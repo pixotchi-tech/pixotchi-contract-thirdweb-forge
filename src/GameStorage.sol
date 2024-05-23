@@ -29,35 +29,35 @@ library GameStorage {
         uint256 lb;
         //uint256 totalOffers;
         //mapping(uint256 => IOffers.Offer) offers;
-    mapping(uint256 => IGameStorage.Plant) plants;
+        mapping(uint256 => IPixotchiV1.Plant) plants;
 
-    // v staking
-    mapping(uint256 => uint256)  ethOwed;
-    mapping(uint256 => uint256)  plantRewardDebt;
+        // v staking
+        mapping(uint256 => uint256) ethOwed;
+        mapping(uint256 => uint256) plantRewardDebt;
 
-    uint256  ethAccPerShare;
+        uint256 ethAccPerShare;
 
-    uint256  totalScores;
+        uint256 totalScores;
 
-    // items/benefits for the plant, general so can be food or anything in the future.
-    mapping(uint256 => uint256)  itemPrice;
-    mapping(uint256 => uint256)  itemPoints;
-    mapping(uint256 => string)  itemName;
-    mapping(uint256 => uint256)  itemTimeExtension;
-    mapping(address => uint32[])  idsByOwner;
-    mapping(uint32 => uint32)  ownerIndexById;
+        // items/benefits for the plant, general so can be food or anything in the future.
+        mapping(uint256 => uint256) itemPrice;
+        mapping(uint256 => uint256) itemPoints;
+        mapping(uint256 => string) itemName;
+        mapping(uint256 => uint256) itemTimeExtension;
+        mapping(address => uint32[]) idsByOwner;
+        mapping(uint32 => uint32) ownerIndexById;
 
-    mapping(address => bool)  IsAuthorized;
-    uint256  Mint_Price;
-    uint256  hasTheDiamond;
-    uint256  maxSupply;
-    bool  mintIsActive;
-    address  revShareWallet;
-    uint256  burnPercentage;
+        mapping(address => bool) IsAuthorized;
+        uint256 Mint_Price;
+        uint256 hasTheDiamond;
+        uint256 maxSupply;
+        bool mintIsActive;
+        address revShareWallet;
+        uint256 burnPercentage;
 
-    IRenderer  renderer;
+        IRenderer renderer;
 
-    mapping(uint256 => bool)  burnedPlants;
+        mapping(uint256 => bool) burnedPlants;
 
     }
 
