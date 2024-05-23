@@ -7,6 +7,7 @@ import {BaseRouter, IRouter, IRouterState} from "../lib/dynamic-contracts/src/pr
 import  "../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
 import "../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
 import "../lib/contracts/contracts/extension/upgradeable/init/ReentrancyGuardInit.sol";
+import "../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
 
 
 /// Example usage of `BaseRouter`, for demonstration only
@@ -15,7 +16,8 @@ contract SimpleRouter is
     Initializable,
     BaseRouter,
     PermissionsEnumerable,
-    ReentrancyGuardInit
+    ReentrancyGuardInit,
+    ERC721AUpgradeable
 {
     /// @dev Only EXTENSION_ROLE holders can perform upgrades.
     bytes32 private constant EXTENSION_ROLE = keccak256("EXTENSION_ROLE");
@@ -38,6 +40,9 @@ contract SimpleRouter is
 
         // Initialize BaseRouter
         __BaseRouter_init();
+
+        __ERC721A_init("NAME", "SYMBOL");
+
         tokenAddress = _simpleRouterV3Params.tokenAddress;
 
         // Initialize inherited contracts, most base-like -> most derived.
@@ -50,8 +55,8 @@ contract SimpleRouter is
 
         _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
         _setupRole(EXTENSION_ROLE, _defaultAdmin);
-        _setupRole(keccak256("LISTER_ROLE"), address(0));
-        _setupRole(keccak256("ASSET_ROLE"), address(0));
+        //_setupRole(keccak256("LISTER_ROLE"), address(0));
+        //_setupRole(keccak256("ASSET_ROLE"), address(0));
 
         _setupRole(EXTENSION_ROLE, _defaultAdmin);
         _setRoleAdmin(EXTENSION_ROLE, EXTENSION_ROLE);
@@ -89,6 +94,16 @@ contract SimpleRouter is
     function _isAuthorizedCallToUpgrade() internal view virtual override returns (bool) {
         return _hasRole(EXTENSION_ROLE, msg.sender);
     }
+
+    function _msgData() internal view override(Context, Permissions) returns (bytes calldata) {
+        return Context._msgData();
+    }
+
+    function _msgSender() internal view override(Context, Permissions) returns (address sender) {
+        return Context._msgSender();
+    }
+
+
 
 
 }
