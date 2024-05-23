@@ -4,3 +4,6 @@
 [submodule "lib/dynamic-contracts"]
 	path = lib/dynamic-contracts
 	url = https://github.com/thirdweb-dev/dynamic-contracts
+[submodule "lib/contracts"]
+	path = lib/contracts
+	url = https://github.com/thirdweb-dev/contracts
