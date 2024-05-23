@@ -10,9 +10,10 @@
   },
   "scripts": {
     "forge:build": "forge build",
-    "build": "npx thirdweb@latest detect",
-    "deploy": "npx thirdweb@latest deploy",
-    "publish": "npx thirdweb@latest publish",
+    "install": "npx thirdweb@5.22 install",
+    "build": "npx thirdweb@5.22 detect",
+    "deploy": "npx thirdweb@5.22 deploy",
+    "publish": "npx thirdweb@5.22 publish",
     "forge build": "forge build"
   }
 }
