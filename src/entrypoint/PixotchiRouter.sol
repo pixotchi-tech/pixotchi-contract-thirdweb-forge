@@ -1,13 +1,12 @@
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 //import "@thirdweb-dev/dynamic-contracts/src/presets/BaseRouter.sol";
-import {BaseRouter, IRouter, IRouterState} from "../lib/dynamic-contracts/src/presets/BaseRouter.sol";
-import  "../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
-import "../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
-import "../lib/contracts/contracts/extension/upgradeable/init/ReentrancyGuardInit.sol";
-import "../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
+import {BaseRouter, IRouter, IRouterState} from "../../lib/dynamic-contracts/src/presets/BaseRouter.sol";
+import  "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
+import "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
+import "../../lib/contracts/contracts/extension/upgradeable/init/ReentrancyGuardInit.sol";
+import "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
 
 //import "../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
 
