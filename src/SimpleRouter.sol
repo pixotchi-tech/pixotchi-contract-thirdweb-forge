@@ -20,6 +20,9 @@ contract SimpleRouter is
     /// @dev Only EXTENSION_ROLE holders can perform upgrades.
     bytes32 private constant EXTENSION_ROLE = keccak256("EXTENSION_ROLE");
 
+    bytes32 private constant MODULE_TYPE = bytes32("PixotchiV2");
+    uint256 private constant VERSION = 1;
+
     address public tokenAddress;
 
     /// @dev We accept constructor params as a struct to avoid `Stack too deep` errors.
@@ -55,6 +58,23 @@ contract SimpleRouter is
 
     }
 
+    receive() external payable {
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                        Generic contract logic
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Returns the type of the contract.
+    function contractType() external pure returns (bytes32) {
+        return MODULE_TYPE;
+    }
+
+    /// @dev Returns the version of the contract.
+    function contractVersion() external pure returns (uint8) {
+        return uint8(VERSION);
+    }
+
     /*///////////////////////////////////////////////////////////////
                         Overridable Permissions
     //////////////////////////////////////////////////////////////*/
@@ -70,6 +90,5 @@ contract SimpleRouter is
         return _hasRole(EXTENSION_ROLE, msg.sender);
     }
 
-    receive() external payable {
-    }
+
 }
