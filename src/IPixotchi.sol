@@ -1,15 +1,7 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.11;
 
 interface IGameLogic {
-
-}
-
-interface IPixotchiV1 {
-    /*//////////////////////////////////////////////////////////////
-                     events
-//////////////////////////////////////////////////////////////*/
-
     struct Plant {
         string name;
         uint256 timeUntilStarving;
@@ -57,10 +49,29 @@ interface IPixotchiV1 {
 
     event Played(uint256 indexed id, uint256 points, uint256 timeExtension);
     event PlayedV2(uint256 indexed id, int256 points, int256 timeExtension);
+
+
+    // Player functions
+    function mint() external;
+    function attack(uint256 fromId, uint256 toId) external;
+    function kill(uint256 _deadId, uint256 _tokenId) external;
+    function setPlantName(uint256 _id, string calldata _name) external;
+    function pass(uint256 from, uint256 to) external;
+
+    // Admin functions
+    function authorizeAddress(address account, bool authorized) external;
+    function setConfig(uint256 _Price, uint256 _maxSupply, bool _mintIsActive, uint256 _burnPercentage) external;
+    function setRenderer(address _renderer) external;
+    function setRevShareWallet(address _wallet) external;
+    function setToken(address _token) external;
+    function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
+    function editItem(uint256 _id, uint256 _price, uint256 _points, string calldata _name, uint256 _timeExtension) external;
+
+    // Events
+    //event PlantCreated(uint256 indexed _plantId, address indexed _owner);
+    //event AttackOccurred(uint256 indexed _plantId, address indexed _attacker);
+    //event KillOccurred(uint256 indexed _plantId, address indexed _killer);
+   // event ItemCreated(uint256 indexed _itemId, string _name, uint256 _price, uint256 _points);
 }
 
 
-interface IGameStorage {
-
-
-}

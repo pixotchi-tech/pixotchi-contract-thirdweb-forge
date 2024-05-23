@@ -15,9 +15,11 @@ import "../IToken.sol";
 library GameStorage {
     /// @custom:storage-location erc7201:offers.storage
     /// @dev use chisel cli tool from foundry to evaluate this expression
-    /// @dev  keccak256(abi.encode(uint256(keccak256("game.storage")) - 1)) & ~bytes32(uint256(0xff))
-    bytes32  constant OFFERS_STORAGE_POSITION =
-    0x7b88e42357d22f249e6991bc87bae4cbb3c3a6df3597089b20afdf487007e800;
+    /// @dev  keccak256(abi.encode(uint256(keccak256("eth.pixotchi.game.storage")) - 1)) & ~bytes32(uint256(0xff))
+    //bytes32  constant OFFERS_STORAGE_POSITION = keccak256(abi.encode(uint256(keccak256("eth.pixotchi.game.storage")) - 1));// & ~bytes32(uint256(0xff));
+    //0x7b88e42357d22f249e6991bc87bae4cbb3c3a6df3597089b20afdf487007e800;
+    bytes32  constant OFFERS_STORAGE_POSITION = 0xc7fc9545a7a1c6d926eb226aca9b0331d15be911879e1d18bd76f146a8dc0000; //keccak256(abi.encode(uint256(keccak256("eth.pixotchi.game.storage")) - 1))  & ~bytes32(uint256(0xff))
+
 
     struct Data {
         uint256 PRECISION;// = 1 ether;

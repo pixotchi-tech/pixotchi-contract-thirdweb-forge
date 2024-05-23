@@ -16,7 +16,7 @@ pragma solidity ^0.8.11;
 https://t.me/Pixotchi
 https://twitter.com/pixotchi
 https://pixotchi.tech/
-@audit https://blocksafu.com/
+
 */
 
 interface IToken {

@@ -14,7 +14,13 @@ import "../../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
 import "../../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
 import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
 
-contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
+
+contract GameLogic is
+    IGameLogic,
+    ReentrancyGuard,
+    ERC721AUpgradeable,
+    PermissionsEnumerable
+{
 
     using SafeTransferLib for address payable;
     using FixedPointMathLib for uint256;
@@ -56,6 +62,7 @@ contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
     constructor(address _token, address _renderer) {
 
         __ERC721A_init("NAME","SYMBOL");
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
         //nativeTokenWrapper = _nativeTokenWrapper;
         //__ERC721_init("Pixotchi", "PIX");
@@ -558,4 +565,93 @@ contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
     function _s() internal pure returns (GameStorage.Data storage data) {
         data = GameStorage.data();
     }
+
+    function authorizeAddress(address account, bool authorized) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _s().IsAuthorized[account] = authorized;
+    }
+
+    function setConfig(uint256 _Price, uint256 _maxSupply, bool _mintIsActive, uint256 _burnPercentage) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(_burnPercentage <= 100, "Burn percentage can't be more than 100");
+        _s().Mint_Price = _Price;
+        _s().maxSupply = _maxSupply;
+        _s().mintIsActive = _mintIsActive;
+        _s().burnPercentage = _burnPercentage;
+    }
+
+    function setRenderer(address _renderer) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _s().renderer = IRenderer(_renderer);
+    }
+
+    function setRevShareWallet(address _revShareWallet) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _s().revShareWallet = _revShareWallet;
+    }
+
+    function setToken(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _s().token = IToken(_token);
+    }
+
+    // add items/accessories
+    function createItem(
+        string calldata name,
+        uint256 price,
+        uint256 points,
+        uint256 timeExtension
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        uint256 newItemId = _s()._itemIds;
+        _s().itemName[newItemId] = name;
+        _s().itemPrice[newItemId] = price;
+        _s().itemPoints[newItemId] = points;
+        _s().itemTimeExtension[newItemId] = timeExtension;
+
+        _s()._itemIds++;
+
+        emit ItemCreated(newItemId, name, price, points);
+    }
+
+
+
+    // New function to create multiple items
+    function createItems(FullItem[] calldata items) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        //we are ignoring the id in the struct and using the index of the array
+        for (uint i = 0; i < items.length; i++) {
+            createItem(items[i].name, items[i].price, items[i].points, items[i].timeExtension);
+        }
+    }
+
+
+
+    function editItem(
+        uint256 _id,
+        uint256 _price,
+        uint256 _points,
+        string calldata _name,
+        uint256 _timeExtension
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _s().itemPrice[_id] = _price;
+        _s().itemPoints[_id] = _points;
+        _s().itemName[_id] = _name;
+        _s().itemTimeExtension[_id] = _timeExtension;
+    }
+
+    // New function to edit multiple items
+    function editItems(FullItem[] calldata updates) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        for (uint i = 0; i < updates.length; i++) {
+            editItem(
+                updates[i].id,
+                updates[i].price,
+                updates[i].points,
+                updates[i].name,
+                updates[i].timeExtension
+            );
+        }
+    }
+
+    function _msgData() internal view override(Permissions, Context) returns (bytes calldata) {
+        return Context._msgData();
+    }
+
+    function _msgSender() internal view override(Permissions, Context) returns (address sender) {
+        return Context._msgSender();
+    }
+
 }
