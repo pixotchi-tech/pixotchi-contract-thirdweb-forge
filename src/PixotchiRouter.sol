@@ -7,17 +7,20 @@ import {BaseRouter, IRouter, IRouterState} from "../lib/dynamic-contracts/src/pr
 import  "../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
 import "../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
 import "../lib/contracts/contracts/extension/upgradeable/init/ReentrancyGuardInit.sol";
-import "../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
+import "../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
+
+//import "../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
 
 
-/// Example usage of `BaseRouter`, for demonstration only
+
 
 contract PixotchiRouter is
     Initializable,
     BaseRouter,
     PermissionsEnumerable,
     ReentrancyGuardInit,
-    ERC721AUpgradeable
+    ReentrancyGuard//,
+    //ERC721AUpgradeable
 {
     /// @dev Only EXTENSION_ROLE holders can perform upgrades.
     bytes32 private constant EXTENSION_ROLE = keccak256("EXTENSION_ROLE");
@@ -41,7 +44,7 @@ contract PixotchiRouter is
         // Initialize BaseRouter
         __BaseRouter_init();
 
-        __ERC721A_init("NAME", "SYMBOL");
+        //__ERC721A_init("NAME", "SYMBOL");
 
         tokenAddress = _simpleRouterV3Params.tokenAddress;
 
@@ -95,12 +98,12 @@ contract PixotchiRouter is
         return _hasRole(EXTENSION_ROLE, msg.sender);
     }
 
-    function _msgData() internal view override(Context, Permissions) returns (bytes calldata) {
-        return Context._msgData();
+    function _msgData() internal view override(Permissions) returns (bytes calldata) {
+        return Permissions._msgData();
     }
 
-    function _msgSender() internal view override(Context, Permissions) returns (address sender) {
-        return Context._msgSender();
+    function _msgSender() internal view override(Permissions) returns (address sender) {
+        return Permissions._msgSender();
     }
 
 
