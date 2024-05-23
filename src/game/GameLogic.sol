@@ -1,17 +1,18 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.11;
 
 // ====== Internal imports ======
 import "./GameStorage.sol";
-import "./IPixotchi.sol";
+import "../IPixotchi.sol";
 
 
 // ====== External imports ======
-import "./FixedPointMathLib.sol";
-import  "../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
-import "../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
-import "../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
-import "../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
-import "../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
+import "../utils/FixedPointMathLib.sol";
+import  "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
+import "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
+import "../../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
+import "../../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
+import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
 
 contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
 
@@ -95,7 +96,7 @@ contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
         require(_s()._tokenIds < _s().maxSupply, "Over the limit");
         tokenBurnAndRedistribute(msg.sender, _s().Mint_Price);
 
-        _s().plants[_s()._tokenIds] = IPixotchiV1.Plant({
+        _s().plants[_s()._tokenIds] = Plant({
             name: "",
             timeUntilStarving: block.timestamp + 1 days,
             score: 0,
@@ -107,7 +108,7 @@ contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
 
         addTokenIdToOwner(uint32(_s()._tokenIds), msg.sender);
         _mint(msg.sender, _s()._tokenIds);
-        emit IPixotchiV1.Mint(_s()._tokenIds);
+        emit Mint(_s()._tokenIds);
         _s()._tokenIds++;
     }
 
@@ -177,7 +178,7 @@ contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
 
         payable(_to).safeTransferETH(pending);
 
-        emit IPixotchiV1.RedeemRewards(id, pending);
+        emit RedeemRewards(id, pending);
     }
 
     // Override the _burn function to track burned plant IDs
@@ -238,7 +239,7 @@ contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
         //token.burnFrom(msg.sender, amount);
         tokenBurnAndRedistribute(msg.sender, amount);
 
-        emit IPixotchiV1.ItemConsumed(nftId, msg.sender, itemId);
+        emit ItemConsumed(nftId, msg.sender, itemId);
     }
 
     function attack(uint256 fromId, uint256 toId) external isApproved(fromId) nonReentrant {
@@ -288,7 +289,7 @@ contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
         _s().plants[winner].score += prizeScore;
         _s().plantRewardDebt[winner] += prizeDebt;
 
-        emit IPixotchiV1.Attack(fromId, winner, loser, prizeScore);
+        emit Attack(fromId, winner, loser, prizeScore);
     }
 
     // kill and burn plants and get in game stars.
@@ -314,7 +315,7 @@ contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
         // redeem for dead plant
         _redeem(_deadId, ownerOfDead);
 
-        emit IPixotchiV1.Killed(
+        emit Killed(
             _tokenId,
             _deadId,
             _s().plants[_deadId].name,
@@ -338,7 +339,7 @@ contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
 
         _s().hasTheDiamond = to;
 
-        emit IPixotchiV1.Pass(from, to);
+        emit Pass(from, to);
     }
 
     // for updating from future contracts
@@ -361,7 +362,7 @@ contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
 
         _s().totalScores += _points;
 
-        emit IPixotchiV1.Played(_nftId, _points, _timeExtension);
+        emit Played(_nftId, _points, _timeExtension);
     }
 
     function updatePointsAndRewardsV2(uint256 _nftId, int256 _points, int256 _timeExtension) external {
@@ -414,7 +415,7 @@ contract GameLogic is IGameLogic, ReentrancyGuard, ERC721AUpgradeable {
         }
         // No else block needed for _points == 0 as no changes are required in that scenario
 
-        emit IPixotchiV1.PlayedV2(_nftId, _points, _timeExtension);
+        emit PlayedV2(_nftId, _points, _timeExtension);
     }
 
 

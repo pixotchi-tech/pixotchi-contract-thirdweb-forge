@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.11;
 
-import "./IPixotchi.sol";
-import "./IRenderer.sol";
-import "./IToken.sol";
+import "../IPixotchi.sol";
+import "../IRenderer.sol";
+import "../IToken.sol";
 
 /// @author thirdweb
 
@@ -30,7 +30,7 @@ library GameStorage {
         uint256 lb;
         //uint256 totalOffers;
         //mapping(uint256 => IOffers.Offer) offers;
-        mapping(uint256 => IPixotchiV1.Plant) plants;
+        mapping(uint256 => IGameLogic.Plant) plants;
 
         // v staking
         mapping(uint256 => uint256) ethOwed;
