@@ -26,8 +26,6 @@ interface IPixotchiV1 {
     }
 
 
-
-
     event ItemConsumed(uint256 nftId, address giver, uint256 itemId);
 
     event Killed(
@@ -59,8 +57,6 @@ interface IPixotchiV1 {
 
 
 interface IGameStorage {
-
-
 
 
 }
