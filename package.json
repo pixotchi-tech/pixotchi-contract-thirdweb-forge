@@ -9,8 +9,10 @@
     "@thirdweb-dev/contracts": "^3"
   },
   "scripts": {
+    "forge:build": "forge build",
     "build": "npx thirdweb@latest detect",
     "deploy": "npx thirdweb@latest deploy",
-    "release": "npx thirdweb@latest release"
+    "publish": "npx thirdweb@latest publish",
+    "forge build": "forge build"
   }
 }
