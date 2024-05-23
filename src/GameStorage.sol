@@ -3,6 +3,7 @@ pragma solidity ^0.8.11;
 
 import "./IPixotchi.sol";
 import "./IRenderer.sol";
+import "./IToken.sol";
 
 /// @author thirdweb
 
@@ -20,7 +21,7 @@ library GameStorage {
 
     struct Data {
         uint256 PRECISION;// = 1 ether;
-        //IToken  token;
+        IToken  token;
 
         uint256 _tokenIds;
         uint256 _itemIds;

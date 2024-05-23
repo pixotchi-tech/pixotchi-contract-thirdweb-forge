@@ -12,7 +12,7 @@ import "../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
 
 /// Example usage of `BaseRouter`, for demonstration only
 
-contract SimpleRouter is
+contract PixotchiRouter is
     Initializable,
     BaseRouter,
     PermissionsEnumerable,

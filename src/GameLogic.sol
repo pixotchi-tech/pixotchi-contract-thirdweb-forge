@@ -4,6 +4,8 @@ pragma solidity ^0.8.11;
 /// @author thirdweb
 
 import "./GameStorage.sol";
+import "./FixedPointMathLib.sol";
+
 
 // ====== External imports ======
 //import "@openzeppelin/contracts/utils/Context.sol";
@@ -26,20 +28,24 @@ import "./GameStorage.sol";
  * @author  thirdweb.com
  */
 contract GameLogic is IGameLogic/*, ReentrancyGuard*/ {
+
+    //using SafeTransferLib for address payable;
+    using FixedPointMathLib for uint256;
+    //using SafeMath for uint256;
     /*///////////////////////////////////////////////////////////////
                         Constants / Immutables
     //////////////////////////////////////////////////////////////*/
 
     /// @dev Only lister role holders can create auctions, when auctions are restricted by lister address.
-    bytes32 private constant LISTER_ROLE = keccak256("LISTER_ROLE");
+    //bytes32 private constant LISTER_ROLE = keccak256("LISTER_ROLE");
     /// @dev Only assets from NFT contracts with asset role can be auctioned, when auctions are restricted by asset address.
-    bytes32 private constant ASSET_ROLE = keccak256("ASSET_ROLE");
+    //bytes32 private constant ASSET_ROLE = keccak256("ASSET_ROLE");
 
     /// @dev The max bps of the contract. So, 10_000 == 100 %
-    uint64 private constant MAX_BPS = 10_000;
+    //uint64 private constant MAX_BPS = 10_000;
 
     /// @dev The address of the native token wrapper contract.
-    address private immutable nativeTokenWrapper;
+    //address private immutable nativeTokenWrapper;
 
     /*///////////////////////////////////////////////////////////////
                               Modifiers
@@ -77,9 +83,35 @@ contract GameLogic is IGameLogic/*, ReentrancyGuard*/ {
                             Constructor logic
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address _nativeTokenWrapper) {
-        nativeTokenWrapper = _nativeTokenWrapper;
+    constructor(address _token, address _renderer) {
+        //nativeTokenWrapper = _nativeTokenWrapper;
+        //__ERC721_init("Pixotchi", "PIX");
+        //__Ownable_init();
+        _gameStorage().token = IToken(_token);
+        _gameStorage().renderer = IRenderer(_renderer);
+        _gameStorage().la = 2;
+        _gameStorage().lb = 2;
+        _gameStorage().totalScores = 0;
+        _gameStorage().Mint_Price = 100 * 1e18;
+        _gameStorage().maxSupply = 20_000;
+        _gameStorage().mintIsActive = true;
+        _gameStorage().revShareWallet = msg.sender; //temporary wallet
+        _gameStorage().burnPercentage = 0; // 0-100%
     }
+
+    /*//////////////////////////////////////////////////////////////
+                receive ether function, interface support
+    //////////////////////////////////////////////////////////////*/
+
+    receive() external payable {
+        _gameStorage().ethAccPerShare += msg.value.mulDivDown(_gameStorage().PRECISION, _gameStorage().totalScores);
+    }
+
+//    function supportsInterface(bytes4 interfaceId) public view override(ERC721Upgradeable)
+//    returns (bool) {
+//        return super.supportsInterface(interfaceId);
+//    }
+
 
     /*///////////////////////////////////////////////////////////////
                             External functions
