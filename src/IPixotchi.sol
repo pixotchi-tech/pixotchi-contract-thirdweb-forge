@@ -11,6 +11,7 @@ interface IGameLogic {
         uint256 maxSupply;
         string name;
         bool isActive;
+        uint256 getStrainTotalLeft;
     }
 
     struct Plant {

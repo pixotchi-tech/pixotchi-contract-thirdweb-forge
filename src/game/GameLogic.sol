@@ -112,8 +112,7 @@ PermissionsEnumerable//,
         require(_s().mintIsActive, "Mint is closed");
         require(_s().strainIsActive[strain], "Strain is not active");
         require(_s().strainTotalMinted[strain] < _s().strainMaxSupply[strain], "Strain supply exceeded");
-        require(_s().strainTotalMinted[strain] < _s().strainMaxSupply[strain], "Over the limit");
-        //require(msg.value >= _s().mintPriceByStrain[strain], "Insufficient funds");
+
 
 
         tokenBurnAndRedistribute(msg.sender, _s().mintPriceByStrain[strain]);

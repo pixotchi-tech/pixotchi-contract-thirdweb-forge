@@ -62,7 +62,8 @@ library GameStorage {
         //strainCounter
         //uint256 strainCounter;
         mapping(uint256 => uint256) mintPriceByStrain;
-        mapping(uint256 => uint256) strainTotalSupply;
+        //mapping(uint256 => uint256) strainTotalSupply;
+        mapping(uint256 => uint256) strainBurned;
         mapping(uint256 => uint256) strainTotalMinted;
         mapping(uint256 => uint256) strainMaxSupply;
         mapping(uint256 => string) strainName;
@@ -95,31 +96,31 @@ library GameStorage {
         }
     }
 
-function createPlant(IGameLogic.Plant memory plant, uint256 id) internal {
-    Data storage ds = data();
-    ds.plantName[id] = plant.name;
-    ds.plantStrain[id] = plant.strain;
-    ds.plantTimeBorn[id] = block.timestamp;
-    ds.plantTimeUntilStarving[id] = plant.timeUntilStarving;
-    ds.plantScore[id] = plant.score;
-    ds.plantLastAttackUsed[id] = plant.lastAttackUsed;
-    ds.plantLastAttacked[id] = plant.lastAttacked;
-    ds.plantStars[id] = plant.stars;
+    function createPlant(IGameLogic.Plant memory plant, uint256 id) internal {
+        Data storage ds = data();
+        ds.plantName[id] = plant.name;
+        ds.plantStrain[id] = plant.strain;
+        ds.plantTimeBorn[id] = block.timestamp;
+        ds.plantTimeUntilStarving[id] = plant.timeUntilStarving;
+        ds.plantScore[id] = plant.score;
+        ds.plantLastAttackUsed[id] = plant.lastAttackUsed;
+        ds.plantLastAttacked[id] = plant.lastAttacked;
+        ds.plantStars[id] = plant.stars;
 
-    // Print updates
-    //emit PlantUpdated(plant.owner, plant.name, plant.strain, plant.timeUntilStarving, plant.score, plant.lastAttackUsed, plant.lastAttacked, plant.stars);
-}
+        // Print updates
+        //emit PlantUpdated(plant.owner, plant.name, plant.strain, plant.timeUntilStarving, plant.score, plant.lastAttackUsed, plant.lastAttacked, plant.stars);
+    }
 
-function createItem(IGameLogic.FullItem memory item) internal {
-    Data storage ds = data();
-    ds.itemName[item.id] = item.name;
-    ds.itemPrice[item.id] = item.price;
-    ds.itemPoints[item.id] = item.points;
-    ds.itemTimeExtension[item.id] = item.timeExtension;
+    function createItem(IGameLogic.FullItem memory item) internal {
+        Data storage ds = data();
+        ds.itemName[item.id] = item.name;
+        ds.itemPrice[item.id] = item.price;
+        ds.itemPoints[item.id] = item.points;
+        ds.itemTimeExtension[item.id] = item.timeExtension;
 
-    // Print updates
-    //emit ItemUpdated(item.id, item.name, item.price, item.points, item.timeExtension);
-}
+        // Print updates
+        //emit ItemUpdated(item.id, item.name, item.price, item.points, item.timeExtension);
+    }
 
     function getPlant(uint256 id)
     internal
@@ -180,16 +181,16 @@ function createItem(IGameLogic.FullItem memory item) internal {
     function setStrain(
         uint256 id,
         uint256 mintPrice,
-        uint256 totalSupply,
-        uint256 totalMinted,
+        //uint256 totalSupply,
+        //uint256 totalMinted,
         uint256 maxSupply,
         string memory name,
         bool isActive
     ) internal {
         Data storage ds = data();
         ds.mintPriceByStrain[id] = mintPrice;
-        ds.strainTotalSupply[id] = totalSupply;
-        ds.strainTotalMinted[id] = totalMinted;
+        //ds.strainTotalSupply[id] = totalSupply;
+        //ds.strainTotalMinted[id] = totalMinted;
         ds.strainMaxSupply[id] = maxSupply;
         ds.strainName[id] = name;
         ds.strainIsActive[id] = isActive;
@@ -200,12 +201,23 @@ function createItem(IGameLogic.FullItem memory item) internal {
         return IGameLogic.Strain({
             id: id,
             mintPrice: ds.mintPriceByStrain[id],
-            totalSupply: ds.strainTotalSupply[id],
+            totalSupply: getStrainTotalSupply(id),
+            getStrainTotalLeft: getStrainTotalLeft(id),
             totalMinted: ds.strainTotalMinted[id],
             maxSupply: ds.strainMaxSupply[id],
             name: ds.strainName[id],
             isActive: ds.strainIsActive[id]
         });
+    }
+
+    function getStrainTotalSupply(uint256 id) internal view returns (uint256) {
+        Data storage ds = data();
+        return ds.strainTotalMinted[id] - ds.strainBurned[id];
+    }
+
+    function getStrainTotalLeft(uint256 id) internal view returns (uint256) {
+        Data storage ds = data();
+        return ds.strainMaxSupply[id] - ds.strainTotalMinted[id];
     }
 
 }
