@@ -23,16 +23,13 @@ library GameStorage {
 
     struct Data {
         uint256 PRECISION;// = 1 ether;
-        IToken  token;
+        IToken token;
 
-        uint256 _tokenIds;
+        //uint256 _tokenIds;
         uint256 _itemIds;
 
         uint256 la;
         uint256 lb;
-        //uint256 totalOffers;
-        //mapping(uint256 => IOffers.Offer) offers;
-        mapping(uint256 => IGameLogic.Plant) plants;
 
         // v staking
         mapping(uint256 => uint256) ethOwed;
@@ -51,9 +48,9 @@ library GameStorage {
         mapping(uint32 => uint32) ownerIndexById;
 
         mapping(address => bool) IsAuthorized;
-        uint256 Mint_Price;
+
         uint256 hasTheDiamond;
-        uint256 maxSupply;
+        //uint256 maxSupply;
         bool mintIsActive;
         address revShareWallet;
         uint256 burnPercentage;
@@ -62,6 +59,33 @@ library GameStorage {
 
         mapping(uint256 => bool) burnedPlants;
 
+        //strainCounter
+        //uint256 strainCounter;
+        mapping(uint256 => uint256) mintPriceByStrain;
+        mapping(uint256 => uint256) strainTotalSupply;
+        mapping(uint256 => uint256) strainTotalMinted;
+        mapping(uint256 => uint256) strainMaxSupply;
+        mapping(uint256 => string) strainName;
+        mapping(uint256 => bool) strainIsActive;
+
+        //shop Items
+        uint256 shopItemCounter;
+        mapping(uint256 => uint256) shopItemPrice;
+        mapping(uint256 => uint256) shopItemTotalConsumed;
+        mapping(uint256 => uint256) shopItemMaxSupply;
+        mapping(uint256 => string) shopItemName;
+        mapping(uint256 => bool) shopItemIsActive;
+        mapping(uint256 => uint256) shopItemExpireTime;
+
+        // Plant mappings
+        mapping(address => string) plantName;
+        mapping(address => uint256) plantTimeUntilStarving;
+        mapping(address => uint256) plantScore;
+        mapping(address => uint256) plantTimeBorn;
+        mapping(address => uint256) plantLastAttackUsed;
+        mapping(address => uint256) plantLastAttacked;
+        mapping(address => uint256) plantStars;
+        mapping(address => uint256) plantStrain;
     }
 
     function data() internal pure returns (Data storage data_) {
@@ -70,4 +94,118 @@ library GameStorage {
             data_.slot := position
         }
     }
+
+function createPlant(IGameLogic.Plant memory plant, ) internal {
+    Data storage ds = data();
+    ds.plantName[plant.] = plant.name;
+    ds.plantStrain[plant.id] = plant.strain;
+    ds.plantTimeBorn[plant.id] = block.timestamp;
+    ds.plantTimeUntilStarving[plant.id] = plant.timeUntilStarving;
+    ds.plantScore[plant.id] = plant.score;
+    ds.plantLastAttackUsed[plant.id] = plant.lastAttackUsed;
+    ds.plantLastAttacked[plant.id] = plant.lastAttacked;
+    ds.plantStars[plant.id] = plant.stars;
+
+    // Print updates
+    //emit PlantUpdated(plant.owner, plant.name, plant.strain, plant.timeUntilStarving, plant.score, plant.lastAttackUsed, plant.lastAttacked, plant.stars);
+}
+
+function createItem(IGameLogic.FullItem memory item) internal {
+    Data storage ds = data();
+    ds.itemName[item.id] = item.name;
+    ds.itemPrice[item.id] = item.price;
+    ds.itemPoints[item.id] = item.points;
+    ds.itemTimeExtension[item.id] = item.timeExtension;
+
+    // Print updates
+    //emit ItemUpdated(item.id, item.name, item.price, item.points, item.timeExtension);
+}
+
+    function getPlant(address owner)
+    internal
+    view
+    returns (IGameLogic.Plant memory)
+    {
+        Data storage ds = data();
+        return IGameLogic.Plant({
+            name: ds.plantName[owner],
+            timeUntilStarving: ds.plantTimeUntilStarving[owner],
+            score: ds.plantScore[owner],
+            timePlantBorn: ds.plantTimeBorn[owner],
+            lastAttackUsed: ds.plantLastAttackUsed[owner],
+            lastAttacked: ds.plantLastAttacked[owner],
+            stars: ds.plantStars[owner],
+            strain: ds.plantStrain[owner]
+        });
+    }
+
+    function createShopItem(
+        uint256 id,
+        string memory name,
+        uint256 price,
+        uint256 maxSupply,
+        uint256 expireTime
+    ) internal {
+        Data storage ds = data();
+        ds.shopItemName[id] = name;
+        ds.shopItemPrice[id] = price;
+        ds.shopItemMaxSupply[id] = maxSupply;
+        ds.shopItemExpireTime[id] = expireTime;
+        ds.shopItemIsActive[id] = true;
+        ds.shopItemTotalConsumed[id] = 0;
+    }
+
+    function getShopItem(uint256 id)
+    internal
+    view
+    returns (
+        string memory name,
+        uint256 price,
+        uint256 maxSupply,
+        uint256 expireTime,
+        bool isActive,
+        uint256 totalConsumed
+    )
+    {
+        Data storage ds = data();
+        name = ds.shopItemName[id];
+        price = ds.shopItemPrice[id];
+        maxSupply = ds.shopItemMaxSupply[id];
+        expireTime = ds.shopItemExpireTime[id];
+        isActive = ds.shopItemIsActive[id];
+        totalConsumed = ds.shopItemTotalConsumed[id];
+    }
+
+
+    function setStrain(
+        uint256 id,
+        uint256 mintPrice,
+        uint256 totalSupply,
+        uint256 totalMinted,
+        uint256 maxSupply,
+        string memory name,
+        bool isActive
+    ) internal {
+        Data storage ds = data();
+        ds.mintPriceByStrain[id] = mintPrice;
+        ds.strainTotalSupply[id] = totalSupply;
+        ds.strainTotalMinted[id] = totalMinted;
+        ds.strainMaxSupply[id] = maxSupply;
+        ds.strainName[id] = name;
+        ds.strainIsActive[id] = isActive;
+    }
+
+    function getStrain(uint256 id) internal view returns (IGameLogic.Strain memory) {
+        Data storage ds = data();
+        return IGameLogic.Strain({
+            id: id,
+            mintPrice: ds.mintPriceByStrain[id],
+            totalSupply: ds.strainTotalSupply[id],
+            totalMinted: ds.strainTotalMinted[id],
+            maxSupply: ds.strainMaxSupply[id],
+            name: ds.strainName[id],
+            isActive: ds.strainIsActive[id]
+        });
+    }
+
 }
