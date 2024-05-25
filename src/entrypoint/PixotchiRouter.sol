@@ -7,8 +7,11 @@ import  "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerab
 import "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/init/ReentrancyGuardInit.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
+import "../utils/FixedPointMathLib.sol";
 
 //import "../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
+
+import "../game/GameStorage.sol";
 
 
 
@@ -41,11 +44,13 @@ contract PixotchiRouter is
         SimpleRouterConstructorParams memory _simpleRouterV3Params
     ) BaseRouter(_simpleRouterV3Params.extensions)  {
           __BaseRouter_init();
-        _disableInitializers();
+        //_disableInitializers();
 
     }
 
     receive() external payable {
+        GameStorage.Data storage _s = GameStorage.data();
+        _s.ethAccPerShare += FixedPointMathLib.mulDivDown(msg.value, _s.PRECISION, _s.totalScores);
     }
 
 
@@ -54,7 +59,7 @@ contract PixotchiRouter is
     function initialize(
     ) external initializer {
     __ReentrancyGuard_init();
-    address _defaultAdmin = msg.sender;
+    address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
     _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
     _setupRole(EXTENSION_ROLE, _defaultAdmin);
     _setupRole(EXTENSION_ROLE, _defaultAdmin);
