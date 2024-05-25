@@ -78,14 +78,14 @@ library GameStorage {
         mapping(uint256 => uint256) shopItemExpireTime;
 
         // Plant mappings
-        mapping(address => string) plantName;
-        mapping(address => uint256) plantTimeUntilStarving;
-        mapping(address => uint256) plantScore;
-        mapping(address => uint256) plantTimeBorn;
-        mapping(address => uint256) plantLastAttackUsed;
-        mapping(address => uint256) plantLastAttacked;
-        mapping(address => uint256) plantStars;
-        mapping(address => uint256) plantStrain;
+        mapping(uint256 => string) plantName;
+        mapping(uint256 => uint256) plantTimeUntilStarving;
+        mapping(uint256 => uint256) plantScore;
+        mapping(uint256 => uint256) plantTimeBorn;
+        mapping(uint256 => uint256) plantLastAttackUsed;
+        mapping(uint256 => uint256) plantLastAttacked;
+        mapping(uint256 => uint256) plantStars;
+        mapping(uint256 => uint256) plantStrain;
     }
 
     function data() internal pure returns (Data storage data_) {
@@ -95,16 +95,16 @@ library GameStorage {
         }
     }
 
-function createPlant(IGameLogic.Plant memory plant, ) internal {
+function createPlant(IGameLogic.Plant memory plant, uint256 id) internal {
     Data storage ds = data();
-    ds.plantName[plant.] = plant.name;
-    ds.plantStrain[plant.id] = plant.strain;
-    ds.plantTimeBorn[plant.id] = block.timestamp;
-    ds.plantTimeUntilStarving[plant.id] = plant.timeUntilStarving;
-    ds.plantScore[plant.id] = plant.score;
-    ds.plantLastAttackUsed[plant.id] = plant.lastAttackUsed;
-    ds.plantLastAttacked[plant.id] = plant.lastAttacked;
-    ds.plantStars[plant.id] = plant.stars;
+    ds.plantName[id] = plant.name;
+    ds.plantStrain[id] = plant.strain;
+    ds.plantTimeBorn[id] = block.timestamp;
+    ds.plantTimeUntilStarving[id] = plant.timeUntilStarving;
+    ds.plantScore[id] = plant.score;
+    ds.plantLastAttackUsed[id] = plant.lastAttackUsed;
+    ds.plantLastAttacked[id] = plant.lastAttacked;
+    ds.plantStars[id] = plant.stars;
 
     // Print updates
     //emit PlantUpdated(plant.owner, plant.name, plant.strain, plant.timeUntilStarving, plant.score, plant.lastAttackUsed, plant.lastAttacked, plant.stars);
@@ -121,21 +121,21 @@ function createItem(IGameLogic.FullItem memory item) internal {
     //emit ItemUpdated(item.id, item.name, item.price, item.points, item.timeExtension);
 }
 
-    function getPlant(address owner)
+    function getPlant(uint256 id)
     internal
     view
     returns (IGameLogic.Plant memory)
     {
         Data storage ds = data();
         return IGameLogic.Plant({
-            name: ds.plantName[owner],
-            timeUntilStarving: ds.plantTimeUntilStarving[owner],
-            score: ds.plantScore[owner],
-            timePlantBorn: ds.plantTimeBorn[owner],
-            lastAttackUsed: ds.plantLastAttackUsed[owner],
-            lastAttacked: ds.plantLastAttacked[owner],
-            stars: ds.plantStars[owner],
-            strain: ds.plantStrain[owner]
+            name: ds.plantName[id],
+            timeUntilStarving: ds.plantTimeUntilStarving[id],
+            score: ds.plantScore[id],
+            timePlantBorn: ds.plantTimeBorn[id],
+            lastAttackUsed: ds.plantLastAttackUsed[id],
+            lastAttacked: ds.plantLastAttacked[id],
+            stars: ds.plantStars[id],
+            strain: ds.plantStrain[id]
         });
     }
 
