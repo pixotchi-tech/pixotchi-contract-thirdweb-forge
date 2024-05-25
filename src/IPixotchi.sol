@@ -2,6 +2,17 @@
 pragma solidity ^0.8.11;
 
 interface IGameLogic {
+
+    struct Strain {
+        uint256 id;
+        uint256 mintPrice;
+        uint256 totalSupply;
+        uint256 totalMinted;
+        uint256 maxSupply;
+        string name;
+        bool isActive;
+    }
+
     struct Plant {
         string name;
         uint256 timeUntilStarving;
@@ -10,6 +21,7 @@ interface IGameLogic {
         uint256 lastAttackUsed;
         uint256 lastAttacked;
         uint256 stars;
+        uint256 strain;
     }
 
     // Define a struct to hold plant information
@@ -52,7 +64,7 @@ interface IGameLogic {
 
 
     // Player functions
-    function mint() external;
+    function mint(uint256 strain) external;
     function attack(uint256 fromId, uint256 toId) external;
     function kill(uint256 _deadId, uint256 _tokenId) external;
     function setPlantName(uint256 _id, string calldata _name) external;
