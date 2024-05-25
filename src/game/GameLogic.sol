@@ -5,10 +5,9 @@ pragma solidity ^0.8.11;
 import "./GameStorage.sol";
 import "../IPixotchi.sol";
 
-
 // ====== External imports ======
 import "../utils/FixedPointMathLib.sol";
-import  "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
+import "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
 import "../../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
@@ -17,10 +16,10 @@ import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/uti
 
 
 contract GameLogic is
-    IGameLogic,
-    ReentrancyGuard,
-    ERC721AUpgradeable,
-    PermissionsEnumerable//,
+IGameLogic,
+ReentrancyGuard,
+ERC721AUpgradeable,
+PermissionsEnumerable//,
     //Initializable
 {
 
@@ -56,7 +55,6 @@ contract GameLogic is
         _;
     }
 
-
     /*///////////////////////////////////////////////////////////////
                             Constructor logic
     //////////////////////////////////////////////////////////////*/
@@ -66,8 +64,11 @@ contract GameLogic is
         address _token = 0xc64F740D216B6ec49e435a8a08132529788e8DD0;
         address _renderer = 0x9D4F2b4D49A83A22F902629aD7d6Bd0329224A50;
 
-        __ERC721A_init("NAME","SYMBOL");
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
+
+        _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
+
+        __ERC721A_init("NAME", "SYMBOL");
 
         //nativeTokenWrapper = _nativeTokenWrapper;
         //__ERC721_init("Pixotchi", "PIX");
@@ -78,8 +79,8 @@ contract GameLogic is
         _s().la = 2;
         _s().lb = 2;
         _s().totalScores = 0;
-        _s().Mint_Price = 100 * 1e18;
-        _s().maxSupply = 20_000;
+        //_s().Mint_Price = 100 * 1e18;
+        // _s().maxSupply = 20_000;
         _s().mintIsActive = true;
         _s().revShareWallet = msg.sender; //temporary wallet
         _s().burnPercentage = 0; // 0-100%
@@ -89,39 +90,52 @@ contract GameLogic is
                 receive ether function, interface support
     //////////////////////////////////////////////////////////////*/
 
-    receive() external payable {
-        _s().ethAccPerShare += msg.value.mulDivDown(_s().PRECISION, _s().totalScores);
-    }
+//    receive() external payable {
+//        _s().ethAccPerShare += msg.value.mulDivDown(_s().PRECISION, _s().totalScores);
+//    }
 
 //    function supportsInterface(bytes4 interfaceId) public view override(ERC721Upgradeable)
 //    returns (bool) {
 //        return super.supportsInterface(interfaceId);
 //    }
 
-
     /*///////////////////////////////////////////////////////////////
                             External functions
     //////////////////////////////////////////////////////////////*/
 
-    function mint() public nonReentrant {
+    function mint(uint256 strain) public nonReentrant {
         require(_s().mintIsActive, "Mint is closed");
-        require(_s()._tokenIds < _s().maxSupply, "Over the limit");
-        tokenBurnAndRedistribute(msg.sender, _s().Mint_Price);
+        require(_s().strainIsActive[strain], "Strain is not active");
+        require(_s().strainTotalMinted[strain] < _s().strainMaxSupply[strain], "Strain supply exceeded");
+        require(_s().strainTotalMinted[strain] < _s().strainMaxSupply[strain], "Over the limit");
+        require(msg.value >= _s().mintPriceByStrain[strain], "Insufficient funds");
 
-        _s().plants[_s()._tokenIds] = Plant({
+        tokenBurnAndRedistribute(msg.sender, _s().mintPriceByStrain[strain]);
+
+        uint256 _tokenId = _totalMinted();
+
+        //GameStorage.createPlant(owner, name, strain, timeUntilStarving, score, lastAttackUsed, lastAttacked, stars);
+
+        IGameLogic.Plant memory _plant = Plant({
             name: "",
             timeUntilStarving: block.timestamp + 1 days,
             score: 0,
             timePlantBorn: block.timestamp,
             lastAttackUsed: 0,
             lastAttacked: 0,
-            stars: 0
+            stars: 0,
+            strain: strain
         });
 
-        addTokenIdToOwner(uint32(_s()._tokenIds), msg.sender);
-        _mint(msg.sender, _s()._tokenIds);
-        emit Mint(_s()._tokenIds);
-        _s()._tokenIds++;
+        GameStorage.createPlant[_tokenId] = _plant;
+
+        addTokenIdToOwner(uint32(_tokenId), msg.sender);
+        uint256 quantity = 1;
+        _mint(msg.sender, quantity);
+        emit Mint(_tokenId);
+
+        _s().strainTotalMinted[strain]++;
+        //_s()._tokenIds++;
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -154,7 +168,7 @@ contract GameLogic is
         _s().idsByOwner[owner].push(tokenId);
     }
 
-    function removeTokenIdFromOwner(uint32 tokenId, address owner) internal returns(bool) {
+    function removeTokenIdFromOwner(uint32 tokenId, address owner) internal returns (bool) {
         uint32[] storage ids = _s().idsByOwner[owner];
         uint256 balance = ids.length;
 
@@ -186,7 +200,7 @@ contract GameLogic is
         _s().totalScores -= _s().plants[id].score;
         _s().plants[id].score = 0;
         _s().ethOwed[id] = 0;
-        _s(). plantRewardDebt[id] = 0;
+        _s().plantRewardDebt[id] = 0;
 
         payable(_to).safeTransferETH(pending);
 
@@ -320,7 +334,7 @@ contract GameLogic is
 
         address ownerOfDead = ownerOf(_deadId);
 
-        removeTokenIdFromOwner(uint32(_deadId) , ownerOfDead);
+        removeTokenIdFromOwner(uint32(_deadId), ownerOfDead);
 
         _burn(_deadId);
         _s().plants[_tokenId].stars += 1;
@@ -345,7 +359,7 @@ contract GameLogic is
     }
 
     // just side quest for later to add to ui, one thing in the game that can be passed to other players
-    function pass(uint256 from, uint256 to) external isApproved(from) nonReentrant  {
+    function pass(uint256 from, uint256 to) external isApproved(from) nonReentrant {
         require(_s().hasTheDiamond == from, "you don't have it");
         require(ownerOf(to) != address(0x0), "don't burn it");
 
@@ -356,9 +370,9 @@ contract GameLogic is
 
     // for updating from future contracts
     function updatePointsAndRewards(uint256 _nftId, uint256 _points, uint256 _timeExtension) external {
-        require(_s().IsAuthorized[msg.sender] , "Not Authorized");
+        require(_s().IsAuthorized[msg.sender], "Not Authorized");
 
-        if(_timeExtension != 0)
+        if (_timeExtension != 0)
             _s().plants[_nftId].timeUntilStarving += _timeExtension;
 
         if (_s().plants[_nftId].score > 0) {
@@ -382,7 +396,7 @@ contract GameLogic is
 
         // Handling time extension adjustments
         if (_timeExtension != 0) {
-            if (_timeExtension > 0 || uint256(-_timeExtension) <= _s().plants[_nftId].timeUntilStarving) {
+            if (_timeExtension > 0 || uint256(- _timeExtension) <= _s().plants[_nftId].timeUntilStarving) {
                 // Safe to adjust time, whether adding or subtracting
                 _s().plants[_nftId].timeUntilStarving = uint256(int256(_s().plants[_nftId].timeUntilStarving) + _timeExtension);
             } else {
@@ -393,7 +407,7 @@ contract GameLogic is
 
         // Handling point adjustments
         if (_points != 0) {
-            if (_points > 0 || uint256(-_points) <= _s().plants[_nftId].score) {
+            if (_points > 0 || uint256(- _points) <= _s().plants[_nftId].score) {
                 // Safe to adjust points, whether adding or subtracting
                 _s().plants[_nftId].score = uint256(int256(_s().plants[_nftId].score) + _points);
             } else {
@@ -414,7 +428,7 @@ contract GameLogic is
         if (_points > 0) {
             _s().totalScores += uint256(_points);
         } else if (_points < 0) { // Check if points are negative to avoid unnecessary operations when _points are 0
-            uint256 absPoints = uint256(-_points);
+            uint256 absPoints = uint256(- _points);
             if (absPoints > 0) { // Proceed only if absPoints is greater than 0
                 if (absPoints <= _s().totalScores) {
                     _s().totalScores -= absPoints;
@@ -429,7 +443,6 @@ contract GameLogic is
 
         emit PlayedV2(_nftId, _points, _timeExtension);
     }
-
 
     /*///////////////////////////////////////////////////////////////
                             View functions
@@ -488,11 +501,9 @@ contract GameLogic is
         if (_score == 0) {
             return 1;
         }
-        uint256 _level = _sqrtu(_score *  _s().la);
+        uint256 _level = _sqrtu(_score * _s().la);
         return (_level * _s().lb);
     }
-
-
 
     /*///////////////////////////////////////////////////////////////
                             Internal functions
@@ -564,8 +575,6 @@ contract GameLogic is
         return hashNumber % 100;
     }
 
-
-
     /// @dev Returns the storage.
     function _s() internal pure returns (GameStorage.Data storage data) {
         data = GameStorage.data();
@@ -613,8 +622,6 @@ contract GameLogic is
         emit ItemCreated(newItemId, name, price, points);
     }
 
-
-
     // New function to create multiple items
     function createItems(FullItem[] calldata items) external onlyRole(DEFAULT_ADMIN_ROLE) {
         //we are ignoring the id in the struct and using the index of the array
@@ -622,7 +629,6 @@ contract GameLogic is
             createItem(items[i].name, items[i].price, items[i].points, items[i].timeExtension);
         }
     }
-
 
 
     function editItem(
