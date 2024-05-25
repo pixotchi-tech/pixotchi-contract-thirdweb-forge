@@ -103,12 +103,18 @@ PermissionsEnumerable//,
                             External functions
     //////////////////////////////////////////////////////////////*/
 
-    function mint(uint256 strain) public nonReentrant {
+    function mint(uint256 strain) external  {
+        mintTo(strain, msg.sender);
+    }
+
+
+    function mintTo(uint256 strain, address _to) public nonReentrant {
         require(_s().mintIsActive, "Mint is closed");
         require(_s().strainIsActive[strain], "Strain is not active");
         require(_s().strainTotalMinted[strain] < _s().strainMaxSupply[strain], "Strain supply exceeded");
         require(_s().strainTotalMinted[strain] < _s().strainMaxSupply[strain], "Over the limit");
-        require(msg.value >= _s().mintPriceByStrain[strain], "Insufficient funds");
+        //require(msg.value >= _s().mintPriceByStrain[strain], "Insufficient funds");
+
 
         tokenBurnAndRedistribute(msg.sender, _s().mintPriceByStrain[strain]);
 
@@ -127,11 +133,11 @@ PermissionsEnumerable//,
             strain: strain
         });
 
-        GameStorage.createPlant[_tokenId] = _plant;
+        GameStorage.createPlant(_plant, _tokenId);
 
         addTokenIdToOwner(uint32(_tokenId), msg.sender);
-        uint256 quantity = 1;
-        _mint(msg.sender, quantity);
+        uint256 _quantity = 1;
+        _mint(_to, _quantity);
         emit Mint(_tokenId);
 
         _s().strainTotalMinted[strain]++;
@@ -197,10 +203,11 @@ PermissionsEnumerable//,
     function _redeem(uint256 id, address _to) internal {
         uint256 pending = pendingEth(id);
 
-        _s().totalScores -= _s().plants[id].score;
-        _s().plants[id].score = 0;
-        _s().ethOwed[id] = 0;
-        _s().plantRewardDebt[id] = 0;
+        GameStorage.Data storage s = _s();
+        s.totalScores -= s.plantScore[id];
+        s.plantScore[id] = 0;
+        s.ethOwed[id] = 0;
+        s.plantRewardDebt[id] = 0;
 
         payable(_to).safeTransferETH(pending);
 
@@ -218,13 +225,13 @@ PermissionsEnumerable//,
 
         //plantRewardDebt can sometimes be bigger by 1 wei do to several mulDivDowns so we do extra checks
         if (
-            _s().plants[plantId].score.mulDivDown(_ethAccPerShare, _s().PRECISION) <
+            _s().plantScore[plantId].mulDivDown(_ethAccPerShare, _s().PRECISION) <
             _s().plantRewardDebt[plantId]
         ) {
             return _s().ethOwed[plantId];
         } else {
             return
-                (_s().plants[plantId].score.mulDivDown(_ethAccPerShare, _s().PRECISION))
+                (_s().plantScore[plantId].mulDivDown(_ethAccPerShare, _s().PRECISION))
                 .sub(_s().plantRewardDebt[plantId])
                 .add(_s().ethOwed[plantId]);
         }
@@ -243,19 +250,19 @@ PermissionsEnumerable//,
         uint256 amount = _s().itemPrice[itemId];
 
         // recalculate time until starving
-        _s().plants[nftId].timeUntilStarving += _s().itemTimeExtension[itemId];
+        _s().plantTimeUntilStarving[nftId] += _s().itemTimeExtension[itemId];
 
-        if (_s().plants[nftId].score > 0) {
+        if (_s().plantScore[nftId] > 0) {
             _s().ethOwed[nftId] = pendingEth(nftId);
         }
 
         if (!isPlantAlive(nftId)) {
-            _s().plants[nftId].score = _s().itemPoints[itemId];
+            _s().plantScore[nftId] = _s().itemPoints[itemId];
         } else {
-            _s().plants[nftId].score += _s().itemPoints[itemId];
+            _s().plantScore[nftId] += _s().itemPoints[itemId];
         }
 
-        _s().plantRewardDebt[nftId] = _s().plants[nftId].score.mulDivDown(
+        _s().plantRewardDebt[nftId] = _s().plantScore[nftId].mulDivDown(
             _s().ethAccPerShare,
             _s().PRECISION
         );
@@ -282,8 +289,8 @@ PermissionsEnumerable//,
             return;
         }
 
-        _s().plants[fromId].lastAttackUsed = block.timestamp;
-        _s().plants[toId].lastAttacked = block.timestamp;
+        _s().plantLastAttackUsed[fromId] = block.timestamp;
+        _s().plantLastAttacked[toId] = block.timestamp;
 
         uint256 loser;
         uint256 winner;
@@ -299,7 +306,7 @@ PermissionsEnumerable//,
         }
 
         uint256 feePercentage = _s().PRECISION.mulDivDown(pct, 1000); // 0.5 pct
-        uint256 prizeScore = _s().plants[loser].score.mulDivDown(
+        uint256 prizeScore = _s().plantScore[loser].mulDivDown(
             feePercentage,
             _s().PRECISION
         );
@@ -309,10 +316,10 @@ PermissionsEnumerable//,
             _s().PRECISION
         );
 
-        _s().plants[loser].score -= prizeScore;
+        _s().plantScore[loser] -= prizeScore;
         _s().plantRewardDebt[loser] -= prizeDebt;
 
-        _s().plants[winner].score += prizeScore;
+        _s().plantScore[winner] += prizeScore;
         _s().plantRewardDebt[winner] += prizeDebt;
 
         emit Attack(fromId, winner, loser, prizeScore);
@@ -337,17 +344,17 @@ PermissionsEnumerable//,
         removeTokenIdFromOwner(uint32(_deadId), ownerOfDead);
 
         _burn(_deadId);
-        _s().plants[_tokenId].stars += 1;
+        _s().plantStars[_tokenId] += 1;
         // redeem for dead plant
         _redeem(_deadId, ownerOfDead);
 
         emit Killed(
             _tokenId,
             _deadId,
-            _s().plants[_deadId].name,
+            _s().plantName[_deadId],
             1,
             msg.sender,
-            _s().plants[_tokenId].name
+            _s().plantName[_tokenId]
         );
     }
 
@@ -355,7 +362,7 @@ PermissionsEnumerable//,
         uint256 _id,
         string memory _name
     ) external isApproved(_id) {
-        _s().plants[_id].name = _name;
+        _s().plantName[_id] = _name;
     }
 
     // just side quest for later to add to ui, one thing in the game that can be passed to other players
@@ -373,15 +380,15 @@ PermissionsEnumerable//,
         require(_s().IsAuthorized[msg.sender], "Not Authorized");
 
         if (_timeExtension != 0)
-            _s().plants[_nftId].timeUntilStarving += _timeExtension;
+            _s().plantTimeUntilStarving[_nftId] += _timeExtension;
 
-        if (_s().plants[_nftId].score > 0) {
+        if (_s().plantScore[_nftId] > 0) {
             _s().ethOwed[_nftId] = pendingEth(_nftId);
         }
 
-        _s().plants[_nftId].score += _points;
+        _s().plantScore[_nftId] += _points;
 
-        _s().plantRewardDebt[_nftId] = _s().plants[_nftId].score.mulDivDown(
+        _s().plantRewardDebt[_nftId] = _s().plantScore[_nftId].mulDivDown(
             _s().ethAccPerShare,
             _s().PRECISION
         );
@@ -396,32 +403,32 @@ PermissionsEnumerable//,
 
         // Handling time extension adjustments
         if (_timeExtension != 0) {
-            if (_timeExtension > 0 || uint256(- _timeExtension) <= _s().plants[_nftId].timeUntilStarving) {
+            if (_timeExtension > 0 || uint256(- _timeExtension) <= _s().plantTimeUntilStarving[_nftId]) {
                 // Safe to adjust time, whether adding or subtracting
-                _s().plants[_nftId].timeUntilStarving = uint256(int256(_s().plants[_nftId].timeUntilStarving) + _timeExtension);
+                _s().plantTimeUntilStarving[_nftId] = uint256(int256(_s().plantTimeUntilStarving[_nftId]) + _timeExtension);
             } else {
                 // Prevent underflow if trying to subtract more than the current value
-                _s().plants[_nftId].timeUntilStarving = 0;
+                _s().plantTimeUntilStarving[_nftId] = 0;
             }
         }
 
         // Handling point adjustments
         if (_points != 0) {
-            if (_points > 0 || uint256(- _points) <= _s().plants[_nftId].score) {
+            if (_points > 0 || uint256(- _points) <= _s().plantScore[_nftId]) {
                 // Safe to adjust points, whether adding or subtracting
-                _s().plants[_nftId].score = uint256(int256(_s().plants[_nftId].score) + _points);
+                _s().plantScore[_nftId] = uint256(int256(_s().plantScore[_nftId]) + _points);
             } else {
                 // Prevent underflow if trying to subtract more than the current score
-                _s().plants[_nftId].score = 0;
+                _s().plantScore[_nftId] = 0;
             }
 
             // Adjust pending ETH, only if plantScore is positive
-            if (_s().plants[_nftId].score > 0) {
+            if (_s().plantScore[_nftId] > 0) {
                 _s().ethOwed[_nftId] = pendingEth(_nftId);
             }
 
             // Recalculate reward debt, assuming plantScore did not underflow
-            _s().plantRewardDebt[_nftId] = _s().plants[_nftId].score.mulDivDown(_s().ethAccPerShare, _s().PRECISION);
+            _s().plantRewardDebt[_nftId] = _s().plantScore[_nftId].mulDivDown(_s().ethAccPerShare, _s().PRECISION);
         }
 
         // Adjust total scores accordingly, checking for underflow and overflow
@@ -458,7 +465,7 @@ PermissionsEnumerable//,
 
     // check that Plant didn't starve
     function isPlantAlive(uint256 _nftId) public view returns (bool) {
-        uint256 _timeUntilStarving = _s().plants[_nftId].timeUntilStarving;
+        uint256 _timeUntilStarving = _s().plantTimeUntilStarving[_nftId];
         if (_timeUntilStarving != 0 && _timeUntilStarving >= block.timestamp) {
             return true;
         } else {
@@ -473,13 +480,13 @@ PermissionsEnumerable//,
     ) public view returns (uint256 pct, uint256 odds, bool canAttack) {
         // Ensure the attacker can only attack once every 15 minutes
         require(
-            block.timestamp >= _s().plants[fromId].lastAttackUsed + 15 minutes ||
-            _s().plants[fromId].lastAttackUsed == 0,
+            block.timestamp >= _s().plantLastAttackUsed[fromId] + 15 minutes ||
+            _s().plantLastAttackUsed[fromId] == 0,
             "You have one attack every 15 mins"
         );
         // Ensure the one being attacked can only be attacked once every hour
         require(
-            block.timestamp > _s().plants[toId].lastAttacked + 1 hours,
+            block.timestamp > _s().plantLastAttacked[toId] + 1 hours,
             "can be attacked once every hour"
         );
 
@@ -496,7 +503,7 @@ PermissionsEnumerable//,
 
     function level(uint256 tokenId) public view returns (uint256) {
         // This is the formula L(x) = 2 * sqrt(x * 2)
-        uint256 _score = _s().plants[tokenId].score / 1e12;
+        uint256 _score = _s().plantScore[tokenId] / 1e12;
         _score = _score / 100;
         if (_score == 0) {
             return 1;
@@ -584,10 +591,10 @@ PermissionsEnumerable//,
         _s().IsAuthorized[account] = authorized;
     }
 
-    function setConfig(uint256 _Price, uint256 _maxSupply, bool _mintIsActive, uint256 _burnPercentage) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) public onlyRole(DEFAULT_ADMIN_ROLE) {
         require(_burnPercentage <= 100, "Burn percentage can't be more than 100");
-        _s().Mint_Price = _Price;
-        _s().maxSupply = _maxSupply;
+        //_s().Mint_Price = _Price;
+        //_s().maxSupply = _maxSupply;
         _s().mintIsActive = _mintIsActive;
         _s().burnPercentage = _burnPercentage;
     }
