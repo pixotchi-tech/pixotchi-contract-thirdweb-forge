@@ -11,9 +11,13 @@
   "scripts": {
     "forge:build": "forge build",
     "install": "npx thirdweb@5.22 install",
-    "build": "npx thirdweb@5.22 detect",
-    "deploy": "npx thirdweb@5.22 deploy",
-    "publish": "npx thirdweb@5.22 publish",
+    "build": "thirdweb detect",
+    "deploy": "thirdweb deploy",
+    "deploy:dynamic": "thirdweb deploy --dynamic",
+    "publish": "thirdweb publish",
     "forge build": "forge build"
+  },
+  "devDependencies": {
+    "thirdweb": "5.22"
   }
 }
