@@ -72,7 +72,7 @@ interface IGameLogic {
 
     // Admin functions
     function authorizeAddress(address account, bool authorized) external;
-    function setConfig(uint256 _Price, uint256 _maxSupply, bool _mintIsActive, uint256 _burnPercentage) external;
+    function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) external;
     function setRenderer(address _renderer) external;
     function setRevShareWallet(address _wallet) external;
     function setToken(address _token) external;
