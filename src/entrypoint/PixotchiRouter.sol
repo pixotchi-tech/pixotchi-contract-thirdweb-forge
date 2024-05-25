@@ -27,46 +27,40 @@ contract PixotchiRouter is
     bytes32 private constant MODULE_TYPE = bytes32("PixotchiV2");
     uint256 private constant VERSION = 1;
 
-    address public tokenAddress;
+    //address public tokenAddress;
 
     /// @dev We accept constructor params as a struct to avoid `Stack too deep` errors.
     struct SimpleRouterConstructorParams {
         Extension[] extensions;
-        address tokenAddress;
+        //address tokenAddress;
     }
+
+
 
     constructor(
         SimpleRouterConstructorParams memory _simpleRouterV3Params
     ) BaseRouter(_simpleRouterV3Params.extensions)  {
-        //_disableInitializers();
-
-        // Initialize BaseRouter
-        __BaseRouter_init();
-
-        //__ERC721A_init("NAME", "SYMBOL");
-
-        tokenAddress = _simpleRouterV3Params.tokenAddress;
-
-        // Initialize inherited contracts, most base-like -> most derived.
-        __ReentrancyGuard_init();
-        //__ERC2771Context_init(_trustedForwarders);
-
-        // Initialize this contract's state.
-        //_setupContractURI(_contractURI);
-        address _defaultAdmin = msg.sender;
-
-        _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
-        _setupRole(EXTENSION_ROLE, _defaultAdmin);
-        //_setupRole(keccak256("LISTER_ROLE"), address(0));
-        //_setupRole(keccak256("ASSET_ROLE"), address(0));
-
-        _setupRole(EXTENSION_ROLE, _defaultAdmin);
-        _setRoleAdmin(EXTENSION_ROLE, EXTENSION_ROLE);
+          __BaseRouter_init();
+        _disableInitializers();
 
     }
 
     receive() external payable {
     }
+
+
+
+    /// @dev Initializes the contract, like a constructor.
+    function initialize(
+    ) external initializer {
+    __ReentrancyGuard_init();
+    address _defaultAdmin = msg.sender;
+    _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
+    _setupRole(EXTENSION_ROLE, _defaultAdmin);
+    _setupRole(EXTENSION_ROLE, _defaultAdmin);
+    _setRoleAdmin(EXTENSION_ROLE, EXTENSION_ROLE);
+    }
+
 
     /*///////////////////////////////////////////////////////////////
                         Generic contract logic
