@@ -2,7 +2,7 @@
 pragma solidity ^0.8.11;
 
 // ====== Internal imports ======
-import "./GameStorage.sol";
+import "../game/GameStorage.sol";
 import "../IPixotchi.sol";
 
 // ====== External imports ======
