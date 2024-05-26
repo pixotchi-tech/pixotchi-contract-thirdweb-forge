@@ -87,6 +87,10 @@ library GameStorage {
         mapping(uint256 => uint256) plantLastAttacked;
         mapping(uint256 => uint256) plantStars;
         mapping(uint256 => uint256) plantStrain;
+
+        //mapping(uint256 => bool) approvedToBurn;
+
+        bool guardDisarmed;
     }
 
     function data() internal pure returns (Data storage data_) {

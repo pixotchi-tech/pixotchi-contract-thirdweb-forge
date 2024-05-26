@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.11;
 
+interface INFTLogic {
+    function mint(uint256 strain) external;
+    function mintTo(uint256 strain, address to) external;
+    function burn(uint256 id) external;
+    event Mint(address to, uint256 strain, uint256 id);
+    function tokenBurnAndRedistribute(address account, uint256 amount) external;
+    function removeTokenIdFromOwner(uint32 tokenId, address owner) external returns (bool);
+
+}
+
 interface IGameLogic {
 
     struct Strain {
@@ -58,14 +68,14 @@ interface IGameLogic {
 
     event Pass(uint256 from, uint256 to);
 
-    event Mint(uint256 id);
+    //event Mint(uint256 id);
 
     event Played(uint256 indexed id, uint256 points, uint256 timeExtension);
     event PlayedV2(uint256 indexed id, int256 points, int256 timeExtension);
 
 
     // Player functions
-    function mint(uint256 strain) external;
+    //function mint(uint256 strain) external;
     function attack(uint256 fromId, uint256 toId) external;
     function kill(uint256 _deadId, uint256 _tokenId) external;
     function setPlantName(uint256 _id, string calldata _name) external;

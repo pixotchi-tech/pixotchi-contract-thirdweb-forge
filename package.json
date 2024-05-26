@@ -9,7 +9,7 @@
     "@thirdweb-dev/contracts": "^3"
   },
   "scripts": {
-    "forge:build": "forge build",
+    "forge:build": "forge build --sizes",
     "install": "npx thirdweb@5.22 install",
     "build": "thirdweb detect",
     "deploy": "thirdweb deploy",
