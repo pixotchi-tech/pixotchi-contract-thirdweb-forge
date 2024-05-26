@@ -170,9 +170,9 @@ ERC2771ContextUpgradeable
         return ERC2771ContextUpgradeable._msgData();
     }
 
-    function trustedForwarder() public view virtual returns (address) {
-        return _trustedForwarder;
-    }
+//    function trustedForwarder() public view virtual returns (address) {
+//        return _trustedForwarder;
+//    }
 
 
 }
