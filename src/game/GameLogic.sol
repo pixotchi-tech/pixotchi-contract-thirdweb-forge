@@ -16,7 +16,7 @@ import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/uti
 import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
 
 contract GameLogic is
-IGameLogic,
+IGame,
 ReentrancyGuard,
 //ERC721AUpgradeable,
 PermissionsEnumerable,
@@ -240,42 +240,42 @@ PermissionsEnumerable,
                         Game functions
     //////////////////////////////////////////////////////////////*/
 
-    function buyAccessory(
-        uint256 nftId,
-        uint256 itemId
-    ) external payable isApproved(nftId) nonReentrant {
-        require(itemExists(itemId), "This item doesn't exist");
-        require(isPlantAlive(nftId), "plant dead"); //no revives
-
-        uint256 amount = _s().itemPrice[itemId];
-
-        // recalculate time until starving
-        _s().plantTimeUntilStarving[nftId] += _s().itemTimeExtension[itemId];
-
-        if (_s().plantScore[nftId] > 0) {
-            _s().ethOwed[nftId] = pendingEth(nftId);
-        }
-
-        if (!isPlantAlive(nftId)) {
-            _s().plantScore[nftId] = _s().itemPoints[itemId];
-        } else {
-            _s().plantScore[nftId] += _s().itemPoints[itemId];
-        }
-
-        _s().plantRewardDebt[nftId] = _s().plantScore[nftId].mulDivDown(
-            _s().ethAccPerShare,
-            _s().PRECISION
-        );
-
-        _s().totalScores += _s().itemPoints[itemId];
-
-        //token.burnFrom(msg.sender, amount);
-        _s().guardDisarmed = true;
-        INFTLogic(address(this)).tokenBurnAndRedistribute(msg.sender, amount);
-        _s().guardDisarmed = false;
-
-        emit ItemConsumed(nftId, msg.sender, itemId);
-    }
+//    function buyAccessory(
+//        uint256 nftId,
+//        uint256 itemId
+//    ) external payable isApproved(nftId) nonReentrant {
+//        require(itemExists(itemId), "This item doesn't exist");
+//        require(isPlantAlive(nftId), "plant dead"); //no revives
+//
+//        uint256 amount = _s().itemPrice[itemId];
+//
+//        // recalculate time until starving
+//        _s().plantTimeUntilStarving[nftId] += _s().itemTimeExtension[itemId];
+//
+//        if (_s().plantScore[nftId] > 0) {
+//            _s().ethOwed[nftId] = pendingEth(nftId);
+//        }
+//
+//        if (!isPlantAlive(nftId)) {
+//            _s().plantScore[nftId] = _s().itemPoints[itemId];
+//        } else {
+//            _s().plantScore[nftId] += _s().itemPoints[itemId];
+//        }
+//
+//        _s().plantRewardDebt[nftId] = _s().plantScore[nftId].mulDivDown(
+//            _s().ethAccPerShare,
+//            _s().PRECISION
+//        );
+//
+//        _s().totalScores += _s().itemPoints[itemId];
+//
+//        //token.burnFrom(msg.sender, amount);
+//        _s().guardDisarmed = true;
+//        INFT(address(this)).tokenBurnAndRedistribute(msg.sender, amount);
+//        _s().guardDisarmed = false;
+//
+//        emit ItemConsumed(nftId, msg.sender, itemId);
+//    }
 
     function attack(uint256 fromId, uint256 toId) external isApproved(fromId) nonReentrant {
         require(fromId != toId, "Can't hurt yourself");
@@ -344,10 +344,10 @@ PermissionsEnumerable,
         address ownerOfDead = IERC721A(address(this)).ownerOf(_deadId);
 
         _s().guardDisarmed = true;
-        INFTLogic(address(this)).removeTokenIdFromOwner(uint32(_deadId), ownerOfDead);
+        INFT(address(this)).removeTokenIdFromOwner(uint32(_deadId), ownerOfDead);
         //_s().guardDisarmed = false;
         _s().guardDisarmed = true;
-        INFTLogic(address(this)).burn(_deadId);
+        INFT(address(this)).burn(_deadId);
         _s().guardDisarmed = false;
 
         _s().plantStars[_tokenId] += 1;
@@ -461,13 +461,13 @@ PermissionsEnumerable,
                             View functions
     //////////////////////////////////////////////////////////////*/
 
-    function itemExists(uint256 itemId) public view returns (bool) {
-        if (bytes(_s().itemName[itemId]).length > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+//    function itemExists(uint256 itemId) public view returns (bool) {
+//        if (bytes(_s().itemName[itemId]).length > 0) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
 
     // check that Plant didn't starve
     function isPlantAlive(uint256 _nftId) public view returns (bool) {
@@ -617,58 +617,58 @@ PermissionsEnumerable,
         _s().token = IToken(_token);
     }
 
-    // add items/accessories
-    function createItem(
-        string calldata name,
-        uint256 price,
-        uint256 points,
-        uint256 timeExtension
-    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        uint256 newItemId = _s()._itemIds;
-        _s().itemName[newItemId] = name;
-        _s().itemPrice[newItemId] = price;
-        _s().itemPoints[newItemId] = points;
-        _s().itemTimeExtension[newItemId] = timeExtension;
+//    // add items/accessories
+//    function createItem(
+//        string calldata name,
+//        uint256 price,
+//        uint256 points,
+//        uint256 timeExtension
+//    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+//        uint256 newItemId = _s()._itemIds;
+//        _s().itemName[newItemId] = name;
+//        _s().itemPrice[newItemId] = price;
+//        _s().itemPoints[newItemId] = points;
+//        _s().itemTimeExtension[newItemId] = timeExtension;
+//
+//        _s()._itemIds++;
+//
+//        emit ItemCreated(newItemId, name, price, points);
+//    }
+//
+//    // New function to create multiple items
+//    function createItems(FullItem[] calldata items) external onlyRole(DEFAULT_ADMIN_ROLE) {
+//        //we are ignoring the id in the struct and using the index of the array
+//        for (uint i = 0; i < items.length; i++) {
+//            createItem(items[i].name, items[i].price, items[i].points, items[i].timeExtension);
+//        }
+//    }
 
-        _s()._itemIds++;
 
-        emit ItemCreated(newItemId, name, price, points);
-    }
-
-    // New function to create multiple items
-    function createItems(FullItem[] calldata items) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        //we are ignoring the id in the struct and using the index of the array
-        for (uint i = 0; i < items.length; i++) {
-            createItem(items[i].name, items[i].price, items[i].points, items[i].timeExtension);
-        }
-    }
-
-
-    function editItem(
-        uint256 _id,
-        uint256 _price,
-        uint256 _points,
-        string calldata _name,
-        uint256 _timeExtension
-    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        _s().itemPrice[_id] = _price;
-        _s().itemPoints[_id] = _points;
-        _s().itemName[_id] = _name;
-        _s().itemTimeExtension[_id] = _timeExtension;
-    }
-
-    // New function to edit multiple items
-    function editItems(FullItem[] calldata updates) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        for (uint i = 0; i < updates.length; i++) {
-            editItem(
-                updates[i].id,
-                updates[i].price,
-                updates[i].points,
-                updates[i].name,
-                updates[i].timeExtension
-            );
-        }
-    }
+//    function editItem(
+//        uint256 _id,
+//        uint256 _price,
+//        uint256 _points,
+//        string calldata _name,
+//        uint256 _timeExtension
+//    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+//        _s().itemPrice[_id] = _price;
+//        _s().itemPoints[_id] = _points;
+//        _s().itemName[_id] = _name;
+//        _s().itemTimeExtension[_id] = _timeExtension;
+//    }
+//
+//    // New function to edit multiple items
+//    function editItems(FullItem[] calldata updates) external onlyRole(DEFAULT_ADMIN_ROLE) {
+//        for (uint i = 0; i < updates.length; i++) {
+//            editItem(
+//                updates[i].id,
+//                updates[i].price,
+//                updates[i].points,
+//                updates[i].name,
+//                updates[i].timeExtension
+//            );
+//        }
+//    }
 
 //    function _msgData() internal view override(Permissions, Context) returns (bytes calldata) {
 //        return Context._msgData();

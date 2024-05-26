@@ -17,7 +17,7 @@ import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/uti
 //import "../../lib/contracts/contracts/external-deps/openzeppelin/utils/Context.sol";
 
 contract NFTLogic is
-    INFTLogic,
+INFT,
     ReentrancyGuard,
     ERC721AUpgradeable,
     PermissionsEnumerable
@@ -130,7 +130,7 @@ contract NFTLogic is
 
         //GameStorage.createPlant(owner, name, strain, timeUntilStarving, score, lastAttackUsed, lastAttacked, stars);
 
-        IGameLogic.Plant memory plant = IGameLogic.Plant({
+        IGame.Plant memory plant = IGame.Plant({
             name: "",
             timeUntilStarving: block.timestamp + 1 days,
             score: 0,
@@ -141,7 +141,7 @@ contract NFTLogic is
             strain: strain
         });
 
-        GameStorage.createPlant(plant, tokenId);
+        _createPlant(plant, tokenId);
 
         addTokenIdToOwner(uint32(tokenId), msg.sender);
         uint256 quantity = 1;
@@ -150,6 +150,21 @@ contract NFTLogic is
 
         _s().strainTotalMinted[strain]++;
         //_s()._tokenIds++;
+    }
+
+    function _createPlant(IGame.Plant memory plant, uint256 id) internal {
+
+        _s().plantName[id] = plant.name;
+        _s().plantStrain[id] = plant.strain;
+        _s().plantTimeBorn[id] = block.timestamp;
+        _s().plantTimeUntilStarving[id] = plant.timeUntilStarving;
+        _s().plantScore[id] = plant.score;
+        _s().plantLastAttackUsed[id] = plant.lastAttackUsed;
+        _s().plantLastAttacked[id] = plant.lastAttacked;
+        _s().plantStars[id] = plant.stars;
+
+        // Print updates
+        //emit PlantUpdated(plant.owner, plant.name, plant.strain, plant.timeUntilStarving, plant.score, plant.lastAttackUsed, plant.lastAttacked, plant.stars);
     }
 
     /*//////////////////////////////////////////////////////////////

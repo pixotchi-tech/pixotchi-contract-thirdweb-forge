@@ -91,6 +91,9 @@ library GameStorage {
         //mapping(uint256 => bool) approvedToBurn;
 
         bool guardDisarmed;
+
+        // Shop mappings
+        mapping(uint256 => uint256) shop_0_Fence_EffectUntil;
     }
 
     function data() internal pure returns (Data storage data_) {
@@ -100,128 +103,119 @@ library GameStorage {
         }
     }
 
-    function createPlant(IGameLogic.Plant memory plant, uint256 id) internal {
-        Data storage ds = data();
-        ds.plantName[id] = plant.name;
-        ds.plantStrain[id] = plant.strain;
-        ds.plantTimeBorn[id] = block.timestamp;
-        ds.plantTimeUntilStarving[id] = plant.timeUntilStarving;
-        ds.plantScore[id] = plant.score;
-        ds.plantLastAttackUsed[id] = plant.lastAttackUsed;
-        ds.plantLastAttacked[id] = plant.lastAttacked;
-        ds.plantStars[id] = plant.stars;
-
-        // Print updates
-        //emit PlantUpdated(plant.owner, plant.name, plant.strain, plant.timeUntilStarving, plant.score, plant.lastAttackUsed, plant.lastAttacked, plant.stars);
-    }
-
-    function createItem(IGameLogic.FullItem memory item) internal {
-        Data storage ds = data();
-        ds.itemName[item.id] = item.name;
-        ds.itemPrice[item.id] = item.price;
-        ds.itemPoints[item.id] = item.points;
-        ds.itemTimeExtension[item.id] = item.timeExtension;
-
-        // Print updates
-        //emit ItemUpdated(item.id, item.name, item.price, item.points, item.timeExtension);
-    }
-
-    function getPlant(uint256 id)
-    internal
-    view
-    returns (IGameLogic.Plant memory)
-    {
-        Data storage ds = data();
-        return IGameLogic.Plant({
-            name: ds.plantName[id],
-            timeUntilStarving: ds.plantTimeUntilStarving[id],
-            score: ds.plantScore[id],
-            timePlantBorn: ds.plantTimeBorn[id],
-            lastAttackUsed: ds.plantLastAttackUsed[id],
-            lastAttacked: ds.plantLastAttacked[id],
-            stars: ds.plantStars[id],
-            strain: ds.plantStrain[id]
-        });
-    }
-
-    function createShopItem(
-        uint256 id,
-        string memory name,
-        uint256 price,
-        uint256 maxSupply,
-        uint256 expireTime
-    ) internal {
-        Data storage ds = data();
-        ds.shopItemName[id] = name;
-        ds.shopItemPrice[id] = price;
-        ds.shopItemMaxSupply[id] = maxSupply;
-        ds.shopItemExpireTime[id] = expireTime;
-        ds.shopItemIsActive[id] = true;
-        ds.shopItemTotalConsumed[id] = 0;
-    }
-
-    function getShopItem(uint256 id)
-    internal
-    view
-    returns (
-        string memory name,
-        uint256 price,
-        uint256 maxSupply,
-        uint256 expireTime,
-        bool isActive,
-        uint256 totalConsumed
-    )
-    {
-        Data storage ds = data();
-        name = ds.shopItemName[id];
-        price = ds.shopItemPrice[id];
-        maxSupply = ds.shopItemMaxSupply[id];
-        expireTime = ds.shopItemExpireTime[id];
-        isActive = ds.shopItemIsActive[id];
-        totalConsumed = ds.shopItemTotalConsumed[id];
-    }
-
-
-    function setStrain(
-        uint256 id,
-        uint256 mintPrice,
-        //uint256 totalSupply,
-        //uint256 totalMinted,
-        uint256 maxSupply,
-        string memory name,
-        bool isActive
-    ) internal {
-        Data storage ds = data();
-        ds.mintPriceByStrain[id] = mintPrice;
-        //ds.strainTotalSupply[id] = totalSupply;
-        //ds.strainTotalMinted[id] = totalMinted;
-        ds.strainMaxSupply[id] = maxSupply;
-        ds.strainName[id] = name;
-        ds.strainIsActive[id] = isActive;
-    }
-
-    function getStrain(uint256 id) internal view returns (IGameLogic.Strain memory) {
-        Data storage ds = data();
-        return IGameLogic.Strain({
-            id: id,
-            mintPrice: ds.mintPriceByStrain[id],
-            totalSupply: getStrainTotalSupply(id),
-            getStrainTotalLeft: getStrainTotalLeft(id),
-            totalMinted: ds.strainTotalMinted[id],
-            maxSupply: ds.strainMaxSupply[id],
-            name: ds.strainName[id],
-            isActive: ds.strainIsActive[id]
-        });
-    }
-
-    function getStrainTotalSupply(uint256 id) internal view returns (uint256) {
-        Data storage ds = data();
-        return ds.strainTotalMinted[id] - ds.strainBurned[id];
-    }
-
-    function getStrainTotalLeft(uint256 id) internal view returns (uint256) {
-        Data storage ds = data();
-        return ds.strainMaxSupply[id] - ds.strainTotalMinted[id];
-    }
+//    function createPlant(IGameLogic.Plant memory plant, uint256 id) internal {
+//        Data storage ds = data();
+//        ds.plantName[id] = plant.name;
+//        ds.plantStrain[id] = plant.strain;
+//        ds.plantTimeBorn[id] = block.timestamp;
+//        ds.plantTimeUntilStarving[id] = plant.timeUntilStarving;
+//        ds.plantScore[id] = plant.score;
+//        ds.plantLastAttackUsed[id] = plant.lastAttackUsed;
+//        ds.plantLastAttacked[id] = plant.lastAttacked;
+//        ds.plantStars[id] = plant.stars;
+//
+//        // Print updates
+//        //emit PlantUpdated(plant.owner, plant.name, plant.strain, plant.timeUntilStarving, plant.score, plant.lastAttackUsed, plant.lastAttacked, plant.stars);
+//    }
+//
+//
+//
+//    function getPlant(uint256 id)
+//    internal
+//    view
+//    returns (IGameLogic.Plant memory)
+//    {
+//        Data storage ds = data();
+//        return IGameLogic.Plant({
+//            name: ds.plantName[id],
+//            timeUntilStarving: ds.plantTimeUntilStarving[id],
+//            score: ds.plantScore[id],
+//            timePlantBorn: ds.plantTimeBorn[id],
+//            lastAttackUsed: ds.plantLastAttackUsed[id],
+//            lastAttacked: ds.plantLastAttacked[id],
+//            stars: ds.plantStars[id],
+//            strain: ds.plantStrain[id]
+//        });
+//    }
+//
+//    function createShopItem(
+//        uint256 id,
+//        string memory name,
+//        uint256 price,
+//        uint256 maxSupply,
+//        uint256 expireTime
+//    ) internal {
+//        Data storage ds = data();
+//        ds.shopItemName[id] = name;
+//        ds.shopItemPrice[id] = price;
+//        ds.shopItemMaxSupply[id] = maxSupply;
+//        ds.shopItemExpireTime[id] = expireTime;
+//        ds.shopItemIsActive[id] = true;
+//        ds.shopItemTotalConsumed[id] = 0;
+//    }
+//
+//    function getShopItem(uint256 id)
+//    internal
+//    view
+//    returns (
+//        string memory name,
+//        uint256 price,
+//        uint256 maxSupply,
+//        uint256 expireTime,
+//        bool isActive,
+//        uint256 totalConsumed
+//    )
+//    {
+//        Data storage ds = data();
+//        name = ds.shopItemName[id];
+//        price = ds.shopItemPrice[id];
+//        maxSupply = ds.shopItemMaxSupply[id];
+//        expireTime = ds.shopItemExpireTime[id];
+//        isActive = ds.shopItemIsActive[id];
+//        totalConsumed = ds.shopItemTotalConsumed[id];
+//    }
+//
+//
+//    function setStrain(
+//        uint256 id,
+//        uint256 mintPrice,
+//        //uint256 totalSupply,
+//        //uint256 totalMinted,
+//        uint256 maxSupply,
+//        string memory name,
+//        bool isActive
+//    ) internal {
+//        Data storage ds = data();
+//        ds.mintPriceByStrain[id] = mintPrice;
+//        //ds.strainTotalSupply[id] = totalSupply;
+//        //ds.strainTotalMinted[id] = totalMinted;
+//        ds.strainMaxSupply[id] = maxSupply;
+//        ds.strainName[id] = name;
+//        ds.strainIsActive[id] = isActive;
+//    }
+//
+//    function getStrain(uint256 id) internal view returns (IGameLogic.Strain memory) {
+//        Data storage ds = data();
+//        return IGameLogic.Strain({
+//            id: id,
+//            mintPrice: ds.mintPriceByStrain[id],
+//            totalSupply: getStrainTotalSupply(id),
+//            getStrainTotalLeft: getStrainTotalLeft(id),
+//            totalMinted: ds.strainTotalMinted[id],
+//            maxSupply: ds.strainMaxSupply[id],
+//            name: ds.strainName[id],
+//            isActive: ds.strainIsActive[id]
+//        });
+//    }
+//
+//    function getStrainTotalSupply(uint256 id) internal view returns (uint256) {
+//        Data storage ds = data();
+//        return ds.strainTotalMinted[id] - ds.strainBurned[id];
+//    }
+//
+//    function getStrainTotalLeft(uint256 id) internal view returns (uint256) {
+//        Data storage ds = data();
+//        return ds.strainMaxSupply[id] - ds.strainTotalMinted[id];
+//    }
 
 }

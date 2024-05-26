@@ -1,7 +1,36 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.11;
 
-interface INFTLogic {
+interface IConfig {
+
+}
+
+interface IShop {
+
+}
+
+interface IGarden {
+    // Define a struct to hold plant information
+    struct FullItem {
+        uint256 id;
+        string name;
+        uint256 price;
+        uint256 points;
+        uint256 timeExtension;
+    }
+
+
+    event ItemConsumed(uint256 nftId, address giver, uint256 itemId);
+
+    event ItemCreated(uint256 id, string name, uint256 price, uint256 points);
+
+    function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
+    function editItem(uint256 _id, uint256 _price, uint256 _points, string calldata _name, uint256 _timeExtension) external;
+
+
+}
+
+interface INFT {
     function mint(uint256 strain) external;
     function mintTo(uint256 strain, address to) external;
     function burn(uint256 id) external;
@@ -11,7 +40,7 @@ interface INFTLogic {
 
 }
 
-interface IGameLogic {
+interface IGame {
 
     struct Strain {
         uint256 id;
@@ -35,17 +64,7 @@ interface IGameLogic {
         uint256 strain;
     }
 
-    // Define a struct to hold plant information
-    struct FullItem {
-        uint256 id;
-        string name;
-        uint256 price;
-        uint256 points;
-        uint256 timeExtension;
-    }
 
-
-    event ItemConsumed(uint256 nftId, address giver, uint256 itemId);
 
     event Killed(
         uint256 nftId,
@@ -56,7 +75,6 @@ interface IGameLogic {
         string winnerName
     );
 
-    event ItemCreated(uint256 id, string name, uint256 price, uint256 points);
 
     event Attack(
         uint256 attacker,
@@ -87,8 +105,11 @@ interface IGameLogic {
     function setRenderer(address _renderer) external;
     function setRevShareWallet(address _wallet) external;
     function setToken(address _token) external;
-    function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
-    function editItem(uint256 _id, uint256 _price, uint256 _points, string calldata _name, uint256 _timeExtension) external;
+
+    function isPlantAlive(uint256 _nftId) external view returns (bool);
+    function pendingEth(uint256 plantId) external view returns (uint256);
+    //function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
+    //function editItem(uint256 _id, uint256 _price, uint256 _points, string calldata _name, uint256 _timeExtension) external;
 
     // Events
     //event PlantCreated(uint256 indexed _plantId, address indexed _owner);
