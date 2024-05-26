@@ -6,6 +6,8 @@ import "./GameStorage.sol";
 import "../IPixotchi.sol";
 
 // ====== External imports ======
+import "@openzeppelin/contracts/utils/Context.sol";
+
 import "../utils/FixedPointMathLib.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
@@ -14,13 +16,16 @@ import "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
 import "../../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
 import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
 import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
+//import "../../lib/contracts/contracts/extension/upgradeable/ERC2771ContextConsumer.sol";
+import "@openzeppelin/contracts-upgradeable/metatx/ERC2771ForwarderUpgradeable.sol";
 
 contract GameLogic is
 IGame,
 ReentrancyGuard,
 //ERC721AUpgradeable,
 PermissionsEnumerable,
-    Initializable
+    Initializable,
+ERC2771ForwarderUpgradeable
 {
 
     using SafeTransferLib for address payable;
@@ -617,6 +622,22 @@ PermissionsEnumerable,
         _s().token = IToken(_token);
     }
 
+
+//    function _msgSender()
+//    public
+//    view
+//    override(ERC2771ForwarderUpgradeable)
+//    returns (address sender)
+//    {
+//        return ERC2771ForwarderUpgradeable._msgSender();
+//    }
+//
+//    function _msgData() internal view override(ERC2771ForwarderUpgradeable, Permissions) returns (bytes calldata) {
+//        return ERC2771ForwarderUpgradeable._msgData();
+//    }
+
+
+
 //    // add items/accessories
 //    function createItem(
 //        string calldata name,
@@ -677,5 +698,10 @@ PermissionsEnumerable,
 //    function _msgSender() internal view override(Permissions, Context) returns (address sender) {
 //        return Context._msgSender();
 //    }
+
+    function trustedForwarder() public view virtual returns (address) {
+        return _trustedForwarder;
+    }
+
 
 }
