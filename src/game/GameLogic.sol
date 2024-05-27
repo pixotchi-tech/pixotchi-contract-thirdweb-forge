@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.20;
 
 // ====== Internal imports ======
 import "./GameStorage.sol";
@@ -17,15 +17,16 @@ import "../../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
 import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
 import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
 //import "../../lib/contracts/contracts/extension/upgradeable/ERC2771ContextConsumer.sol";
-import "@openzeppelin/contracts-upgradeable/metatx/ERC2771ForwarderUpgradeable.sol";
+//import "@openzeppelin/contracts-upgradeable/metatx/ERC2771ForwarderUpgradeable.sol";
+import "../utils/ERC2771ContextConsumer.sol";
 
 contract GameLogic is
 IGame,
 ReentrancyGuard,
 //ERC721AUpgradeable,
 PermissionsEnumerable,
-    Initializable//,
-ERC2771ForwarderUpgradeable
+    Initializable,
+ERC2771ContextConsumer
 {
 
     using SafeTransferLib for address payable;
@@ -691,13 +692,13 @@ ERC2771ForwarderUpgradeable
 //        }
 //    }
 
-//    function _msgData() internal view override(Permissions, Context) returns (bytes calldata) {
-//        return Context._msgData();
-//    }
-//
-//    function _msgSender() internal view override(Permissions, Context) returns (address sender) {
-//        return Context._msgSender();
-//    }
+    function _msgData() internal view override(ERC2771ContextConsumer, Permissions) returns (bytes calldata) {
+        return ERC2771ContextConsumer._msgData();
+    }
+
+    function _msgSender() internal view override(ERC2771ContextConsumer, Permissions) returns (address sender) {
+        return ERC2771ContextConsumer._msgSender();
+    }
 
 //    function trustedForwarder() public view virtual returns (address) {
 //        return _trustedForwarder;
