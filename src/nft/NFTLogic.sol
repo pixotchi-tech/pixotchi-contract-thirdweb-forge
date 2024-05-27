@@ -1,26 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-// ====== Internal imports ======
 import "../game/GameStorage.sol";
 import "../IPixotchi.sol";
-
-// ====== External imports ======
 import "../utils/FixedPointMathLib.sol";
+import "../utils/ERC2771ContextConsumer.sol";
+
 import "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
 import "../../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
 import "../../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
 import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
-//import "../../lib/contracts/contracts/external-deps/openzeppelin/utils/Context.sol";
-//import "../../lib/contracts/contracts/external-deps/openzeppelin/utils/Context.sol";
 
 contract NFTLogic is
 INFT,
     ReentrancyGuard,
     ERC721AUpgradeable,
-    PermissionsEnumerable
+    PermissionsEnumerable,
+ERC2771ContextConsumer
 //Context
 {
     using SafeTransferLib for address payable;
@@ -625,9 +623,9 @@ INFT,
         data = GameStorage.data();
     }
 
-    function authorizeAddress(address account, bool authorized) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        _s().IsAuthorized[account] = authorized;
-    }
+//    function authorizeAddress(address account, bool authorized) public onlyRole(DEFAULT_ADMIN_ROLE) {
+//        _s().IsAuthorized[account] = authorized;
+//    }
 
     function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) public onlyRole(DEFAULT_ADMIN_ROLE) {
         require(_burnPercentage <= 100, "Burn percentage can't be more than 100");
@@ -701,12 +699,20 @@ INFT,
 //        }
 //    }
 
-    function _msgData() internal view override(Permissions, Context) returns (bytes calldata) {
-        return Context._msgData();
+//    function _msgData() internal view override(Permissions, Context) returns (bytes calldata) {
+//        return Context._msgData();
+//    }
+//
+//    function _msgSender() internal view override(Permissions, Context) returns (address sender) {
+//        return Context._msgSender();
+//    }
+        function _msgData() internal view override(ERC2771ContextConsumer, Context, Permissions) returns (bytes calldata) {
+        return ERC2771ContextConsumer._msgData();
     }
 
-    function _msgSender() internal view override(Permissions, Context) returns (address sender) {
-        return Context._msgSender();
+    function _msgSender() internal view override(ERC2771ContextConsumer, Context, Permissions) returns (address sender) {
+        return ERC2771ContextConsumer._msgSender();
     }
+
 
 }

@@ -47,7 +47,7 @@ library GameStorage {
         mapping(address => uint32[]) idsByOwner;
         mapping(uint32 => uint32) ownerIndexById;
 
-        mapping(address => bool) IsAuthorized;
+        //mapping(address => bool) IsAuthorized;
 
         uint256 hasTheDiamond;
         //uint256 maxSupply;

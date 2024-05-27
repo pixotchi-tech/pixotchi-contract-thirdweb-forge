@@ -3,6 +3,16 @@ pragma solidity ^0.8.20;
 
 interface IConfig {
 
+    // Admin functions
+//    //function authorizeAddress(address account, bool authorized) external;
+//
+//    function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) external;
+//
+//    function setRenderer(address _renderer) external;
+//
+//    function setRevShareWallet(address _wallet) external;
+//
+//    function setToken(address _token) external;
 }
 
 interface IShop {
@@ -44,9 +54,9 @@ interface IGarden {
 
     event ItemCreated(uint256 id, string name, uint256 price, uint256 points);
 
-    function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
+    //function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
 
-    function editItem(uint256 _id, uint256 _price, uint256 _points, string calldata _name, uint256 _timeExtension) external;
+    //function editItem(uint256 _id, uint256 _price, uint256 _points, string calldata _name, uint256 _timeExtension) external;
 
 
 }
@@ -126,16 +136,7 @@ interface IGame {
 
     function pass(uint256 from, uint256 to) external;
 
-    // Admin functions
-    function authorizeAddress(address account, bool authorized) external;
 
-    function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) external;
-
-    function setRenderer(address _renderer) external;
-
-    function setRevShareWallet(address _wallet) external;
-
-    function setToken(address _token) external;
 
     function isPlantAlive(uint256 _nftId) external view returns (bool);
 
