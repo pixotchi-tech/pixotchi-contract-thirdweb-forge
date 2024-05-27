@@ -26,7 +26,7 @@ pragma solidity ^0.8.20;
 //   \$$$$  |$$ |  $$ |$$ |$$ |      \$$$$$$$ |\$$$$$\$$$$  |\$$$$$$$\ $$$$$$$  |
 //    \____/ \__|  \__|\__|\__|       \_______| \_____\____/  \_______|\_______/
 
-// ====== And to ======
+// ====== and to ======
 
 
 //                     |"|                                       |"|      #                 # #   ___         _     _       _     _       |               ___
@@ -63,18 +63,13 @@ pragma solidity ^0.8.20;
 //
 
 
-//import "@thirdweb-dev/dynamic-contracts/src/presets/BaseRouter.sol";
 import {BaseRouter, IRouter, IRouterState} from "../../lib/dynamic-contracts/src/presets/BaseRouter.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/init/ReentrancyGuardInit.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/ERC2771ContextUpgradeable.sol";
-//import "@openzeppelin/contracts-upgradeable/metatx/ERC2771ContextUpgradeable.sol";
 import "../utils/FixedPointMathLib.sol";
-
-//import "../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
-
 import "../game/GameStorage.sol";
 
 
@@ -85,31 +80,22 @@ PermissionsEnumerable,
 ReentrancyGuardInit,
 ReentrancyGuard,
 ERC2771ContextUpgradeable
-//,
-    //ERC721AUpgradeable
 {
     /// @dev Only EXTENSION_ROLE holders can perform upgrades.
     bytes32 private constant EXTENSION_ROLE = keccak256("EXTENSION_ROLE");
 
-    bytes32 private constant MODULE_TYPE = bytes32("PixotchiV2");
+    bytes32 private constant MODULE_TYPE = bytes32("PixotchiV2Router");
     uint256 private constant VERSION = 1;
-
-    //address public tokenAddress;
 
     /// @dev We accept constructor params as a struct to avoid `Stack too deep` errors.
     struct SimpleRouterConstructorParams {
         Extension[] extensions;
-        //address tokenAddress;
     }
-
-
 
     constructor(
         SimpleRouterConstructorParams memory _simpleRouterV3Params
     ) BaseRouter(_simpleRouterV3Params.extensions)  {
         __BaseRouter_init();
-        //_disableInitializers();
-
     }
 
     receive() external payable {
@@ -160,7 +146,7 @@ ERC2771ContextUpgradeable
     function _msgSender()
     internal
     view
-    override(ERC2771ContextUpgradeable, Permissions/*, Multicall*/)
+    override(ERC2771ContextUpgradeable, Permissions)
     returns (address sender)
     {
         return ERC2771ContextUpgradeable._msgSender();
@@ -170,10 +156,6 @@ ERC2771ContextUpgradeable
     returns (bytes calldata) {
         return ERC2771ContextUpgradeable._msgData();
     }
-
-//    function trustedForwarder() public view virtual returns (address) {
-//        return _trustedForwarder;
-//    }
 
 
 }
