@@ -256,6 +256,56 @@ Initializable//,
                             View functions
     //////////////////////////////////////////////////////////////*/
 
+    // Function to convert Status enum to string
+    function statusToString(IGame.Status status) public pure returns (string memory) {
+        if (status == IGame.Status.JOYFUL) {
+            return "JOYFUL";
+        } else if (status == IGame.Status.THIRSTY) {
+            return "THIRSTY";
+        } else if (status == IGame.Status.NEGLECTED) {
+            return "NEGLECTED";
+        } else if (status == IGame.Status.SICK) {
+            return "SICK";
+        } else if (status == IGame.Status.DEAD) {
+            return "DEAD";
+        } else if (status == IGame.Status.BURNED) {
+            return "BURNED";
+        }
+        return ""; // Default case, should not happen
+    }
+
+function getStatus(uint256 plant) public view returns (Status) {
+    GameStorage.Data storage s = _s();
+
+    if (s.burnedPlants[plant]) {
+        return Status.BURNED;
+    }
+    if (!isPlantAlive(plant)) {
+        return Status.DEAD;
+    }
+
+    if (s.plantTimeUntilStarving[plant] > block.timestamp + 16 hours) {
+        return Status.JOYFUL;
+    }
+    if (
+        s.plantTimeUntilStarving[plant] > block.timestamp + 12 hours &&
+        s.plantTimeUntilStarving[plant] < block.timestamp + 16 hours
+    ) {
+        return Status.THIRSTY;
+    }
+    if (
+        s.plantTimeUntilStarving[plant] > block.timestamp + 8 hours &&
+        s.plantTimeUntilStarving[plant] < block.timestamp + 12 hours
+    ) {
+        return Status.NEGLECTED;
+    }
+    if (s.plantTimeUntilStarving[plant] < block.timestamp + 8 hours) {
+        return Status.SICK;
+    }
+
+    return Status.BURNED;
+}
+
     function pendingEth(uint256 plantId) public view returns (uint256) {
         uint256 _ethAccPerShare = _s().ethAccPerShare;
 

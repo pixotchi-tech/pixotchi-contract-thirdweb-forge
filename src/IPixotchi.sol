@@ -64,7 +64,7 @@ interface IGarden {
 interface INFT {
     function mint(uint256 strain) external;
 
-    function mintTo(uint256 strain, address to) external;
+    //function mintTo(uint256 strain, address to) external;
 
     function burn(uint256 id) external;
 
@@ -76,7 +76,20 @@ interface INFT {
 
 }
 
+interface IRenderer {
+    function prepareTokenURI(IGame.Plant calldata plant, string calldata ipfsHash, string calldata status, uint256 level) external view returns (string memory);
+}
+
 interface IGame {
+
+    enum  Status {
+        JOYFUL, //0
+        THIRSTY, //1
+        NEGLECTED, //2
+        SICK, //3
+        DEAD, //4,
+        BURNED //5
+    }
 
     struct Strain {
         uint256 id;
@@ -90,6 +103,7 @@ interface IGame {
     }
 
     struct Plant {
+        uint256 id;
         string name;
         uint256 timeUntilStarving;
         uint256 score;
@@ -141,7 +155,14 @@ interface IGame {
     function isPlantAlive(uint256 _nftId) external view returns (bool);
 
     function pendingEth(uint256 plantId) external view returns (uint256);
-    //function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
+
+    function level(uint256 tokenId) external view returns (uint256);
+
+    function getStatus(uint256 plant) external view returns (IGame.Status);
+
+    function statusToString(IGame.Status status) external pure returns (string memory);
+
+//function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
     //function editItem(uint256 _id, uint256 _price, uint256 _points, string calldata _name, uint256 _timeExtension) external;
 
     // Events

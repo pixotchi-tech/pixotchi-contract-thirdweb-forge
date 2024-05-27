@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "../IPixotchi.sol";
-import "../IRenderer.sol";
+//import "../IRenderer.sol";
 import "../IToken.sol";
 
 /// @author thirdweb
@@ -68,6 +68,7 @@ library GameStorage {
         mapping(uint256 => uint256) strainMaxSupply;
         mapping(uint256 => string) strainName;
         mapping(uint256 => bool) strainIsActive;
+        mapping(uint256 => string) strainIPFSHash;
 
         //shop Items
         uint256 shopItemCounter;
@@ -94,6 +95,9 @@ library GameStorage {
 
         // Shop mappings
         mapping(uint256 => uint256) shop_0_Fence_EffectUntil;
+
+
+
     }
 
     function data() internal pure returns (Data storage data_) {
