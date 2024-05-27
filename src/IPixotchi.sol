@@ -34,8 +34,21 @@ interface IShop {
         uint256 id;
         string name;
         uint256 price;
-        uint256 ExpireTime;
+        uint256 ExpireTime; //for example 3days timespan.
     }
+
+    struct ShopItemOwned {
+        uint256 id;
+        string name;
+        //uint256 price;
+        uint256 EffectUntil; //in the future. per owner
+    }
+
+    function getAllShopItem() external pure returns(ShopItem[] memory);
+
+    function getPurchasedShopItems(uint256 nftId) external view returns(ShopItemOwned[] memory);
+
+
 
 }
 
@@ -53,6 +66,8 @@ interface IGarden {
     event ItemConsumed(uint256 nftId, address giver, uint256 itemId);
 
     event ItemCreated(uint256 id, string name, uint256 price, uint256 points);
+
+    function getAllGardenItem() external pure returns(FullItem[] memory);
 
     //function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
 
@@ -161,6 +176,12 @@ interface IGame {
     function getStatus(uint256 plant) external view returns (IGame.Status);
 
     function statusToString(IGame.Status status) external pure returns (string memory);
+
+    function getAllStrainInfo() external pure returns(Strain[] memory);
+
+
+
+
 
 //function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
     //function editItem(uint256 _id, uint256 _price, uint256 _points, string calldata _name, uint256 _timeExtension) external;
