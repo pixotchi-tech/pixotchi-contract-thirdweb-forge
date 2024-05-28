@@ -134,7 +134,7 @@ ERC721AUpgradeable//,
 
 
     function tokenURI(uint256 id) public view override returns (string memory) {
-        IGame.Plant memory plant = getPlant(id);
+        IGame.Plant memory plant = getPlantInfo(id);
         string memory ipfsHash = _s().strainIPFSHash[plant.strain];
 
         IGame.Status status = IGame(address(this)).getStatus(plant.id);
@@ -147,7 +147,7 @@ ERC721AUpgradeable//,
         //(IGame.Plant calldata plant, string calldata ipfsHash, string calldata status, uint256 level)
     }
 
-    function getPlant(uint256 id)
+    function getPlantInfo(uint256 id)
     public
     view
     returns (IGame.Plant memory)
@@ -166,6 +166,27 @@ ERC721AUpgradeable//,
             strain: _s().plantStrain[id]
         });
     }
+
+        function getPlantsInfo(uint256[] memory _nftIds) public view returns (IGame.Plant[] memory) {
+        IGame.Plant[] memory plants = new IGame.Plant[](_nftIds.length);
+        for (uint256 i = 0; i < _nftIds.length; i++) {
+            plants[i] = getPlantInfo(_nftIds[i]);
+        }
+        return plants;
+    }
+
+    function getPlantsByOwner(address _owner) public view returns (IGame.Plant[] memory) {
+        uint32[] storage ids = _s().idsByOwner[_owner];
+        IGame.Plant[] memory plants = new IGame.Plant[](ids.length);
+        for (uint256 i = 0; i < ids.length; i++) {
+            plants[i] = getPlantInfo(ids[i]);
+        }
+        return plants;
+    }
+
+    //function getPlantsInfo(uint256[] memory _nftIds) public view returns (IGame.Plant[] memory) {
+    //function getPlantsByOwner(address _owner) public view returns (IGame.Plant[] memory) {
+
 
     /*///////////////////////////////////////////////////////////////
                             Internal functions

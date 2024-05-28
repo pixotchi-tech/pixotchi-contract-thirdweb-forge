@@ -78,6 +78,22 @@ PixotchiExtensionPermission
         _createItem("Dream Dew", 35 * etherConversion, 50 * pointsConversion, 12 * timeConversion);
     }
 
+    function getGardenItem(uint256 itemId)
+        public
+        view
+        returns (IGarden.FullItem memory)
+    {
+        require(itemExists(itemId), "This item doesn't exist");
+
+        GameStorage.Data storage s = _s();
+        return IGarden.FullItem({
+            id: itemId,
+            name: s.itemName[itemId],
+            price: s.itemPrice[itemId],
+            points: s.itemPoints[itemId],
+            timeExtension: s.itemTimeExtension[itemId]
+        });
+    }
 
     function getAllGardenItem()
     public
