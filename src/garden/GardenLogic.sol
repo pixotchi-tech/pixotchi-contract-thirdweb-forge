@@ -62,7 +62,7 @@ PixotchiExtensionPermission
     //////////////////////////////////////////////////////////////*/
 
     //constructor(address _token, address _renderer) {
-    function initializeGardenLogic() public reinitializer(4) {
+    function initializeGardenLogic() public reinitializer(5) {
         //address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
         //_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
 

@@ -36,7 +36,7 @@ PixotchiExtensionPermission
 
 
 
-    function initializeConfigLogic() public reinitializer(2) {
+    function initializeConfigLogic() public reinitializer(4) {
         //address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
         //_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
 //
