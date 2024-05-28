@@ -45,8 +45,8 @@ PixotchiExtensionPermission
         _s().totalScores = 0;
 
         //0 reserved for OG
-        _setStrain(1, 50 ether, 10000, "flora", "Qmev3QP84J4KYWhJNrTUWkEZbWsxnyc7fCbtugqw8iYjqQ", true, 1 days);
-        _setStrain(2, 100 ether, 7000, "taki", "QmUhjHmsPP3KCes7gFUzb6Rrc7cKUMhreVcGPLiFaB1Ngm", true, 1 days);
+        _setStrain(1, 50 ether, 10000, "Flora", "Qmev3QP84J4KYWhJNrTUWkEZbWsxnyc7fCbtugqw8iYjqQ", true, 1 days);
+        _setStrain(2, 100 ether, 7000, "Taki", "QmUhjHmsPP3KCes7gFUzb6Rrc7cKUMhreVcGPLiFaB1Ngm", true, 1 days);
         _s().strainCounter = 2;
 
     }
