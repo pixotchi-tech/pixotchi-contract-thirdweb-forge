@@ -1,18 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
 interface IConfig {
 
-    // Admin functions
-//    //function authorizeAddress(address account, bool authorized) external;
-//
-//    function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) external;
-//
-//    function setRenderer(address _renderer) external;
-//
-//    function setRevShareWallet(address _wallet) external;
-//
-//    function setToken(address _token) external;
 }
 
 interface IShop {

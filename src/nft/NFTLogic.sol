@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
 import "../game/GameStorage.sol";
 import "../IPixotchi.sol";
@@ -18,7 +18,6 @@ contract NFTLogic is
 INFT,
 ReentrancyGuard,
 ERC721AUpgradeable//,
-//PermissionsEnumerable//,
 //ERC2771ContextConsumer
 //Context
 {
@@ -32,15 +31,6 @@ ERC721AUpgradeable//,
     /*///////////////////////////////////////////////////////////////
                               Modifiers
     //////////////////////////////////////////////////////////////*/
-
-//    modifier isApproved(uint256 id) {
-//        require(
-//            ownerOf(id) == msg.sender,
-//            "Not approved"
-//        );
-//
-//        _;
-//    }
 
     /**
  * @dev Modifier to guard functions.
@@ -70,20 +60,17 @@ ERC721AUpgradeable//,
 
     //constructor(address _token, address _renderer) {
     function initializeNFTLogic() public reinitializer(3) {
-        address _token = 0xa62b1E028E40c68ECD037239D7A115187b7Ead44;
-        address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
-        //address _renderer = 0x9D4F2b4D49A83A22F902629aD7d6Bd0329224A50;
+        address _token = 0x546D239032b24eCEEE0cb05c92FC39090846adc7;
+        address _defaultAdmin = 0x44e156CBb4506cee55A96b45D10A77806E012469;
 
+        address _revShareWallet = 0x93023ED94724af40Da8dd7AD03304fB28F1765d6;
 
-        //_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
-
-        __ERC721A_init("NAME", "SYMBOL");
+        __ERC721A_init("Pixotchi", "PIX");
 
         _s().token = IToken(_token);
         _s().mintIsActive = true;
-        _s().revShareWallet = _defaultAdmin; //temporary wallet
+        _s().revShareWallet = _revShareWallet;
         _s().burnPercentage = 1; // 0-100%
-
 
 
     }
@@ -138,65 +125,58 @@ ERC721AUpgradeable//,
         IGame.PlantFull memory plant = getPlantInfo(id);
         string memory ipfsHash = _s().strainIPFSHash[plant.strain];
 
-        //IGame.Status status = IGame(address(this)).getStatus(plant.id);
-        //string memory statusString = IGame(address(this)).statusToString(status); // Convert status enum to string
-        //string memory statusString = statusToString(_status); // Convert status enum to string
-
-
-        //uint256 level = IGame(address(this)).level(plant.id);
-        return IRenderer(address(this)).prepareTokenURI(plant, ipfsHash/*, statusString, level*/);
-        //(IGame.Plant calldata plant, string calldata ipfsHash, string calldata status, uint256 level)
+        return IRenderer(address(this)).prepareTokenURI(plant, ipfsHash);
     }
 
-function getPlantInfo(uint256 id)
-public
-view
-returns (IGame.PlantFull memory)
-{
-    IGame.Plant memory plant = IGame.Plant({
-        id: id,
-        name: _s().plantName[id],
-        timeUntilStarving: _s().plantTimeUntilStarving[id],
-        score: _s().plantScore[id],
-        timePlantBorn: _s().plantTimeBorn[id],
-        lastAttackUsed: _s().plantLastAttackUsed[id],
-        lastAttacked: _s().plantLastAttacked[id],
-        stars: _s().plantStars[id],
-        strain: _s().plantStrain[id]
-    });
+    function getPlantInfo(uint256 id)
+    public
+    view
+    returns (IGame.PlantFull memory)
+    {
+        IGame.Plant memory plant = IGame.Plant({
+            id: id,
+            name: _s().plantName[id],
+            timeUntilStarving: _s().plantTimeUntilStarving[id],
+            score: _s().plantScore[id],
+            timePlantBorn: _s().plantTimeBorn[id],
+            lastAttackUsed: _s().plantLastAttackUsed[id],
+            lastAttacked: _s().plantLastAttacked[id],
+            stars: _s().plantStars[id],
+            strain: _s().plantStrain[id]
+        });
 
-    uint256 level = IGame(address(this)).level(plant.id);
-    IGame.Status status = IGame(address(this)).getStatus(plant.id);
+        uint256 level = IGame(address(this)).level(plant.id);
+        IGame.Status status = IGame(address(this)).getStatus(plant.id);
 
-    string memory statusStr = IGame(address(this)).statusToString(status); // Convert status enum to string
+        string memory statusStr = IGame(address(this)).statusToString(status); // Convert status enum to string
 
-    address  plantOwner = ( !IGame(address(this)).isPlantAlive(id) && plant.score == 0 ? address(0x0) : IERC721A(address(this)).ownerOf(id) );
+        address plantOwner = (!IGame(address(this)).isPlantAlive(id) && plant.score == 0 ? address(0x0) : IERC721A(address(this)).ownerOf(id));
 
-    return IGame.PlantFull({
-        id: plant.id,
-        name: plant.name,
-        timeUntilStarving: plant.timeUntilStarving,
-        score: plant.score,
-        timePlantBorn: plant.timePlantBorn,
-        lastAttackUsed: plant.lastAttackUsed,
-        lastAttacked: plant.lastAttacked,
-        stars: plant.stars,
-        strain: plant.strain,
-        status: status,
-        statusStr: statusStr,
-        level: level,
-        owner: plantOwner, //!isPlantAlive(_nftId) && plant.score == 0 ? address(0x0) : ownerOf(_nftId);
-        rewards: IGame(address(this)).pendingEth(id)
-    });
-}
-
-function getPlantsInfo(uint256[] memory _nftIds) public view returns (IGame.PlantFull[] memory) {
-    IGame.PlantFull[] memory plants = new IGame.PlantFull[](_nftIds.length);
-    for (uint256 i = 0; i < _nftIds.length; i++) {
-        plants[i] = getPlantInfo(_nftIds[i]);
+        return IGame.PlantFull({
+            id: plant.id,
+            name: plant.name,
+            timeUntilStarving: plant.timeUntilStarving,
+            score: plant.score,
+            timePlantBorn: plant.timePlantBorn,
+            lastAttackUsed: plant.lastAttackUsed,
+            lastAttacked: plant.lastAttacked,
+            stars: plant.stars,
+            strain: plant.strain,
+            status: status,
+            statusStr: statusStr,
+            level: level,
+            owner: plantOwner,
+            rewards: IGame(address(this)).pendingEth(id)
+        });
     }
-    return plants;
-}
+
+    function getPlantsInfo(uint256[] memory _nftIds) public view returns (IGame.PlantFull[] memory) {
+        IGame.PlantFull[] memory plants = new IGame.PlantFull[](_nftIds.length);
+        for (uint256 i = 0; i < _nftIds.length; i++) {
+            plants[i] = getPlantInfo(_nftIds[i]);
+        }
+        return plants;
+    }
 
     function getPlantsByOwner(address _owner) public view returns (IGame.PlantFull[] memory) {
         uint32[] storage ids = _s().idsByOwner[_owner];
@@ -206,9 +186,6 @@ function getPlantsInfo(uint256[] memory _nftIds) public view returns (IGame.Plan
         }
         return plants;
     }
-
-    //function getPlantsInfo(uint256[] memory _nftIds) public view returns (IGame.Plant[] memory) {
-    //function getPlantsByOwner(address _owner) public view returns (IGame.Plant[] memory) {
 
 
     /*///////////////////////////////////////////////////////////////
@@ -327,7 +304,7 @@ function getPlantsInfo(uint256[] memory _nftIds) public view returns (IGame.Plan
 //    function _msgSender() internal view override(ERC2771ContextConsumer, Context, Permissions) returns (address sender) {
 //        return ERC2771ContextConsumer._msgSender();
 //    }
-        function _msgData() internal view override(Context/*, Permissions*/) returns (bytes calldata) {
+    function _msgData() internal view override(Context/*, Permissions*/) returns (bytes calldata) {
         return Context._msgData();
     }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
 
 import "./GameStorage.sol";
@@ -24,31 +24,18 @@ IConfig,
 Initializable,//,
 PixotchiExtensionPermission
 {
-//    constructor(){
-//
-//    }
-    //bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;
-
-//    modifier onlyAdminRole() {
-//        require(Permissions(address(this)).hasRole(DEFAULT_ADMIN_ROLE, msg.sender()), "!not default admin role");
-//        _;
-//    }
-
 
     function initializeConfigLogic() public reinitializer(4) {
-        //address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
-        //_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
         _s().PRECISION = 1 ether;
-//
+
         _s().la = 2;
         _s().lb = 2;
         _s().totalScores = 0;
 
         //0 reserved for OG
-        _setStrain(1, 50 ether, 10000, "Flora", "Qmev3QP84J4KYWhJNrTUWkEZbWsxnyc7fCbtugqw8iYjqQ", true, 1 days);
-        _setStrain(2, 100 ether, 7000, "Taki", "QmUhjHmsPP3KCes7gFUzb6Rrc7cKUMhreVcGPLiFaB1Ngm", true, 1 days);
+        _setStrain(1, 5 ether, 10000, "Flora", "Qmev3QP84J4KYWhJNrTUWkEZbWsxnyc7fCbtugqw8iYjqQ", true, 1 days);
+        _setStrain(2, 10 ether, 7000, "Taki", "QmUhjHmsPP3KCes7gFUzb6Rrc7cKUMhreVcGPLiFaB1Ngm", true, 1 days);
         _s().strainCounter = 2;
-
     }
 
     function setStrain(uint256 id, uint256 mintPrice, uint256 maxSupply, string memory name, string memory ipfsHash, bool isActive, uint256 strainInitialTOD, uint256 strainCounter) external onlyAdminRole {
@@ -63,7 +50,6 @@ PixotchiExtensionPermission
         _s().strainIPFSHash[id] = ipfsHash;
         _s().strainIsActive[id] = isActive;
         _s().strainInitialTOD[id] = strainInitialTOD;
-        //_s().strainIds.push(id);
     }
 
     function setPRECISION(uint256 _precision) public onlyAdminRole {
@@ -71,10 +57,8 @@ PixotchiExtensionPermission
     }
 
 
-    function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) public onlyAdminRole {
+    function setConfig(bool _mintIsActive, uint256 _burnPercentage) public onlyAdminRole {
         require(_burnPercentage <= 100, "Burn percentage can't be more than 100");
-        //_s().Mint_Price = _Price;
-        //_s().maxSupply = _maxSupply;
         _s().mintIsActive = _mintIsActive;
         _s().burnPercentage = _burnPercentage;
     }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
 // ====== Internal imports ======
 import "../game/GameStorage.sol";
@@ -10,7 +10,6 @@ import "../utils/FixedPointMathLib.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
-//import "../../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
 import "../../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
 import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
 import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
@@ -20,8 +19,6 @@ import "../utils/PixotchiExtensionPermission.sol";
 contract GardenLogic is
 IGarden,
 ReentrancyGuard,
-    //ERC721AUpgradeable,
-//PermissionsEnumerable,
 Initializable,
 PixotchiExtensionPermission
 {
@@ -32,50 +29,28 @@ PixotchiExtensionPermission
                         Constants / Immutables
     //////////////////////////////////////////////////////////////*/
 
-    /// @dev Only lister role holders can create auctions, when auctions are restricted by lister address.
-    //bytes32 private constant LISTER_ROLE = keccak256("LISTER_ROLE");
-    /// @dev Only assets from NFT contracts with asset role can be auctioned, when auctions are restricted by asset address.
-    //bytes32 private constant ASSET_ROLE = keccak256("ASSET_ROLE");
-
-    /// @dev The max bps of the contract. So, 10_000 == 100 %
-    //uint64 private constant MAX_BPS = 10_000;
-
-    /// @dev The address of the native token wrapper contract.
-    //address private immutable nativeTokenWrapper;
 
     /*///////////////////////////////////////////////////////////////
                               Modifiers
     //////////////////////////////////////////////////////////////*/
 
-//    modifier isApproved(uint256 id) {
-//        require(
-//            IERC721A(address(this)).ownerOf(id) == msg.sender,
-//            //ownerOf(id) == msg.sender,
-//            "Not approved"
-//        );
-//
-//        _;
-//    }
 
     /*///////////////////////////////////////////////////////////////
                             Constructor logic
     //////////////////////////////////////////////////////////////*/
 
-    //constructor(address _token, address _renderer) {
-    function initializeGardenLogic() public reinitializer(5) {
-        //address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
-        //_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
 
+    function initializeGardenLogic() public reinitializer(5) {
         uint256 etherConversion = 1 ether;
         uint256 pointsConversion = 1e12;
         uint256 timeConversion = 1 hours;
 
-        _createItem("Sunlight", 8 * etherConversion, 60 * pointsConversion, 0);
-        _createItem("Water", 6 * etherConversion, 0, 4 * timeConversion);
-        _createItem("Fertilizer", 20 * etherConversion, 150 * pointsConversion, 0);
-        _createItem("Pollinator", 10 * etherConversion, 0, 6 * timeConversion);
-        _createItem("Magic Soil", 25 * etherConversion, 350 * pointsConversion, 0);
-        _createItem("Dream Dew", 35 * etherConversion, 50 * pointsConversion, 12 * timeConversion);
+        _createItem("Sunlight", 4 * etherConversion, 50 * pointsConversion, 0);
+        _createItem("Water", 6 * etherConversion, 0, 6 * timeConversion);
+        _createItem("Fertilizer", 10 * etherConversion, 75 * pointsConversion, 0);
+        _createItem("Pollinator", 8 * etherConversion, 0, 8 * timeConversion);
+        _createItem("Magic Soil", 12 * etherConversion, 90 * pointsConversion, 0);
+        _createItem("Dream Dew", 15 * etherConversion, 50 * pointsConversion, 12 * timeConversion);
     }
 
     function getGardenItem(uint256 itemId)
@@ -124,8 +99,7 @@ PixotchiExtensionPermission
     ) external nonReentrant {
         require(itemExists(itemId), "This item doesn't exist");
         require(IGame(address(this)).isPlantAlive(nftId), "plant dead"); //no revives
-        //require(IGame(address(this)).isApprovedFn(nftId));
-        require((IERC721A(address(this)).ownerOf(nftId) == msg.sender));
+        require((IERC721A(address(this)).ownerOf(nftId) == msg.sender)); // equals isApprovedFn
 
         uint256 amount = _s().itemPrice[itemId];
 
@@ -149,7 +123,7 @@ PixotchiExtensionPermission
 
         _s().totalScores += _s().itemPoints[itemId];
 
-        //token.burnFrom(msg.sender, amount);
+
         _s().guardDisarmed = true;
         INFT(address(this)).tokenBurnAndRedistribute(msg.sender, amount);
         _s().guardDisarmed = false;

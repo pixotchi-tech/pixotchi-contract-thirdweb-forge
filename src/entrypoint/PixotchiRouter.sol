@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
 /// @author pixotchi
 
@@ -84,7 +84,7 @@ ERC2771ContextUpgradeable
     /// @dev Only EXTENSION_ROLE holders can perform upgrades.
     bytes32 private constant EXTENSION_ROLE = keccak256("EXTENSION_ROLE");
 
-    bytes32 private constant MODULE_TYPE = bytes32("PixotchiV2Router");
+    bytes32 private constant MODULE_TYPE = bytes32("PixotchiRouter");
     uint256 private constant VERSION = 1;
 
     /// @dev We accept constructor params as a struct to avoid `Stack too deep` errors.
@@ -107,9 +107,8 @@ ERC2771ContextUpgradeable
     function initializeRouter(
     ) external initializer {
         __ReentrancyGuard_init();
-        address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
+        address _defaultAdmin = 0x44e156CBb4506cee55A96b45D10A77806E012469;
         _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
-        _setupRole(EXTENSION_ROLE, _defaultAdmin);
         _setupRole(EXTENSION_ROLE, _defaultAdmin);
         _setRoleAdmin(EXTENSION_ROLE, EXTENSION_ROLE);
     }
