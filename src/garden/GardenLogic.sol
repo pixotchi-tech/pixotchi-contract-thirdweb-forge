@@ -40,7 +40,7 @@ PixotchiExtensionPermission
     //////////////////////////////////////////////////////////////*/
 
 
-    function initializeGardenLogic() public reinitializer(5) {
+    function initializeGardenLogic() public reinitializer(4) {
         uint256 etherConversion = 1 ether;
         uint256 pointsConversion = 1e12;
         uint256 timeConversion = 1 hours;

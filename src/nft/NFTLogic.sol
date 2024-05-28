@@ -59,7 +59,7 @@ ERC721AUpgradeable//,
     //////////////////////////////////////////////////////////////*/
 
     //constructor(address _token, address _renderer) {
-    function initializeNFTLogic() public reinitializer(3) {
+    function initializeNFTLogic() public reinitializer(5) {
         address _token = 0x546D239032b24eCEEE0cb05c92FC39090846adc7;
         address _defaultAdmin = 0x44e156CBb4506cee55A96b45D10A77806E012469;
 

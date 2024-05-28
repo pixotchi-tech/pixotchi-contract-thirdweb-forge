@@ -25,7 +25,7 @@ Initializable,//,
 PixotchiExtensionPermission
 {
 
-    function initializeConfigLogic() public reinitializer(4) {
+    function initializeConfigLogic() public reinitializer(3) {
         _s().PRECISION = 1 ether;
 
         _s().la = 2;
