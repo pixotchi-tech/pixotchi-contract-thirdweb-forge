@@ -36,13 +36,13 @@ PixotchiExtensionPermission
 
 
 
-    function initializeConfigLogic() public initializer {
+    function initializeConfigLogic() public reinitializer(2) {
         //address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
         //_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
 //
-//        _s().la = 2;
-//        _s().lb = 2;
-//        _s().totalScores = 0;
+        _s().la = 2;
+        _s().lb = 2;
+        _s().totalScores = 0;
 
         //0 reserved for OG
         setStrain(1, 50 ether, 10000, "flora", "Qmev3QP84J4KYWhJNrTUWkEZbWsxnyc7fCbtugqw8iYjqQ", true);

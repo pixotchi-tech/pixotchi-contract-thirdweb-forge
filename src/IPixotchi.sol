@@ -97,6 +97,8 @@ interface IRenderer {
 
 interface IGame {
 
+    function isApprovedFn(uint256 id) external view returns (bool);
+
     enum  Status {
         JOYFUL, //0
         THIRSTY, //1

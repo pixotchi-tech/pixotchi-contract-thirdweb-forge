@@ -47,15 +47,15 @@ PixotchiExtensionPermission
                               Modifiers
     //////////////////////////////////////////////////////////////*/
 
-    modifier isApproved(uint256 id) {
-        require(
-            IERC721A(address(this)).ownerOf(id) == msg.sender,
-            //ownerOf(id) == msg.sender,
-            "Not approved"
-        );
-
-        _;
-    }
+//    modifier isApproved(uint256 id) {
+//        require(
+//            IERC721A(address(this)).ownerOf(id) == msg.sender,
+//            //ownerOf(id) == msg.sender,
+//            "Not approved"
+//        );
+//
+//        _;
+//    }
 
     /*///////////////////////////////////////////////////////////////
                             Constructor logic
@@ -105,9 +105,10 @@ PixotchiExtensionPermission
     function buyAccessory(
         uint256 nftId,
         uint256 itemId
-    ) external payable isApproved(nftId) nonReentrant {
+    ) external payable nonReentrant {
         require(itemExists(itemId), "This item doesn't exist");
         require(IGame(address(this)).isPlantAlive(nftId), "plant dead"); //no revives
+        require(IGame(address(this)).isApprovedFn(nftId));
 
         uint256 amount = _s().itemPrice[itemId];
 
