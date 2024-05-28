@@ -70,12 +70,12 @@ PixotchiExtensionPermission
         uint256 pointsConversion = 1e12;
         uint256 timeConversion = 1 hours;
 
-        createItem("Sunlight", 8 * etherConversion, 60 * pointsConversion, 0);
-        createItem("Water", 6 * etherConversion, 0, 4 * timeConversion);
-        createItem("Fertilizer", 20 * etherConversion, 150 * pointsConversion, 0);
-        createItem("Pollinator", 10 * etherConversion, 0, 6 * timeConversion);
-        createItem("Magic Soil", 25 * etherConversion, 350 * pointsConversion, 0);
-        createItem("Dream Dew", 35 * etherConversion, 50 * pointsConversion, 12 * timeConversion);
+        _createItem("Sunlight", 8 * etherConversion, 60 * pointsConversion, 0);
+        _createItem("Water", 6 * etherConversion, 0, 4 * timeConversion);
+        _createItem("Fertilizer", 20 * etherConversion, 150 * pointsConversion, 0);
+        _createItem("Pollinator", 10 * etherConversion, 0, 6 * timeConversion);
+        _createItem("Magic Soil", 25 * etherConversion, 350 * pointsConversion, 0);
+        _createItem("Dream Dew", 35 * etherConversion, 50 * pointsConversion, 12 * timeConversion);
     }
 
 
@@ -156,90 +156,94 @@ PixotchiExtensionPermission
         data = GameStorage.data();
     }
 
-    //    function authorizeAddress(address account, bool authorized) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    //        _s().IsAuthorized[account] = authorized;
-    //    }
+function createItem(
+    string memory name,
+    uint256 price,
+    uint256 points,
+    uint256 timeExtension
+) external onlyAdminRole {
+    _createItem(name, price, points, timeExtension);
+}
 
-    //    function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    //        require(_burnPercentage <= 100, "Burn percentage can't be more than 100");
-    //        //_s().Mint_Price = _Price;
-    //        //_s().maxSupply = _maxSupply;
-    //        _s().mintIsActive = _mintIsActive;
-    //        _s().burnPercentage = _burnPercentage;
-    //    }
-    //
-    //    function setRenderer(address _renderer) external onlyRole(DEFAULT_ADMIN_ROLE) {
-    //        _s().renderer = IRenderer(_renderer);
-    //    }
-    //
-    //    function setRevShareWallet(address _revShareWallet) external onlyRole(DEFAULT_ADMIN_ROLE) {
-    //        _s().revShareWallet = _revShareWallet;
-    //    }
-    //
-    //    function setToken(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
-    //        _s().token = IToken(_token);
-    //    }
+function createItems(
+    FullItem[] calldata items
+) external onlyAdminRole {
+    _createItems(items);
+}
 
-    // add items/accessories
-    function createItem(
-        string memory name,
-        uint256 price,
-        uint256 points,
-        uint256 timeExtension
-    ) public onlyAdminRole {
-        uint256 newItemId = _s()._itemIds;
-        _s().itemName[newItemId] = name;
-        _s().itemPrice[newItemId] = price;
-        _s().itemPoints[newItemId] = points;
-        _s().itemTimeExtension[newItemId] = timeExtension;
+function editItem(
+    uint256 _id,
+    uint256 _price,
+    uint256 _points,
+    string calldata _name,
+    uint256 _timeExtension
+) external onlyAdminRole {
+    _editItem(_id, _price, _points, _name, _timeExtension);
+}
 
-        _s()._itemIds++;
+function editGardenItems(
+    FullItem[] calldata updates
+) external onlyAdminRole {
+    _editItems(updates);
+}
 
-        emit ItemCreated(newItemId, name, price, points);
+function _createItem(
+    string memory name,
+    uint256 price,
+    uint256 points,
+    uint256 timeExtension
+) internal {
+    uint256 newItemId = _s()._itemIds;
+    _s().itemName[newItemId] = name;
+    _s().itemPrice[newItemId] = price;
+    _s().itemPoints[newItemId] = points;
+    _s().itemTimeExtension[newItemId] = timeExtension;
+
+    _s()._itemIds++;
+
+    emit ItemCreated(newItemId, name, price, points);
+}
+
+function _createItems(
+    FullItem[] calldata items
+) internal {
+    for (uint i = 0; i < items.length; i++) {
+        _createItem(
+            items[i].name,
+            items[i].price,
+            items[i].points,
+            items[i].timeExtension
+        );
     }
+}
 
-    // New function to create multiple items
-    function createItems(
-        FullItem[] calldata items
-    ) external onlyAdminRole {
-        //we are ignoring the id in the struct and using the index of the array
-        for (uint i = 0; i < items.length; i++) {
-            createItem(
-                items[i].name,
-                items[i].price,
-                items[i].points,
-                items[i].timeExtension
-            );
-        }
-    }
+function _editItem(
+    uint256 _id,
+    uint256 _price,
+    uint256 _points,
+    string calldata _name,
+    uint256 _timeExtension
+) internal {
+    _s().itemPrice[_id] = _price;
+    _s().itemPoints[_id] = _points;
+    _s().itemName[_id] = _name;
+    _s().itemTimeExtension[_id] = _timeExtension;
+}
 
-    function editItem(
-        uint256 _id,
-        uint256 _price,
-        uint256 _points,
-        string calldata _name,
-        uint256 _timeExtension
-    ) public onlyAdminRole {
-        _s().itemPrice[_id] = _price;
-        _s().itemPoints[_id] = _points;
-        _s().itemName[_id] = _name;
-        _s().itemTimeExtension[_id] = _timeExtension;
+function _editItems(
+    FullItem[] calldata updates
+) internal {
+    for (uint i = 0; i < updates.length; i++) {
+        _editItem(
+            updates[i].id,
+            updates[i].price,
+            updates[i].points,
+            updates[i].name,
+            updates[i].timeExtension
+        );
     }
+}
 
-    // New function to edit multiple items
-    function editItems(
-        FullItem[] calldata updates
-    ) external onlyAdminRole {
-        for (uint i = 0; i < updates.length; i++) {
-            editItem(
-                updates[i].id,
-                updates[i].price,
-                updates[i].points,
-                updates[i].name,
-                updates[i].timeExtension
-            );
-        }
-    }
 
     //    function _msgData() internal view override(Permissions, Context) returns (bytes calldata) {
     //        return Context._msgData();
