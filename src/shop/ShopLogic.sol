@@ -25,11 +25,12 @@ Initializable
         // Initialization logic
     }
 
-    function createShopItem(
+
+    function _createShopItem(
         string calldata name,
         uint256 price,
         uint256 _ExpireTime
-    ) public {
+    ) private {
         uint256 newItemId = _s().shopItemCounter++;
         _s().shopItemName[newItemId] = name;
         _s().shopItemPrice[newItemId] = price;

@@ -131,6 +131,22 @@ interface IGame {
         uint256 strain;
     }
 
+    struct PlantFull {
+        uint256 id;
+        string name;
+        uint256 timeUntilStarving;
+        uint256 score;
+        uint256 timePlantBorn;
+        uint256 lastAttackUsed;
+        uint256 lastAttacked;
+        uint256 stars;
+        uint256 strain;
+        Status status;
+        uint256 level;
+        address owner;
+        uint256 rewards;
+    }
+
 
     event Killed(
         uint256 nftId,
