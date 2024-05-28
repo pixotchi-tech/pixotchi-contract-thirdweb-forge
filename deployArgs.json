@@ -4,7 +4,7 @@
       "metadata": {
         "name": "ConfigLogic",
         "metadataURI": "ipfs://QmPJVq9yDQNvX3gAfkd2Awah4qvENiZSDr15BTZRjrPVaS",
-        "implementation": "0x0000000000000000000000000000000000000000"
+        "implementation": "0xb98d7eed881eaB353cF9A69815DBfe2DdcC57628"
       },
       "functions": [
         {
@@ -69,7 +69,7 @@
       "metadata": {
         "name": "GameLogic",
         "metadataURI": "ipfs://QmbRdbVFYu2yWbQrJGWMjQ9nQ85MyVEJKepiLwbHUSpXS6",
-        "implementation": "0x0000000000000000000000000000000000000000"
+        "implementation": "0x921f1A24620FfA0a42d1bFa8dAA8F96Cc418d982"
       },
       "functions": [
         {
@@ -162,7 +162,7 @@
       "metadata": {
         "name": "GardenLogic",
         "metadataURI": "ipfs://QmSEXwFASrBMXA82ED9NrML1xXkCQ2v2Rv7jgtqzTAgB1L",
-        "implementation": "0x0000000000000000000000000000000000000000"
+        "implementation": "0x2BD91F4b692A115d6F6Ce19a99a52CE79a066DC9"
       },
       "functions": [
         {
@@ -239,7 +239,7 @@
       "metadata": {
         "name": "NFTLogic",
         "metadataURI": "ipfs://QmYCdL1TB26Ttw9ZX6YM7NQgGqUmk7EJtkMtZBGqP9WfcG",
-        "implementation": "0x0000000000000000000000000000000000000000"
+        "implementation": "0x29083A62466B0A49747022338e1113F62F2bC99a"
       },
       "functions": [
         {
@@ -364,7 +364,7 @@
       "metadata": {
         "name": "Renderer",
         "metadataURI": "ipfs://QmQzBesAfw91QzZgYwr8cYQaMHMTaVFiodTkudrRcM1fTM",
-        "implementation": "0x0000000000000000000000000000000000000000"
+        "implementation": "0x3B6Df48ab5e343Ea889460FDEC6c96f1b393E157"
       },
       "functions": [
         {
@@ -381,7 +381,7 @@
       "metadata": {
         "name": "ShopLogic",
         "metadataURI": "ipfs://QmbMFUajwiBo3UcCEBbvLALVqvx2doF7MzUmqx18PE1CLS",
-        "implementation": "0x0000000000000000000000000000000000000000"
+        "implementation": "0xd25d8179590e719Dc1c4F6A7E1785fF27Eaaa4EC"
       },
       "functions": [
         {
