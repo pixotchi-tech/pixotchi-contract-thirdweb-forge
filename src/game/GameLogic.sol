@@ -256,6 +256,28 @@ Initializable//,
                             View functions
     //////////////////////////////////////////////////////////////*/
 
+
+    function getAllStrainInfo() external view returns (IGame.Strain[] memory) {
+    GameStorage.Data storage s = _s();
+    uint256 strainCount = s.shopItemCounter; // Assuming shopItemCounter is used to count strains
+    IGame.Strain[] memory strains = new IGame.Strain[](strainCount);
+
+    for (uint256 i = 0; i < strainCount; i++) {
+        strains[i] = IGame.Strain({
+            id: i,
+            mintPrice: s.mintPriceByStrain[i],
+            totalSupply: s.strainTotalMinted[i] - s.strainBurned[i],
+            totalMinted: s.strainTotalMinted[i],
+            maxSupply: s.strainMaxSupply[i],
+            name: s.strainName[i],
+            isActive: s.strainIsActive[i],
+            getStrainTotalLeft: s.strainMaxSupply[i] - s.strainTotalMinted[i]
+        });
+    }
+
+    return strains;
+}
+
     // Function to convert Status enum to string
     function statusToString(IGame.Status status) public pure returns (string memory) {
         if (status == IGame.Status.JOYFUL) {

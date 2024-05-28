@@ -16,13 +16,12 @@ import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/uti
 import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
 
 contract GameLogic is
-IGarden,
-ReentrancyGuard,
-//ERC721AUpgradeable,
-PermissionsEnumerable,
+    IGarden,
+    ReentrancyGuard,
+    //ERC721AUpgradeable,
+    PermissionsEnumerable,
     Initializable
 {
-
     using SafeTransferLib for address payable;
     using FixedPointMathLib for uint256;
     using SafeMathUpgradeable for uint256;
@@ -45,7 +44,6 @@ PermissionsEnumerable,
                               Modifiers
     //////////////////////////////////////////////////////////////*/
 
-
     modifier isApproved(uint256 id) {
         require(
             IERC721A(address(this)).ownerOf(id) == msg.sender,
@@ -62,36 +60,53 @@ PermissionsEnumerable,
 
     //constructor(address _token, address _renderer) {
     function initialize() public initializer {
-//        address _token = 0xc64F740D216B6ec49e435a8a08132529788e8DD0;
-//        address _renderer = 0x9D4F2b4D49A83A22F902629aD7d6Bd0329224A50;
-//
-//        address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
-//
-//        _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
-//
-//        //__ERC721A_init("NAME", "SYMBOL");
-//
-//        //nativeTokenWrapper = _nativeTokenWrapper;
-//        //__ERC721_init("Pixotchi", "PIX");
-//        //__Ownable_init();
-//        //__ReentrancyGuard_init();
-//        _s().token = IToken(_token);
-//        _s().renderer = IRenderer(_renderer);
-//        _s().la = 2;
-//        _s().lb = 2;
-//        _s().totalScores = 0;
-//        //_s().Mint_Price = 100 * 1e18;
-//        // _s().maxSupply = 20_000;
-//        _s().mintIsActive = true;
-//        _s().revShareWallet = msg.sender; //temporary wallet
-//        _s().burnPercentage = 0; // 0-100%
+        //        address _token = 0xc64F740D216B6ec49e435a8a08132529788e8DD0;
+        //        address _renderer = 0x9D4F2b4D49A83A22F902629aD7d6Bd0329224A50;
+        //
+        //        address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
+        //
+        //        _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
+        //
+        //        //__ERC721A_init("NAME", "SYMBOL");
+        //
+        //        //nativeTokenWrapper = _nativeTokenWrapper;
+        //        //__ERC721_init("Pixotchi", "PIX");
+        //        //__Ownable_init();
+        //        //__ReentrancyGuard_init();
+        //        _s().token = IToken(_token);
+        //        _s().renderer = IRenderer(_renderer);
+        //        _s().la = 2;
+        //        _s().lb = 2;
+        //        _s().totalScores = 0;
+        //        //_s().Mint_Price = 100 * 1e18;
+        //        // _s().maxSupply = 20_000;
+        //        _s().mintIsActive = true;
+        //        _s().revShareWallet = msg.sender; //temporary wallet
+        //        _s().burnPercentage = 0; // 0-100%
     }
 
+    function getAllGardenItem()
+        public
+        view
+        
+        returns (IGarden.FullItem[] memory)
+    {
+        GameStorage.Data storage s = _s();
+        uint256 itemCount = s._itemIds;
+        IGarden.FullItem[] memory items = new IGarden.FullItem[](itemCount);
 
+        for (uint256 i = 0; i < itemCount; i++) {
+            items[i] = IGarden.FullItem({
+                id: i,
+                name: s.itemName[i],
+                price: s.itemPrice[i],
+                points: s.itemPoints[i],
+                timeExtension: s.itemTimeExtension[i]
+            });
+        }
 
-
-
-
+        return items;
+    }
 
     function buyAccessory(
         uint256 nftId,
@@ -142,35 +157,34 @@ PermissionsEnumerable,
         }
     }
 
-
     /// @dev Returns the storage.
     function _s() internal pure returns (GameStorage.Data storage data) {
         data = GameStorage.data();
     }
 
-//    function authorizeAddress(address account, bool authorized) public onlyRole(DEFAULT_ADMIN_ROLE) {
-//        _s().IsAuthorized[account] = authorized;
-//    }
+    //    function authorizeAddress(address account, bool authorized) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    //        _s().IsAuthorized[account] = authorized;
+    //    }
 
-//    function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) public onlyRole(DEFAULT_ADMIN_ROLE) {
-//        require(_burnPercentage <= 100, "Burn percentage can't be more than 100");
-//        //_s().Mint_Price = _Price;
-//        //_s().maxSupply = _maxSupply;
-//        _s().mintIsActive = _mintIsActive;
-//        _s().burnPercentage = _burnPercentage;
-//    }
-//
-//    function setRenderer(address _renderer) external onlyRole(DEFAULT_ADMIN_ROLE) {
-//        _s().renderer = IRenderer(_renderer);
-//    }
-//
-//    function setRevShareWallet(address _revShareWallet) external onlyRole(DEFAULT_ADMIN_ROLE) {
-//        _s().revShareWallet = _revShareWallet;
-//    }
-//
-//    function setToken(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
-//        _s().token = IToken(_token);
-//    }
+    //    function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    //        require(_burnPercentage <= 100, "Burn percentage can't be more than 100");
+    //        //_s().Mint_Price = _Price;
+    //        //_s().maxSupply = _maxSupply;
+    //        _s().mintIsActive = _mintIsActive;
+    //        _s().burnPercentage = _burnPercentage;
+    //    }
+    //
+    //    function setRenderer(address _renderer) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    //        _s().renderer = IRenderer(_renderer);
+    //    }
+    //
+    //    function setRevShareWallet(address _revShareWallet) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    //        _s().revShareWallet = _revShareWallet;
+    //    }
+    //
+    //    function setToken(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    //        _s().token = IToken(_token);
+    //    }
 
     // add items/accessories
     function createItem(
@@ -191,13 +205,19 @@ PermissionsEnumerable,
     }
 
     // New function to create multiple items
-    function createItems(FullItem[] calldata items) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function createItems(
+        FullItem[] calldata items
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         //we are ignoring the id in the struct and using the index of the array
         for (uint i = 0; i < items.length; i++) {
-            createItem(items[i].name, items[i].price, items[i].points, items[i].timeExtension);
+            createItem(
+                items[i].name,
+                items[i].price,
+                items[i].points,
+                items[i].timeExtension
+            );
         }
     }
-
 
     function editItem(
         uint256 _id,
@@ -213,7 +233,9 @@ PermissionsEnumerable,
     }
 
     // New function to edit multiple items
-    function editItems(FullItem[] calldata updates) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function editItems(
+        FullItem[] calldata updates
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         for (uint i = 0; i < updates.length; i++) {
             editItem(
                 updates[i].id,
@@ -225,12 +247,11 @@ PermissionsEnumerable,
         }
     }
 
-//    function _msgData() internal view override(Permissions, Context) returns (bytes calldata) {
-//        return Context._msgData();
-//    }
-//
-//    function _msgSender() internal view override(Permissions, Context) returns (address sender) {
-//        return Context._msgSender();
-//    }
-
+    //    function _msgData() internal view override(Permissions, Context) returns (bytes calldata) {
+    //        return Context._msgData();
+    //    }
+    //
+    //    function _msgSender() internal view override(Permissions, Context) returns (address sender) {
+    //        return Context._msgSender();
+    //    }
 }

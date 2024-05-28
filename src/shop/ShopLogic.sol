@@ -22,7 +22,30 @@ PermissionsEnumerable,
 Initializable
 {
     function initialize() public initializer {
+        // Initialization logic
+    }
 
+    function createShopItem(
+        string calldata name,
+        uint256 price,
+        uint256 _ExpireTime
+    ) public  {
+        // Dummy implementation
+    }
+
+    function shopItemExists(uint256 itemId) public view  returns (bool) {
+        // Dummy implementation
+        return false;
+    }
+
+    function getAllShopItem() public pure  returns (ShopItem[] memory) {
+        // Dummy implementation
+        return new ShopItem[](0);
+    }
+
+    function getPurchasedShopItems(uint256 nftId) public view  returns (ShopItemOwned[] memory) {
+        // Dummy implementation
+        return new ShopItemOwned[](0);
     }
 
 

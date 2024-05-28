@@ -67,7 +67,7 @@ interface IGarden {
 
     event ItemCreated(uint256 id, string name, uint256 price, uint256 points);
 
-    function getAllGardenItem() external pure returns(FullItem[] memory);
+    function getAllGardenItem() external view returns(FullItem[] memory);
 
     //function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
 
@@ -177,7 +177,7 @@ interface IGame {
 
     function statusToString(IGame.Status status) external pure returns (string memory);
 
-    function getAllStrainInfo() external pure returns(Strain[] memory);
+    function getAllStrainInfo() external view returns(Strain[] memory);
 
 
 
