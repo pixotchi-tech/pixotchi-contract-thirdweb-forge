@@ -59,9 +59,9 @@ Initializable
     //////////////////////////////////////////////////////////////*/
 
     //constructor(address _token, address _renderer) {
-    function initialize() public initializer {
-        address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
-        _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
+    function initializeGardenLogic() public initializer {
+        //address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
+        //_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
 
         uint256 etherConversion = 1 ether;
         uint256 pointsConversion = 1e12;

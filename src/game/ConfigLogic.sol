@@ -25,9 +25,9 @@ Initializable//,
 //    constructor(){
 //
 //    }
-    function initialize() public initializer {
-        address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
-        _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
+    function initializeConfigLogic() public initializer {
+        //address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
+        //_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
 //
 //        _s().la = 2;
 //        _s().lb = 2;

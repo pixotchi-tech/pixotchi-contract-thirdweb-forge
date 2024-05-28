@@ -68,7 +68,7 @@ PermissionsEnumerable//,
     //////////////////////////////////////////////////////////////*/
 
     //constructor(address _token, address _renderer) {
-    function initialize() public initializer {
+    function initializeNFTLogic() public initializer {
         address _token = 0xa62b1E028E40c68ECD037239D7A115187b7Ead44;
         address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
         //address _renderer = 0x9D4F2b4D49A83A22F902629aD7d6Bd0329224A50;

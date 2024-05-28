@@ -21,7 +21,7 @@ ReentrancyGuard,
 PermissionsEnumerable,
 Initializable
 {
-    function initialize() public initializer {
+    function initializeShopLogic() public initializer {
         // Initialization logic
     }
 

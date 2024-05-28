@@ -104,7 +104,7 @@ ERC2771ContextUpgradeable
     }
 
     /// @dev Initializes the contract, like a constructor.
-    function initialize(
+    function initializeRouter(
     ) external initializer {
         __ReentrancyGuard_init();
         address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
