@@ -16,8 +16,8 @@ import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/uti
 contract NFTLogic is
 INFT,
 ReentrancyGuard,
-ERC721AUpgradeable,
-PermissionsEnumerable//,
+ERC721AUpgradeable//,
+//PermissionsEnumerable//,
 //ERC2771ContextConsumer
 //Context
 {
@@ -281,11 +281,11 @@ PermissionsEnumerable//,
 //    function _msgSender() internal view override(ERC2771ContextConsumer, Context, Permissions) returns (address sender) {
 //        return ERC2771ContextConsumer._msgSender();
 //    }
-        function _msgData() internal view override(Context, Permissions) returns (bytes calldata) {
+        function _msgData() internal view override(Context/*, Permissions*/) returns (bytes calldata) {
         return Context._msgData();
     }
 
-    function _msgSender() internal view override(Context, Permissions) returns (address sender) {
+    function _msgSender() internal view override(Context/*, Permissions*/) returns (address sender) {
         return Context._msgSender();
     }
 

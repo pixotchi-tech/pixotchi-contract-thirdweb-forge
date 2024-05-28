@@ -9,22 +9,33 @@ import "../IPixotchi.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 
 import "../utils/FixedPointMathLib.sol";
-import "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
+//import "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
 //import "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
 import "../../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
 import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
 import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
+import "../PixotchiExtensionPermission.sol";
 
 contract ConfigLogic is
 IConfig,
 //ReentrancyGuard,
-PermissionsEnumerable,
-Initializable//,
+//PermissionsEnumerable,
+Initializable,//,
+PixotchiExtensionPermission
 {
 //    constructor(){
 //
 //    }
+    //bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;
+
+//    modifier onlyAdminRole() {
+//        require(Permissions(address(this)).hasRole(DEFAULT_ADMIN_ROLE, msg.sender()), "!not default admin role");
+//        _;
+//    }
+
+
+
     function initializeConfigLogic() public initializer {
         //address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
         //_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
@@ -50,7 +61,7 @@ Initializable//,
     }
 
 
-    function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setConfig(/*uint256 _Price, uint256 _maxSupply,*/ bool _mintIsActive, uint256 _burnPercentage) public onlyAdminRole {
         require(_burnPercentage <= 100, "Burn percentage can't be more than 100");
         //_s().Mint_Price = _Price;
         //_s().maxSupply = _maxSupply;
@@ -58,15 +69,15 @@ Initializable//,
         _s().burnPercentage = _burnPercentage;
     }
 
-    function setRenderer(address _renderer) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setRenderer(address _renderer) external onlyAdminRole {
         _s().renderer = IRenderer(_renderer);
     }
 
-    function setRevShareWallet(address _revShareWallet) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setRevShareWallet(address _revShareWallet) external onlyAdminRole {
         _s().revShareWallet = _revShareWallet;
     }
 
-    function setToken(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setToken(address _token) external onlyAdminRole {
         _s().token = IToken(_token);
     }
 

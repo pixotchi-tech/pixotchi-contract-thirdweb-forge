@@ -14,13 +14,16 @@ import "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
 import "../../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
 import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
 import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
+import "../PixotchiExtensionPermission.sol";
+
 
 contract GardenLogic is
 IGarden,
 ReentrancyGuard,
     //ERC721AUpgradeable,
-PermissionsEnumerable,
-Initializable
+//PermissionsEnumerable,
+Initializable,
+PixotchiExtensionPermission
 {
     using SafeTransferLib for address payable;
     using FixedPointMathLib for uint256;
@@ -183,7 +186,7 @@ Initializable
         uint256 price,
         uint256 points,
         uint256 timeExtension
-    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    ) public onlyAdminRole {
         uint256 newItemId = _s()._itemIds;
         _s().itemName[newItemId] = name;
         _s().itemPrice[newItemId] = price;
@@ -198,7 +201,7 @@ Initializable
     // New function to create multiple items
     function createItems(
         FullItem[] calldata items
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    ) external onlyAdminRole {
         //we are ignoring the id in the struct and using the index of the array
         for (uint i = 0; i < items.length; i++) {
             createItem(
@@ -216,7 +219,7 @@ Initializable
         uint256 _points,
         string calldata _name,
         uint256 _timeExtension
-    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    ) public onlyAdminRole {
         _s().itemPrice[_id] = _price;
         _s().itemPoints[_id] = _points;
         _s().itemName[_id] = _name;
@@ -226,7 +229,7 @@ Initializable
     // New function to edit multiple items
     function editItems(
         FullItem[] calldata updates
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    ) external onlyAdminRole {
         for (uint i = 0; i < updates.length; i++) {
             editItem(
                 updates[i].id,

@@ -18,7 +18,7 @@ import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
 contract ShopLogic is
 IShop,
 ReentrancyGuard,
-PermissionsEnumerable,
+//PermissionsEnumerable,
 Initializable
 {
     function initializeShopLogic() public initializer {

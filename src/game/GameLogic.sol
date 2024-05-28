@@ -19,10 +19,11 @@ import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
 contract GameLogic is
 IGame,
 ReentrancyGuard,
-PermissionsEnumerable,
+//PermissionsEnumerable,
 Initializable//,
 //ERC2771ContextConsumer
 {
+
 
     using SafeTransferLib for address payable;
     using FixedPointMathLib for uint256;
