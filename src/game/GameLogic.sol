@@ -46,7 +46,7 @@ ReentrancyGuard//,
         _;
     }
 
-    function isApprovedFn(uint256 id, address wallet) external view override returns (bool) {
+    function isApprovedFn(uint256 id, address wallet) public view override returns (bool) {
         return (IERC721A(address(this)).ownerOf(id) == wallet);
     }
 
@@ -182,6 +182,12 @@ ReentrancyGuard//,
                             External functions
     //////////////////////////////////////////////////////////////*/
 
+    function redeem(uint256 id) public isApproved(id) nonReentrant {
+        address  ownerOfId = IERC721A(address(this)).ownerOf(id);
+
+        _redeem(id, ownerOfId);
+    }
+
 //    function updatePointsAndRewards(uint256 _nftId, uint256 _points, uint256 _timeExtension) external {
 //        require(_s().IsAuthorized[msg.sender], "Not Authorized");
 //
@@ -288,7 +294,8 @@ function getAllStrainInfo() external view returns (IGame.Strain[] memory) {
                 maxSupply: s.strainMaxSupply[i],
                 name: s.strainName[i],
                 isActive: s.strainIsActive[i],
-                getStrainTotalLeft: s.strainMaxSupply[i] - s.strainTotalMinted[i]
+                getStrainTotalLeft: s.strainMaxSupply[i] - s.strainTotalMinted[i],
+                strainInitialTOD: s.strainInitialTOD[i]
             });
             index++;
         }

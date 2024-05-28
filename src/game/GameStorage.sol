@@ -97,7 +97,7 @@ library GameStorage {
         // Shop mappings
         mapping(uint256 => uint256) shop_0_Fence_EffectUntil;
 
-
+        mapping(uint256 => uint256) strainInitialTOD;
 
     }
 

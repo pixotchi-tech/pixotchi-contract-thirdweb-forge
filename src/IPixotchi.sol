@@ -117,6 +117,7 @@ interface IGame {
         string name;
         bool isActive;
         uint256 getStrainTotalLeft;
+        uint256 strainInitialTOD;
     }
 
     struct Plant {

@@ -45,18 +45,24 @@ PixotchiExtensionPermission
         _s().totalScores = 0;
 
         //0 reserved for OG
-        setStrain(1, 50 ether, 10000, "flora", "Qmev3QP84J4KYWhJNrTUWkEZbWsxnyc7fCbtugqw8iYjqQ", true);
-        setStrain(2, 100 ether, 7000, "taki", "QmUhjHmsPP3KCes7gFUzb6Rrc7cKUMhreVcGPLiFaB1Ngm", true);
+        _setStrain(1, 50 ether, 10000, "flora", "Qmev3QP84J4KYWhJNrTUWkEZbWsxnyc7fCbtugqw8iYjqQ", true, 1 days);
+        _setStrain(2, 100 ether, 7000, "taki", "QmUhjHmsPP3KCes7gFUzb6Rrc7cKUMhreVcGPLiFaB1Ngm", true, 1 days);
         _s().strainCounter = 2;
 
     }
 
-        function setStrain(uint256 id, uint256 mintPrice, uint256 maxSupply, string memory name, string memory ipfsHash, bool isActive) internal {
+    function setStrain(uint256 id, uint256 mintPrice, uint256 maxSupply, string memory name, string memory ipfsHash, bool isActive, uint256 strainInitialTOD, uint256 strainCounter) external onlyAdminRole {
+        _setStrain(id, mintPrice, maxSupply, name, ipfsHash, isActive, strainInitialTOD);
+        _s().strainCounter = strainCounter;
+    }
+
+        function _setStrain(uint256 id, uint256 mintPrice, uint256 maxSupply, string memory name, string memory ipfsHash, bool isActive, uint256 strainInitialTOD) internal {
         _s().mintPriceByStrain[id] = mintPrice;
         _s().strainMaxSupply[id] = maxSupply;
         _s().strainName[id] = name;
         _s().strainIPFSHash[id] = ipfsHash;
         _s().strainIsActive[id] = isActive;
+        _s().strainInitialTOD[id] = strainInitialTOD;
         //_s().strainIds.push(id);
     }
 

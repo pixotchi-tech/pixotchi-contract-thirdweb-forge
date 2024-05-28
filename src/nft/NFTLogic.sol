@@ -228,10 +228,12 @@ function getPlantsInfo(uint256[] memory _nftIds) public view returns (IGame.Plan
         _tokenBurnAndRedistribute(to, _s().mintPriceByStrain[strain]);
         uint256 tokenId = _totalMinted();
 
+        uint256 _strainInitialTOD = _s().strainInitialTOD[strain] == 0 ? 1 days : _s().strainInitialTOD[strain];
+
         IGame.Plant memory plant = IGame.Plant({
             id: tokenId,
             name: "",
-            timeUntilStarving: block.timestamp + 1 days,
+            timeUntilStarving: block.timestamp + _strainInitialTOD,
             score: 0,
             timePlantBorn: block.timestamp,
             lastAttackUsed: 0,
