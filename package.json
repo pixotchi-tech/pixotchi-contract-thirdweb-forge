@@ -11,7 +11,7 @@
   },
   "scripts": {
     "forge:build": "forge build --sizes --force",
-    "install": "npx thirdweb@5.22 install",
+    "thirdweb:install": "npx thirdweb@5.25.0 install",
     "build": "thirdweb detect",
     "deploy": "thirdweb deploy",
     "deploy:dynamic": "thirdweb deploy --dynamic",
@@ -19,6 +19,6 @@
     "forge build": "forge build"
   },
   "devDependencies": {
-    "thirdweb": "5.22"
+    "thirdweb": "5.25.0"
   }
 }
