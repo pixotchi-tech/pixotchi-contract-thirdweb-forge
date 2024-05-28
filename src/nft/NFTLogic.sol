@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "../game/GameStorage.sol";
 import "../IPixotchi.sol";
 import "../utils/FixedPointMathLib.sol";
-import "../utils/ERC2771ContextConsumer.sol";
+//import "../utils/ERC2771ContextConsumer.sol";
 
 import "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
@@ -17,8 +17,8 @@ contract NFTLogic is
 INFT,
 ReentrancyGuard,
 ERC721AUpgradeable,
-PermissionsEnumerable,
-ERC2771ContextConsumer
+PermissionsEnumerable//,
+//ERC2771ContextConsumer
 //Context
 {
     using SafeTransferLib for address payable;
@@ -74,7 +74,7 @@ ERC2771ContextConsumer
         //address _renderer = 0x9D4F2b4D49A83A22F902629aD7d6Bd0329224A50;
 
 
-        _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
+        //_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
 
         __ERC721A_init("NAME", "SYMBOL");
 
@@ -274,12 +274,19 @@ ERC2771ContextConsumer
         data = GameStorage.data();
     }
 
-    function _msgData() internal view override(ERC2771ContextConsumer, Context, Permissions) returns (bytes calldata) {
-        return ERC2771ContextConsumer._msgData();
+//    function _msgData() internal view override(ERC2771ContextConsumer, Context, Permissions) returns (bytes calldata) {
+//        return ERC2771ContextConsumer._msgData();
+//    }
+//
+//    function _msgSender() internal view override(ERC2771ContextConsumer, Context, Permissions) returns (address sender) {
+//        return ERC2771ContextConsumer._msgSender();
+//    }
+        function _msgData() internal view override(Context, Permissions) returns (bytes calldata) {
+        return Context._msgData();
     }
 
-    function _msgSender() internal view override(ERC2771ContextConsumer, Context, Permissions) returns (address sender) {
-        return ERC2771ContextConsumer._msgSender();
+    function _msgSender() internal view override(Context, Permissions) returns (address sender) {
+        return Context._msgSender();
     }
 
 
