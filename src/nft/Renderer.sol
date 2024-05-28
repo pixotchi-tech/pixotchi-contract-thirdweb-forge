@@ -24,13 +24,13 @@ import"../IPixotchi.sol";
 
 contract Renderer is IRenderer {
 
-    string private jsonStart = 'data:application/json;base64,';
-    string private jsonEnd = '"}';
+    //string private jsonStart = 'data:application/json;base64,';
+    //string private jsonEnd = '"}';
 
     constructor() {
     }
 
-    function prepareTokenURI(IGame.Plant calldata plant, string calldata ipfsHash, string calldata status, uint256 level) external view returns (string memory)
+    function prepareTokenURI(IGame.Plant calldata plant, string calldata ipfsHash, string calldata status, uint256 level) external pure returns (string memory)
     {
 
         //IGame.Status _status = IGame(address(this)).getStatus(plant.id);
@@ -40,28 +40,48 @@ contract Renderer is IRenderer {
         //uint256 level = IGame(address(this)).level(plant.id);
 
 
-        string memory attributes = string(abi.encodePacked(
-            '{"name":"', plant.name,
-            '","attributes":[{"trait_type":"ID","value":"', Strings.toString(plant.id),
-            '"},{"trait_type":"Score","value":"', Strings.toString(plant.score),
-            //'"},{"trait_type":"Stars","value":"', Strings.toString(plant.stars),
-            '"},{"trait_type":"Strain","value":"', Strings.toString(plant.strain),
-            '"},{"trait_type":"Time Until Starving","value":"', Strings.toString(plant.timeUntilStarving),
-            //'"},{"trait_type":"Time Plant Born","value":"', Strings.toString(plant.timePlantBorn),
-            //'"},{"trait_type":"Last Attack Used","value":"', Strings.toString(plant.lastAttackUsed),
-            //'"},{"trait_type":"Last Attacked","value":"', Strings.toString(plant.lastAttacked),
-            //'"},{"trait_type":"Level","value":"', Strings.toString(level),
+//        string memory attributes = string(abi.encodePacked(
+//            '{"name":"', plant.name,
+//            '","attributes":[{"trait_type":"ID","value":"', Strings.toString(plant.id),
+//            '"},{"trait_type":"Score","value":"', Strings.toString(plant.score),
+//            //'"},{"trait_type":"Stars","value":"', Strings.toString(plant.stars),
+//            '"},{"trait_type":"Strain","value":"', Strings.toString(plant.strain),
+//            '"},{"trait_type":"Time Until Starving","value":"', Strings.toString(plant.timeUntilStarving),
+//            //'"},{"trait_type":"Time Plant Born","value":"', Strings.toString(plant.timePlantBorn),
+//            //'"},{"trait_type":"Last Attack Used","value":"', Strings.toString(plant.lastAttackUsed),
+//            //'"},{"trait_type":"Last Attacked","value":"', Strings.toString(plant.lastAttacked),
+//            //'"},{"trait_type":"Level","value":"', Strings.toString(level),
+//            '"},{"trait_type":"Status","value":"', status,
+//            '"}],"image": '
+//        ));
+        string memory part2 = string(abi.encodePacked(
+            '"},{"trait_type":"Time Plant Born","value":"', Strings.toString(plant.timePlantBorn),
+            '"},{"trait_type":"Last Attack Used","value":"', Strings.toString(plant.lastAttackUsed),
+            '"},{"trait_type":"Last Attacked","value":"', Strings.toString(plant.lastAttacked),
+            '"},{"trait_type":"Level","value":"', Strings.toString(level),
             '"},{"trait_type":"Status","value":"', status,
             '"}],"image": '
         ));
 
+
+        string memory attributes = string(abi.encodePacked(
+            '{"name":"', plant.name,
+            '","attributes":[{"trait_type":"ID","value":"', Strings.toString(plant.id),
+            '"},{"trait_type":"Score","value":"', Strings.toString(plant.score),
+            '"},{"trait_type":"Stars","value":"', Strings.toString(plant.stars),
+            '"},{"trait_type":"Strain","value":"', Strings.toString(plant.strain),
+            '"},{"trait_type":"Time Until Starving","value":"', Strings.toString(plant.timeUntilStarving),
+            part2
+        ));
+
         return string(abi.encodePacked(
-            jsonStart,
+            //jsonStart,
+        'data:application/json;base64,',
             Base64.encode(bytes(string(
                 abi.encodePacked(
                     attributes,
-                    getImageUri(level, ipfsHash),
-                    jsonEnd
+                    getImageUri(level, ipfsHash)//,
+                    //jsonEnd
                 )
             )))
         ));
@@ -69,14 +89,10 @@ contract Renderer is IRenderer {
 
 
     function getImageUri(uint256 _level, string calldata ipfsHash) public pure returns (string memory) {
-        return append('ipfs://', ipfsHash, '/', string(abi.encodePacked(Strings.toString(_level), '.svg')));
+        return append('ipfs://', ipfsHash, '/', string(abi.encodePacked(Strings.toString(_level), '.svg')), '"}');
     }
-
-
-    function append(string memory a, string memory b, string memory c, string memory d) internal pure returns (string memory) {
-
-        return string(abi.encodePacked(a, b, c, d));
-
+    function append(string memory a, string memory b, string memory c, string memory d, string memory e) internal pure returns (string memory) {
+        return string(abi.encodePacked(a, b, c, d, e));
     }
 
 

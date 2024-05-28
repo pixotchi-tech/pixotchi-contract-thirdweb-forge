@@ -92,7 +92,7 @@ interface INFT {
 }
 
 interface IRenderer {
-    function prepareTokenURI(IGame.Plant calldata plant, string calldata ipfsHash, string calldata status, uint256 level) external view returns (string memory);
+    function prepareTokenURI(IGame.Plant calldata plant, string calldata ipfsHash, string calldata status, uint256 level) external pure returns (string memory);
 }
 
 interface IGame {
