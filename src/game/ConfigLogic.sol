@@ -35,10 +35,10 @@ PixotchiExtensionPermission
 //    }
 
 
-
     function initializeConfigLogic() public reinitializer(4) {
         //address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
         //_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
+        _s().PRECISION = 1 ether;
 //
         _s().la = 2;
         _s().lb = 2;
@@ -58,6 +58,10 @@ PixotchiExtensionPermission
         _s().strainIPFSHash[id] = ipfsHash;
         _s().strainIsActive[id] = isActive;
         //_s().strainIds.push(id);
+    }
+
+    function setPRECISION(uint256 _precision) public onlyAdminRole {
+        _s().PRECISION = _precision;
     }
 
 
