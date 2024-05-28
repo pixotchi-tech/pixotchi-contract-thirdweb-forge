@@ -69,7 +69,7 @@ contract Renderer is IRenderer {
 
 
     function getImageUri(uint256 _level, string calldata ipfsHash) public pure returns (string memory) {
-        return append('"ipfs://',ipfsHash,Strings.toString(_level),'.svg"');
+        return append('ipfs://', ipfsHash, '/', string(abi.encodePacked(Strings.toString(_level), '.svg')));
     }
 
 
