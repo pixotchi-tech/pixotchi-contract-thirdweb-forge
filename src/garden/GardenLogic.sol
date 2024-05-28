@@ -14,7 +14,7 @@ import "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
 import "../../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
 import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
 import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
-import "../PixotchiExtensionPermission.sol";
+import "../utils/PixotchiExtensionPermission.sol";
 
 
 contract GardenLogic is
