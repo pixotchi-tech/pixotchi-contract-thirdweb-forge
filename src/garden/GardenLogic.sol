@@ -16,11 +16,11 @@ import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/uti
 import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
 
 contract GameLogic is
-    IGarden,
-    ReentrancyGuard,
+IGarden,
+ReentrancyGuard,
     //ERC721AUpgradeable,
-    PermissionsEnumerable,
-    Initializable
+PermissionsEnumerable,
+Initializable
 {
     using SafeTransferLib for address payable;
     using FixedPointMathLib for uint256;
@@ -60,36 +60,27 @@ contract GameLogic is
 
     //constructor(address _token, address _renderer) {
     function initialize() public initializer {
-        //        address _token = 0xc64F740D216B6ec49e435a8a08132529788e8DD0;
-        //        address _renderer = 0x9D4F2b4D49A83A22F902629aD7d6Bd0329224A50;
-        //
-        //        address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
-        //
-        //        _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
-        //
-        //        //__ERC721A_init("NAME", "SYMBOL");
-        //
-        //        //nativeTokenWrapper = _nativeTokenWrapper;
-        //        //__ERC721_init("Pixotchi", "PIX");
-        //        //__Ownable_init();
-        //        //__ReentrancyGuard_init();
-        //        _s().token = IToken(_token);
-        //        _s().renderer = IRenderer(_renderer);
-        //        _s().la = 2;
-        //        _s().lb = 2;
-        //        _s().totalScores = 0;
-        //        //_s().Mint_Price = 100 * 1e18;
-        //        // _s().maxSupply = 20_000;
-        //        _s().mintIsActive = true;
-        //        _s().revShareWallet = msg.sender; //temporary wallet
-        //        _s().burnPercentage = 0; // 0-100%
+        address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
+        _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
+
+        uint256 etherConversion = 1 ether;
+        uint256 pointsConversion = 1e12;
+        uint256 timeConversion = 1 hours;
+
+        createItem("Sunlight", 8 * etherConversion, 60 * pointsConversion, 0);
+        createItem("Water", 6 * etherConversion, 0, 4 * timeConversion);
+        createItem("Fertilizer", 20 * etherConversion, 150 * pointsConversion, 0);
+        createItem("Pollinator", 10 * etherConversion, 0, 6 * timeConversion);
+        createItem("Magic Soil", 25 * etherConversion, 350 * pointsConversion, 0);
+        createItem("Dream Dew", 35 * etherConversion, 50 * pointsConversion, 12 * timeConversion);
     }
 
+
     function getAllGardenItem()
-        public
-        view
-        
-        returns (IGarden.FullItem[] memory)
+    public
+    view
+
+    returns (IGarden.FullItem[] memory)
     {
         GameStorage.Data storage s = _s();
         uint256 itemCount = s._itemIds;
@@ -188,7 +179,7 @@ contract GameLogic is
 
     // add items/accessories
     function createItem(
-        string calldata name,
+        string memory name,
         uint256 price,
         uint256 points,
         uint256 timeExtension

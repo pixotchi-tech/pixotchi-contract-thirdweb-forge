@@ -82,6 +82,9 @@ ERC2771ContextConsumer
         _s().mintIsActive = true;
         _s().revShareWallet = _defaultAdmin; //temporary wallet
         _s().burnPercentage = 1; // 0-100%
+
+
+
     }
 
     /*//////////////////////////////////////////////////////////////

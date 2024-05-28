@@ -60,15 +60,16 @@ library GameStorage {
         mapping(uint256 => bool) burnedPlants;
 
         //strainCounter
-        //uint256 strainCounter;
-        mapping(uint256 => uint256) mintPriceByStrain;
+        uint256 strainCounter;
         //mapping(uint256 => uint256) strainTotalSupply;
+        mapping(uint256 => uint256) mintPriceByStrain;
         mapping(uint256 => uint256) strainBurned;
         mapping(uint256 => uint256) strainTotalMinted;
         mapping(uint256 => uint256) strainMaxSupply;
         mapping(uint256 => string) strainName;
         mapping(uint256 => bool) strainIsActive;
         mapping(uint256 => string) strainIPFSHash;
+        //uint256[] strainIds;
 
         //shop Items
         uint256 shopItemCounter;

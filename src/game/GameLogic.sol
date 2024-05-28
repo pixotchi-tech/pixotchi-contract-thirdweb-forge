@@ -257,22 +257,36 @@ Initializable//,
     //////////////////////////////////////////////////////////////*/
 
 
-    function getAllStrainInfo() external view returns (IGame.Strain[] memory) {
+function getAllStrainInfo() external view returns (IGame.Strain[] memory) {
     GameStorage.Data storage s = _s();
-    uint256 strainCount = s.shopItemCounter; // Assuming shopItemCounter is used to count strains
-    IGame.Strain[] memory strains = new IGame.Strain[](strainCount);
+    uint256 strainCount = s.strainCounter; // Assuming strainCounter is used to count strains
+    uint256 activeStrainCount = 0;
 
-    for (uint256 i = 0; i < strainCount; i++) {
-        strains[i] = IGame.Strain({
-            id: i,
-            mintPrice: s.mintPriceByStrain[i],
-            totalSupply: s.strainTotalMinted[i] - s.strainBurned[i],
-            totalMinted: s.strainTotalMinted[i],
-            maxSupply: s.strainMaxSupply[i],
-            name: s.strainName[i],
-            isActive: s.strainIsActive[i],
-            getStrainTotalLeft: s.strainMaxSupply[i] - s.strainTotalMinted[i]
-        });
+    // First, count the number of active strains
+    for (uint256 i = 0; i <= strainCount; i++) {
+        if (s.strainIsActive[i]) {
+            activeStrainCount++;
+        }
+    }
+
+    IGame.Strain[] memory strains = new IGame.Strain[](activeStrainCount);
+    uint256 index = 0;
+
+    // Populate the strains array with active strain data
+    for (uint256 i = 0; i <= strainCount; i++) {
+        if (s.strainIsActive[i]) {
+            strains[index] = IGame.Strain({
+                id: i,
+                mintPrice: s.mintPriceByStrain[i],
+                totalSupply: s.strainTotalMinted[i] - s.strainBurned[i],
+                totalMinted: s.strainTotalMinted[i],
+                maxSupply: s.strainMaxSupply[i],
+                name: s.strainName[i],
+                isActive: s.strainIsActive[i],
+                getStrainTotalLeft: s.strainMaxSupply[i] - s.strainTotalMinted[i]
+            });
+            index++;
+        }
     }
 
     return strains;

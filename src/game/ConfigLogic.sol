@@ -22,8 +22,31 @@ IConfig,
 PermissionsEnumerable,
 Initializable//,
 {
-    constructor(){
+//    constructor(){
+//
+//    }
+    function initialize() public initializer {
+        address _defaultAdmin = 0xC3f88d5925d9aa2ccc7b6cb65c5F8c7626591Daf;
+        _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
+//
+//        _s().la = 2;
+//        _s().lb = 2;
+//        _s().totalScores = 0;
 
+        //0 reserved for OG
+        setStrain(1, 50 ether, 10000, "flora", "Qmev3QP84J4KYWhJNrTUWkEZbWsxnyc7fCbtugqw8iYjqQ", true);
+        setStrain(2, 100 ether, 7000, "taki", "QmUhjHmsPP3KCes7gFUzb6Rrc7cKUMhreVcGPLiFaB1Ngm", true);
+        _s().strainCounter = 2;
+
+    }
+
+        function setStrain(uint256 id, uint256 mintPrice, uint256 maxSupply, string memory name, string memory ipfsHash, bool isActive) internal {
+        _s().mintPriceByStrain[id] = mintPrice;
+        _s().strainMaxSupply[id] = maxSupply;
+        _s().strainName[id] = name;
+        _s().strainIPFSHash[id] = ipfsHash;
+        _s().strainIsActive[id] = isActive;
+        //_s().strainIds.push(id);
     }
 
 
