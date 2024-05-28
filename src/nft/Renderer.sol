@@ -30,7 +30,7 @@ contract Renderer is IRenderer {
     constructor() {
     }
 
-    function prepareTokenURI(IGame.Plant calldata plant, string calldata ipfsHash, string calldata status, uint256 level) external pure returns (string memory)
+    function prepareTokenURI(IGame.PlantFull calldata plant, string calldata ipfsHash/*, string calldata status, uint256 level*/) external pure returns (string memory)
     {
 
         //IGame.Status _status = IGame(address(this)).getStatus(plant.id);
@@ -58,8 +58,8 @@ contract Renderer is IRenderer {
             '"},{"trait_type":"Time Plant Born","value":"', Strings.toString(plant.timePlantBorn),
             '"},{"trait_type":"Last Attack Used","value":"', Strings.toString(plant.lastAttackUsed),
             '"},{"trait_type":"Last Attacked","value":"', Strings.toString(plant.lastAttacked),
-            '"},{"trait_type":"Level","value":"', Strings.toString(level),
-            '"},{"trait_type":"Status","value":"', status,
+            '"},{"trait_type":"Level","value":"', Strings.toString(plant.level),
+            '"},{"trait_type":"Status","value":"', plant.statusStr,
             '"}],"image": "'
         ));
 
@@ -80,7 +80,7 @@ contract Renderer is IRenderer {
             Base64.encode(bytes(string(
                 abi.encodePacked(
                     attributes,
-                    getImageUri(level, ipfsHash)//,
+                    getImageUri(plant.level, ipfsHash)//,
                     //jsonEnd
                 )
             )))
