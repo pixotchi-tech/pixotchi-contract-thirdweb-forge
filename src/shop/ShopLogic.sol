@@ -21,9 +21,9 @@ ReentrancyGuard,
 //PermissionsEnumerable,
 Initializable
 {
-    function initializeShopLogic() public reinitializer(6) {
-        // Initialization logic
-    }
+//    function initializeShopLogic() public reinitializer(6) {
+//        // Initialization logic
+//    }
 
 
     function _createShopItem(
