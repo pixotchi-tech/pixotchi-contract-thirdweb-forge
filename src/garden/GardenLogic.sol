@@ -121,7 +121,7 @@ PixotchiExtensionPermission
     function buyAccessory(
         uint256 nftId,
         uint256 itemId
-    ) external payable nonReentrant {
+    ) external nonReentrant {
         require(itemExists(itemId), "This item doesn't exist");
         require(IGame(address(this)).isPlantAlive(nftId), "plant dead"); //no revives
         require(IGame(address(this)).isApprovedFn(nftId));
