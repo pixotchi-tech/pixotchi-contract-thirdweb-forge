@@ -60,7 +60,7 @@ contract Renderer is IRenderer {
             '"},{"trait_type":"Last Attacked","value":"', Strings.toString(plant.lastAttacked),
             '"},{"trait_type":"Level","value":"', Strings.toString(level),
             '"},{"trait_type":"Status","value":"', status,
-            '"}],"image": '
+            '"}],"image": "'
         ));
 
 
