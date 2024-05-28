@@ -46,8 +46,8 @@ ReentrancyGuard//,
         _;
     }
 
-    function isApprovedFn(uint256 id) external view override returns (bool) {
-        return IERC721A(address(this)).ownerOf(id) == msg.sender;
+    function isApprovedFn(uint256 id, address wallet) external view override returns (bool) {
+        return (IERC721A(address(this)).ownerOf(id) == wallet);
     }
 
     /*///////////////////////////////////////////////////////////////

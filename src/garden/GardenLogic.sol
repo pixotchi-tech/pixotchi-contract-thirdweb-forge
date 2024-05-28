@@ -124,7 +124,8 @@ PixotchiExtensionPermission
     ) external nonReentrant {
         require(itemExists(itemId), "This item doesn't exist");
         require(IGame(address(this)).isPlantAlive(nftId), "plant dead"); //no revives
-        require(IGame(address(this)).isApprovedFn(nftId));
+        //require(IGame(address(this)).isApprovedFn(nftId));
+        require((IERC721A(address(this)).ownerOf(nftId) == msg.sender));
 
         uint256 amount = _s().itemPrice[itemId];
 

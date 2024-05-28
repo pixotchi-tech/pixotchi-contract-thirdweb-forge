@@ -97,7 +97,7 @@ interface IRenderer {
 
 interface IGame {
 
-    function isApprovedFn(uint256 id) external view returns (bool);
+   function isApprovedFn(uint256 id, address wallet) external view returns (bool);
 
     enum  Status {
         JOYFUL, //0
