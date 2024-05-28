@@ -29,59 +29,51 @@ Initializable
         string calldata name,
         uint256 price,
         uint256 _ExpireTime
-    ) public  {
-        // Dummy implementation
+    ) public {
+        uint256 newItemId = _s().shopItemCounter++;
+        _s().shopItemName[newItemId] = name;
+        _s().shopItemPrice[newItemId] = price;
+        _s().shopItemExpireTime[newItemId] = _ExpireTime;
+        _s().shopItemIsActive[newItemId] = true;
+        _s().shopItemTotalConsumed[newItemId] = 0;
+        emit ShopItemCreated(newItemId, name, price, _ExpireTime);
     }
 
-    function shopItemExists(uint256 itemId) public view  returns (bool) {
-        // Dummy implementation
-        return false;
+    function shopItemExists(uint256 itemId) public view returns (bool) {
+        return bytes(_s().shopItemName[itemId]).length > 0;
     }
 
-    function getAllShopItem() public pure  returns (ShopItem[] memory) {
-        // Dummy implementation
-        return new ShopItem[](0);
+    function getAllShopItem() public view returns (ShopItem[] memory) {
+        uint256 itemCount = _s().shopItemCounter;
+        ShopItem[] memory items = new ShopItem[](itemCount);
+        for (uint256 i = 0; i < itemCount; i++) {
+            items[i] = ShopItem({
+                id: i,
+                name: _s().shopItemName[i],
+                price: _s().shopItemPrice[i],
+                ExpireTime: _s().shopItemExpireTime[i]
+            });
+        }
+        return items;
     }
 
-    function getPurchasedShopItems(uint256 nftId) public view  returns (ShopItemOwned[] memory) {
-        // Dummy implementation
-        return new ShopItemOwned[](0);
+    function getPurchasedShopItems(uint256 nftId) public view returns (ShopItemOwned[] memory) {
+        uint32[] storage ownedIds = _s().idsByOwner[msg.sender];
+        ShopItemOwned[] memory ownedItems = new ShopItemOwned[](ownedIds.length);
+        for (uint256 i = 0; i < ownedIds.length; i++) {
+            uint256 itemId = ownedIds[i];
+            ownedItems[i] = ShopItemOwned({
+                id: itemId,
+                name: _s().shopItemName[itemId],
+                EffectUntil: _s().shop_0_Fence_EffectUntil[itemId]
+            });
+        }
+        return ownedItems;
     }
 
-
-
-
-//    function createShopItem(
-//        string calldata name,
-//        uint256 price,
-//        uint256 _ExpireTime
-//    ) public /*onlyOwner*/ {
-//
-////        ShopItem storage _shopItem = shopItems[_shopItemIds];
-////        _shopItem.id = _shopItemIds;
-////        _shopItem.name = name;
-////        _shopItem.price = price;
-////        _shopItem.ExpireTime = _ExpireTime;
-////        _shopItemIds++;
-//        _s().shopItemName[]
-//        _s().totalShopItems++;
-//        emit ShopItemCreated(newItemId, name, price, _ExpireTime);
-//    }
-
-
-//    function shopItemExists(uint256 itemId) public view returns (bool) {
-//        if (bytes(shopItems[itemId].name).length > 0) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
-//
-//    /// @dev Returns the storage.
-//    function _s() internal pure returns (GameStorage.Data storage data) {
-//        data = GameStorage.data();
-//    }
-
-
-
+    /// @dev Returns the storage.
+    function _s() internal pure returns (GameStorage.Data storage data) {
+        data = GameStorage.data();
+    }
 }
+

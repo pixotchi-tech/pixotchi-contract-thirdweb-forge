@@ -26,7 +26,7 @@ interface IShop {
 //        uint256 _ExpireTime
 //    ) external;
 
-    //event ShopItemCreated(uint256 id, string name, uint256 price, uint256 ExpireTime);
+    event ShopItemCreated(uint256 id, string name, uint256 price, uint256 ExpireTime);
     //event ItemCreated(uint256 id, string name, uint256 price, uint256 points);
     //event BoughtFromShop(uint256 nftId, address giver, uint256 shopItemId);
 
@@ -44,7 +44,7 @@ interface IShop {
         uint256 EffectUntil; //in the future. per owner
     }
 
-    function getAllShopItem() external pure returns(ShopItem[] memory);
+    function getAllShopItem() external view returns(ShopItem[] memory);
 
     function getPurchasedShopItems(uint256 nftId) external view returns(ShopItemOwned[] memory);
 
