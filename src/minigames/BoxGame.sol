@@ -66,9 +66,9 @@ PixotchiExtensionPermission
         require(IGame(address(this)).isPlantAlive(nftID), "Plant is dead");
 
         // Generate random indices for points and time rewards.
-        uint256 pointsIndex = random(seed, 0, _sMini().pointRewards.length - 1);
+        uint256 pointsIndex = random(seed, 0, 5);
         points = _sMini().pointRewards[pointsIndex];
-        uint256 timeIndex = random2(seed, 0, _sMini().timeRewards.length - 1);
+        uint256 timeIndex = random2(seed, 0, 5);
         timeExtension = _sMini().timeRewards[timeIndex];
 
         // Record the current time as the last played time for this NFT.
@@ -165,23 +165,23 @@ PixotchiExtensionPermission
     }
 
     //set pointRewards
-    function boxGameSetPointRewards(uint256[] memory _pointRewards) public onlyAdminRole {
+    function boxGameSetPointRewards(uint256[5] memory _pointRewards) public onlyAdminRole {
         _sMini().pointRewards = _pointRewards;
     }
 
     //set timeRewards
-    function boxGameSetTimeRewards(uint256[] memory _timeRewards) public onlyAdminRole {
+    function boxGameSetTimeRewards(uint256[5] memory _timeRewards) public onlyAdminRole {
         _sMini().timeRewards = _timeRewards;
     }
 
     //  function to generate a pseudo-random number based on several blockchain parameters.
-    function random(uint256 seed, uint256 min, uint256 max) public view returns (uint) {
+    function random(uint256 seed, uint256 min, uint256 max) private view returns (uint) {
         uint randomHash = uint(keccak256(abi.encodePacked(blockhash(block.number-1), block.prevrandao, seed, block.number)));
         return min + (randomHash % (max - min + 1));
     }
 
     // Secondary  function for random number generation.
-    function random2(uint256 seed, uint256 min, uint256 max) public view returns (uint) {
+    function random2(uint256 seed, uint256 min, uint256 max) private view returns (uint) {
         uint randomHash = uint(keccak256(abi.encodePacked(seed, block.prevrandao, block.timestamp, msg.sender)));
         return min + (randomHash % (max - min + 1));
     }

@@ -197,10 +197,10 @@ contract SpinGame is
         // No else block needed for _points == 0 as no changes are required in that scenario
     }
 
-    // Function for the contract owner to set the global cooldown time.
-    function setGlobalCoolDownTime(uint256 _coolDownTime) public onlyAdminRole {
-        _sMini().coolDownTime = _coolDownTime;
-    }
+//    // Function for the contract owner to set the global cooldown time.
+//    function setGlobalCoolDownTime(uint256 _coolDownTime) public onlyAdminRole {
+//        _sMini().coolDownTime = _coolDownTime;
+//    }
 
 //    //set pointRewards
 //    function spinGameSetPointRewards(
@@ -217,13 +217,13 @@ contract SpinGame is
 //    }
 
     //  function to generate a pseudo-random number based on several blockchain parameters.
-    function random(uint256 seed, uint256 min, uint256 max) public view returns (uint) {
+    function random(uint256 seed, uint256 min, uint256 max) private view returns (uint) {
         uint randomHash = uint(keccak256(abi.encodePacked(blockhash(block.number-1), block.prevrandao, seed, block.number)));
         return min + (randomHash % (max - min + 1));
     }
 
     // Secondary  function for random number generation.
-    function random2(uint256 seed, uint256 min, uint256 max) public view returns (uint) {
+    function random2(uint256 seed, uint256 min, uint256 max) private view returns (uint) {
         uint randomHash = uint(keccak256(abi.encodePacked(seed, block.prevrandao, block.timestamp, msg.sender)));
         return min + (randomHash % (max - min + 1));
     }

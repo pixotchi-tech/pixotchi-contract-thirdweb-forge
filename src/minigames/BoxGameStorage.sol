@@ -19,8 +19,8 @@ library BoxGameStorage {
         uint256 coolDownTime; // Cooldown time between plays for each NFT.
         uint256 nftContractRewardDecimals; // Decimals for reward calculation.
         mapping(uint256 => uint256) lastPlayed; // Tracks last played time for each NFT.
-        uint256[] pointRewards; // Array storing point rewards.
-        uint256[] timeRewards; // Array storing time rewards.
+        uint256[5] pointRewards; // Array storing point rewards.
+        uint256[5] timeRewards; // Array storing time rewards.
     }
 
     function data() internal pure returns (Data storage data_) {
