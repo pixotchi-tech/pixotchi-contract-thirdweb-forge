@@ -1,6 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
+
+interface IArcade {
+    event Played(uint256 indexed id, uint256 points, uint256 timeExtension, string gameName);
+
+    event PlayedV2(uint256 indexed id, int256 points, int256 timeExtension, string gameName);
+}
+
+
+interface IBoxGame {
+    function boxGameGetCoolDownTimePerNFT(uint256 nftID) external view returns (uint256);
+
+    function boxGamePlay(uint256 nftID, uint256 seed) external returns (uint256 points, uint256 timeExtension);
+}
+
+interface SpinGame {
+    function spinGameGetCoolDownTimePerNFT(uint256 nftID) external view returns (uint256);
+
+    function spinGamePlay(uint256 nftID, uint256 seed) external returns (uint256 points, uint256 timeExtension);
+}
+
 interface IConfig {
 
 }
@@ -34,10 +54,9 @@ interface IShop {
         uint256 EffectUntil; //in the future. per owner
     }
 
-    function getAllShopItem() external view returns(ShopItem[] memory);
+    function getAllShopItem() external view returns (ShopItem[] memory);
 
-    function getPurchasedShopItems(uint256 nftId) external view returns(ShopItemOwned[] memory);
-
+    function getPurchasedShopItems(uint256 nftId) external view returns (ShopItemOwned[] memory);
 
 
 }
@@ -57,7 +76,7 @@ interface IGarden {
 
     event ItemCreated(uint256 id, string name, uint256 price, uint256 points);
 
-    function getAllGardenItem() external view returns(FullItem[] memory);
+    function getAllGardenItem() external view returns (FullItem[] memory);
 
     //function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
 
@@ -89,7 +108,7 @@ interface IGame {
 
     function getPlantName(uint256 id) external view returns (string memory);
 
-   function isApprovedFn(uint256 id, address wallet) external view returns (bool);
+    function isApprovedFn(uint256 id, address wallet) external view returns (bool);
 
     enum  Status {
         JOYFUL, //0
@@ -178,7 +197,6 @@ interface IGame {
     function pass(uint256 from, uint256 to) external;
 
 
-
     function isPlantAlive(uint256 _nftId) external view returns (bool);
 
     function pendingEth(uint256 plantId) external view returns (uint256);
@@ -189,11 +207,7 @@ interface IGame {
 
     function statusToString(IGame.Status status) external pure returns (string memory);
 
-    function getAllStrainInfo() external view returns(Strain[] memory);
-
-
-
-
+    function getAllStrainInfo() external view returns (Strain[] memory);
 
 //function createItem(string calldata _name, uint256 _price, uint256 _points, uint256 _timeExtension) external;
     //function editItem(uint256 _id, uint256 _price, uint256 _points, string calldata _name, uint256 _timeExtension) external;
