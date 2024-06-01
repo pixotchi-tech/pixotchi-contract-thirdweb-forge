@@ -261,6 +261,11 @@ ReentrancyGuard//,
     //////////////////////////////////////////////////////////////*/
 
 
+    function getPlantName(uint256 _id) public view returns (string memory) {
+        return _s().plantName[_id];
+    }
+
+
 function getAllStrainInfo() external view returns (IGame.Strain[] memory) {
     GameStorage.Data storage s = _s();
     uint256 strainCount = s.strainCounter; // Assuming strainCounter is used to count strains
