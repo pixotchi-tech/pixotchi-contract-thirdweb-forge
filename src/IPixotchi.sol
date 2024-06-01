@@ -87,6 +87,8 @@ interface IRenderer {
 
 interface IGame {
 
+    function getPlantName(uint256 id) external view returns (string memory);
+
    function isApprovedFn(uint256 id, address wallet) external view returns (bool);
 
     enum  Status {
