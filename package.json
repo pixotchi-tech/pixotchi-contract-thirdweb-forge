@@ -19,6 +19,6 @@
     "forge build": "forge build"
   },
   "devDependencies": {
-    "thirdweb": "5.25.1"
+    "thirdweb": "5.27.0"
   }
 }
