@@ -59,16 +59,12 @@ Initializable
     }
 
     function getPurchasedShopItems(uint256 nftId) public view returns (ShopItemOwned[] memory) {
-        uint32[] storage ownedIds = _s().idsByOwner[msg.sender];
-        ShopItemOwned[] memory ownedItems = new ShopItemOwned[](ownedIds.length);
-        for (uint256 i = 0; i < ownedIds.length; i++) {
-            uint256 itemId = ownedIds[i];
-            ownedItems[i] = ShopItemOwned({
-                id: itemId,
-                name: _s().shopItemName[itemId],
-                EffectUntil: _s().shop_0_Fence_EffectUntil[itemId]
-            });
-        }
+        ShopItemOwned[] memory ownedItems = new ShopItemOwned[](1);
+        ownedItems[0] = ShopItemOwned({
+            id: 0,
+            name: _s().shopItemName[0],
+            EffectUntil: _s().shop_0_Fence_EffectUntil[nftId]
+        });
         return ownedItems;
     }
 
