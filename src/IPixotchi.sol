@@ -15,10 +15,11 @@ interface IBoxGame {
     function boxGamePlay(uint256 nftID, uint256 seed) external returns (uint256 points, uint256 timeExtension);
 }
 
-interface SpinGame {
+interface ISpinGame {
     function spinGameGetCoolDownTimePerNFT(uint256 nftID) external view returns (uint256);
 
-    function spinGamePlay(uint256 nftID, uint256 seed) external returns (uint256 points, uint256 timeExtension);
+    function spinGamePlay(uint256 nftID, uint256 seed) external returns (int256 pointsAdjustment, int256 timeAdjustment, bool isPercentage);
+    //function spinGamePlay(uint256 nftID, uint256 seed) external returns (uint256 points, uint256 timeExtension);
 }
 
 interface IConfig {
@@ -88,16 +89,25 @@ interface IGarden {
 interface INFT {
     function mint(uint256 strain) external;
 
-    //function mintTo(uint256 strain, address to) external;
-
     function burn(uint256 id) external;
-
-    event Mint(address to, uint256 strain, uint256 id);
 
     function tokenBurnAndRedistribute(address account, uint256 amount) external;
 
     function removeTokenIdFromOwner(uint32 tokenId, address owner) external returns (bool);
 
+    function getPlantScore(uint256 plantId) external view returns (uint256);
+
+    function getPlantTimeUntilStarving(uint256 plantId) external view returns (uint256);
+
+    function tokenURI(uint256 id) external view returns (string memory);
+
+    function getPlantInfo(uint256 id) external view returns (IGame.PlantFull memory);
+
+    function getPlantsInfo(uint256[] memory _nftIds) external view returns (IGame.PlantFull[] memory);
+
+    function getPlantsByOwner(address _owner) external view returns (IGame.PlantFull[] memory);
+
+    event Mint(address to, uint256 strain, uint256 id);
 }
 
 interface IRenderer {

@@ -5,14 +5,15 @@ import "../IPixotchi.sol";
 //import "../IRenderer.sol";
 import "../IToken.sol";
 
-
 /**
  * @author  7118.eth
  */
 library BoxGameStorage {
     /// @custom:storage-location erc7201:offers.storage
-    bytes32  constant BOX_GAME_STORAGE_POSITION = keccak256(abi.encode(uint256(keccak256("eth.pixotchi.box.game.storage")) - 1)) & ~bytes32(uint256(0xff));
-
+    bytes32 constant BOX_GAME_STORAGE_POSITION =
+        keccak256(
+            abi.encode(uint256(keccak256("eth.pixotchi.box.game.storage")) - 1)
+        ) & ~bytes32(uint256(0xff));
 
     struct Data {
         uint256 coolDownTime; // Cooldown time between plays for each NFT.
@@ -20,7 +21,6 @@ library BoxGameStorage {
         mapping(uint256 => uint256) lastPlayed; // Tracks last played time for each NFT.
         uint256[] pointRewards; // Array storing point rewards.
         uint256[] timeRewards; // Array storing time rewards.
-
     }
 
     function data() internal pure returns (Data storage data_) {
@@ -29,5 +29,4 @@ library BoxGameStorage {
             data_.slot := position
         }
     }
-
 }

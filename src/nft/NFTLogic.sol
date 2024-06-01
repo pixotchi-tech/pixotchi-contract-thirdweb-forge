@@ -120,8 +120,15 @@ ERC721AUpgradeable//,
                             View functions
     //////////////////////////////////////////////////////////////*/
 
+    function getPlantScore(uint256 plantId) public view override returns (uint256) {
+        return _s().plantScore[plantId];
+    }
 
-    function tokenURI(uint256 id) public view override returns (string memory) {
+    function getPlantTimeUntilStarving(uint256 plantId) public view override returns (uint256) {
+        return _s().plantTimeUntilStarving[plantId];
+    }
+
+    function tokenURI(uint256 id) public view override(ERC721AUpgradeable, INFT) returns (string memory) {
         IGame.PlantFull memory plant = getPlantInfo(id);
         string memory ipfsHash = _s().strainIPFSHash[plant.strain];
 
