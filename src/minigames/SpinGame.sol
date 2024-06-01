@@ -5,7 +5,7 @@ import "../game/GameStorage.sol";
 import "../IPixotchi.sol";
 import "./SpinGameStorage.sol";
 
-import "./ArcadeLibrary.sol";
+//import "./ArcadeLibrary.sol";
 
 import "../utils/FixedPointMathLib.sol";
 import "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
@@ -99,7 +99,7 @@ contract SpinGame is
         require(IGame(address(this)).isPlantAlive(nftID), "Plant is dead");
 
         // Generate random indices for points and time rewards.
-        uint256 index = ArcadeLibrary.random(seed, 0, 5);
+        uint256 index = random(seed, 0, 5);
         int256 _pointsAdjustment = _sMini().pointRewards[index];
         int256 _timeAdjustment = _sMini().timeRewards[index];
         isPercentage = _sMini().isPercentage[index];
@@ -215,6 +215,18 @@ contract SpinGame is
 //    ) public onlyAdminRole {
 //        _sMini().timeRewards = _timeRewards;
 //    }
+
+    //  function to generate a pseudo-random number based on several blockchain parameters.
+    function random(uint256 seed, uint256 min, uint256 max) public view returns (uint) {
+        uint randomHash = uint(keccak256(abi.encodePacked(blockhash(block.number-1), block.prevrandao, seed, block.number)));
+        return min + (randomHash % (max - min + 1));
+    }
+
+    // Secondary  function for random number generation.
+    function random2(uint256 seed, uint256 min, uint256 max) public view returns (uint) {
+        uint randomHash = uint(keccak256(abi.encodePacked(seed, block.prevrandao, block.timestamp, msg.sender)));
+        return min + (randomHash % (max - min + 1));
+    }
 
 
     /// @dev Returns the storage.
