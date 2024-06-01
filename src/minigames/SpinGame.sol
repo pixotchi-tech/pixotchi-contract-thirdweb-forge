@@ -104,7 +104,7 @@ contract SpinGame is
         int256 _timeAdjustment = _sMini().timeRewards[index];
         isPercentage = _sMini().isPercentage[index];
 
-        if(isPercentage) {
+        if (isPercentage) {
             if (_pointsAdjustment != 0) {
                 pointsAdjustment =
                     (int256(INFT(address(this)).getPlantScore(nftID)) * _pointsAdjustment) /
@@ -116,6 +116,9 @@ contract SpinGame is
                         _timeAdjustment) /
                     100;
             }
+        } else {
+            pointsAdjustment = _pointsAdjustment;
+            timeAdjustment = _timeAdjustment;
         }
 
         // Record the current time as the last played time for this NFT.
@@ -197,24 +200,34 @@ contract SpinGame is
         // No else block needed for _points == 0 as no changes are required in that scenario
     }
 
-//    // Function for the contract owner to set the global cooldown time.
-//    function setGlobalCoolDownTime(uint256 _coolDownTime) public onlyAdminRole {
-//        _sMini().coolDownTime = _coolDownTime;
-//    }
+    // Function for the contract owner to set the global cooldown time.
+    function spinGameSetCoolDownTime(uint256 _coolDownTime) public onlyAdminRole {
+        _sMini().coolDownTime = _coolDownTime;
+    }
 
-//    //set pointRewards
-//    function spinGameSetPointRewards(
-//        uint256[] memory _pointRewards
-//    ) public onlyAdminRole {
-//        _sMini().pointRewards = _pointRewards;
-//    }
-//
-//    //set timeRewards
-//    function spinGameSetTimeRewards(
-//        uint256[] memory _timeRewards
-//    ) public onlyAdminRole {
-//        _sMini().timeRewards = _timeRewards;
-//    }
+    // Function to set point rewards.
+    function spinGameSetPointRewards(uint256[] memory _pointRewards) public onlyAdminRole {
+        require(_pointRewards.length == 6, "Invalid length for point rewards");
+        for (uint256 i = 0; i < 6; i++) {
+            _sMini().pointRewards[i] = int256(_pointRewards[i]);
+        }
+    }
+
+    // Function to set time rewards.
+    function spinGameSetTimeRewards(int256[] memory _timeRewards) public onlyAdminRole {
+        require(_timeRewards.length == 6, "Invalid length for time rewards");
+        for (uint256 i = 0; i < 6; i++) {
+            _sMini().timeRewards[i] = _timeRewards[i];
+        }
+    }
+
+    // Function to set isPercentage mapping.
+    function spinGameSetIsPercentage(bool[] memory _isPercentage) public onlyAdminRole {
+        require(_isPercentage.length == 6, "Invalid length for isPercentage");
+        for (uint256 i = 0; i < 6; i++) {
+            _sMini().isPercentage[i] = _isPercentage[i];
+        }
+    }
 
     //  function to generate a pseudo-random number based on several blockchain parameters.
     function random(uint256 seed, uint256 min, uint256 max) private view returns (uint) {
