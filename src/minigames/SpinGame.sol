@@ -32,7 +32,7 @@ contract SpinGame is
     using SafeMathUpgradeable for uint256;
 
     // Function to initialize the contract. Only callable once.
-    function SpinGameInitialize() public reinitializer(9) {
+    function SpinGameInitialize() public reinitializer(7) {
         _sMini().coolDownTime = 24 hours; // Default cooldown time.
         _sMini().nftContractRewardDecimals = 1e12; // Set the reward decimals.
 
