@@ -160,7 +160,7 @@ PixotchiExtensionPermission
 
 
     // Function for the contract owner to set the global cooldown time.
-    function setGlobalCoolDownTime(uint256 _coolDownTime) public onlyAdminRole {
+    function boxGameSetGlobalCoolDownTime(uint256 _coolDownTime) public onlyAdminRole {
         _sMini().coolDownTime = _coolDownTime;
     }
 

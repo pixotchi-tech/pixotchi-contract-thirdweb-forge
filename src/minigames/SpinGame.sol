@@ -91,7 +91,6 @@ contract SpinGame is
             (IERC721A(address(this)).ownerOf(nftID) == msg.sender),
             "Not the owner of nft"
         );
-        //require(seed > 0 && seed < 10, "Seed should be between 1-9");
         require(
             spinGameGetCoolDownTimePerNFT(nftID) == 0,
             "Cool down time has not passed yet"
@@ -100,25 +99,24 @@ contract SpinGame is
 
         // Generate random indices for points and time rewards.
         uint256 index = random(seed, 0, 5);
-        int256 _pointsAdjustment = _sMini().pointRewards[index];
-        int256 _timeAdjustment = _sMini().timeRewards[index];
         isPercentage = _sMini().isPercentage[index];
 
         if (isPercentage) {
-            if (_pointsAdjustment != 0) {
+            if (_sMini().pointRewards[index] != 0) {
                 pointsAdjustment =
-                    (int256(INFT(address(this)).getPlantScore(nftID)) * _pointsAdjustment) /
+                    (int256(INFT(address(this)).getPlantScore(nftID)) * _sMini().pointRewards[index]) /
                     100;
             }
-            if (_timeAdjustment != 0) {
+            if (_sMini().timeRewards[index] != 0) {
+                uint256 plantTimeUntilStarving = INFT(address(this)).getPlantTimeUntilStarving(nftID);
+                uint256 remainingLifetime = plantTimeUntilStarving > block.timestamp ? plantTimeUntilStarving - block.timestamp : 0;
                 timeAdjustment =
-                    (int256(INFT(address(this)).getPlantTimeUntilStarving(nftID)) *
-                        _timeAdjustment) /
+                    (int256(remainingLifetime) * _sMini().timeRewards[index]) /
                     100;
             }
         } else {
-            pointsAdjustment = _pointsAdjustment;
-            timeAdjustment = _timeAdjustment;
+            pointsAdjustment = _sMini().pointRewards[index];
+            timeAdjustment = _sMini().timeRewards[index];
         }
 
         // Record the current time as the last played time for this NFT.
