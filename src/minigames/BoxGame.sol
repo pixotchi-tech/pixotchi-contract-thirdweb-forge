@@ -66,9 +66,9 @@ PixotchiExtensionPermission
         require(IGame(address(this)).isPlantAlive(nftID), "Plant is dead");
 
         // Generate random indices for points and time rewards.
-        uint256 pointsIndex = random(seed, 0, 5);
+        uint256 pointsIndex = random(seed, 0, 4);
         points = _sMini().pointRewards[pointsIndex];
-        uint256 timeIndex = random2(seed, 0, 5);
+        uint256 timeIndex = random2(seed, 0, 4);
         timeExtension = _sMini().timeRewards[timeIndex];
 
         // Record the current time as the last played time for this NFT.
