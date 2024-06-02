@@ -31,7 +31,7 @@ PixotchiExtensionPermission
 
 
     // Function to initialize the contract. Only callable once.
-    function boxGameInitialize() public reinitializer(6) {
+    function boxGameInitialize() public reinitializer(10) {
         _sMini().coolDownTime = 24 hours; // Default cooldown time.
         _sMini().nftContractRewardDecimals = 1e12; // Set the reward decimals.
         _sMini().pointRewards = [0, 75 * 1e12, 150 * 1e12, 200 * 1e12, 300 * 1e12]; // Initialize point rewards.
@@ -61,7 +61,7 @@ PixotchiExtensionPermission
     function boxGamePlay(uint256 nftID, uint256 seed) external override returns (uint256 points, uint256 timeExtension) {
         // Ensure the caller is the owner of the NFT and meets other requirements.
         require((IERC721A(address(this)).ownerOf(nftID) == msg.sender), "Not the owner of nft");
-        require(seed > 0 && seed < 10, "Seed should be between 1-9");
+        //require(seed > 0 && seed < 10, "Seed should be between 1-9");
         require(boxGameGetCoolDownTimePerNFT(nftID) == 0, "Cool down time has not passed yet");
         require(IGame(address(this)).isPlantAlive(nftID), "Plant is dead");
 

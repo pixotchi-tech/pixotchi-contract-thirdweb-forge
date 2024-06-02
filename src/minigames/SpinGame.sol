@@ -32,7 +32,7 @@ contract SpinGame is
     using SafeMathUpgradeable for uint256;
 
     // Function to initialize the contract. Only callable once.
-    function SpinGameInitialize() public reinitializer(8) {
+    function SpinGameInitialize() public reinitializer(9) {
         _sMini().coolDownTime = 24 hours; // Default cooldown time.
         _sMini().nftContractRewardDecimals = 1e12; // Set the reward decimals.
 
@@ -46,9 +46,9 @@ contract SpinGame is
 
         // Initialize time rewards
         _sMini().timeRewards[0] = 6 hours;
-        _sMini().timeRewards[1] = 10 hours;
+        _sMini().timeRewards[1] = 10;
         _sMini().timeRewards[2] = 0;
-        _sMini().timeRewards[3] = -5 hours;
+        _sMini().timeRewards[3] = -5;
         _sMini().timeRewards[4] = 0;
         _sMini().timeRewards[5] = 0;
 
@@ -91,7 +91,7 @@ contract SpinGame is
             (IERC721A(address(this)).ownerOf(nftID) == msg.sender),
             "Not the owner of nft"
         );
-        require(seed > 0 && seed < 10, "Seed should be between 1-9");
+        //require(seed > 0 && seed < 10, "Seed should be between 1-9");
         require(
             spinGameGetCoolDownTimePerNFT(nftID) == 0,
             "Cool down time has not passed yet"
