@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "forge:build",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "npm run forge:build"
+        }
+    ]
+}
