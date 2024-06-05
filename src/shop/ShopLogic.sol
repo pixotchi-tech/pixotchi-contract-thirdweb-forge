@@ -89,6 +89,18 @@ PixotchiExtensionPermission
         return ownedItems;
     }
 
+    /// @notice Checks if the effect of a shop item is still ongoing for an NFT.
+    /// @param nftId The ID of the NFT.
+    /// @param itemId The ID of the item.
+    /// @return bool True if the effect is still ongoing, false otherwise.
+    function _shopIsEffectOngoing(uint256 nftId, uint256 itemId) internal view returns (bool) {
+        if (itemId == 0) {
+            return block.timestamp <= _sS().shop_0_Fence_EffectUntil[nftId];
+        }
+        // Add more conditions here for different itemIds
+        return false;
+    }
+
     /// @notice Buys a shop item.
     /// @param nftId The ID of the NFT.
     /// @param itemId The ID of the item to buy.
@@ -111,7 +123,7 @@ PixotchiExtensionPermission
         }
 
         // Prevent repurchase if the effect is still ongoing
-        //require(block.timestamp > _sS().shopItemEffectUntil[nftId][itemId], "Effect still ongoing");
+        require(!_shopIsEffectOngoing(nftId, itemId), "Effect still ongoing");
 
         // Update the total consumed count
         _sS().shopItemTotalConsumed[itemId]++;
@@ -145,4 +157,3 @@ PixotchiExtensionPermission
         data = ShopStorage.data();
     }
 }
-
