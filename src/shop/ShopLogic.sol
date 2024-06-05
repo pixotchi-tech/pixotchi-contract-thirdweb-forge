@@ -1,59 +1,72 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-// ====== Internal imports ======
+// Internal imports
 import "../game/GameStorage.sol";
 import "../IPixotchi.sol";
 import "../nft/NFTLogicDelegations.sol";
-
-// ====== External imports ======
-import "../utils/FixedPointMathLib.sol";
-import "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
-import "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
-import "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
-//import "../../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
-import "../../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
-import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
-import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
 import "../utils/PixotchiExtensionPermission.sol";
 import "./ShopStorage.sol";
 
+// External imports
+//import * as FixedPointMathLib from "../utils/FixedPointMathLib.sol";
+import { PermissionsEnumerable } from "../../lib/contracts/contracts/extension/upgradeable/PermissionsEnumerable.sol";
+import { ReentrancyGuard } from "../../lib/contracts/contracts/extension/upgradeable/ReentrancyGuard.sol";
+import { Initializable } from "../../lib/contracts/contracts/extension/upgradeable/Initializable.sol";
+import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
+import * as IERC721A from "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
+
+/// @title ShopLogic Contract
+/// @notice This contract handles the logic for the shop in the game.
+/// @dev Implements the IShop interface and uses various imported libraries and contracts.
 contract ShopLogic is
 IShop,
 ReentrancyGuard,
 Initializable,
 PixotchiExtensionPermission
 {
+    /// @notice Emitted when a shop item is purchased.
+    /// @param nftId The ID of the NFT.
+    /// @param buyer The address of the buyer.
+    /// @param itemId The ID of the purchased item.
     event ShopItemPurchased(uint256 indexed nftId, address indexed buyer, uint256 indexed itemId);
 
+    /// @notice Reinitializes the ShopLogic contract.
+    /// @dev This function is called to reinitialize the contract with new settings.
     function reinitializer_8_ShopLogic() public reinitializer(8) {
-        
-    }
-
-    function initializeFirstShopItem() public initializer {
         _createShopItem("Fence", 50 * 10**18, 2 days, 0); // Assuming 0 for unlimited supply
     }
 
+    /// @notice Creates a new shop item.
+    /// @param name The name of the item.
+    /// @param price The price of the item.
+    /// @param expireTime The expiration time of the item.
+    /// @param maxSupply The maximum supply of the item (0 for unlimited).
     function _createShopItem(
         string memory name,
         uint256 price,
-        uint256 _ExpireTime,
-        uint256 _MaxSupply
+        uint256 expireTime,
+        uint256 maxSupply
     ) private {
         uint256 newItemId = _sS().shopItemCounter++;
         _sS().shopItemName[newItemId] = name;
         _sS().shopItemPrice[newItemId] = price;
-        _sS().shopItemExpireTime[newItemId] = _ExpireTime;
+        _sS().shopItemExpireTime[newItemId] = expireTime;
         _sS().shopItemIsActive[newItemId] = true;
         _sS().shopItemTotalConsumed[newItemId] = 0;
-        _sS().shopItemMaxSupply[newItemId] = _MaxSupply; // 0 = Unlimited supply
-        emit ShopItemCreated(newItemId, name, price, _ExpireTime);
+        _sS().shopItemMaxSupply[newItemId] = maxSupply; // 0 = Unlimited supply
+        emit ShopItemCreated(newItemId, name, price, expireTime);
     }
 
+    /// @notice Checks if a shop item exists.
+    /// @param itemId The ID of the item.
+    /// @return bool True if the item exists, false otherwise.
     function shopItemExists(uint256 itemId) public view returns (bool) {
         return bytes(_sS().shopItemName[itemId]).length > 0;
     }
 
+    /// @notice Gets all shop items.
+    /// @return ShopItem[] An array of all shop items.
     function getAllShopItem() public view returns (ShopItem[] memory) {
         uint256 itemCount = _sS().shopItemCounter;
         ShopItem[] memory items = new ShopItem[](itemCount);
@@ -68,6 +81,9 @@ PixotchiExtensionPermission
         return items;
     }
 
+    /// @notice Gets the purchased shop items for a specific NFT.
+    /// @param nftId The ID of the NFT.
+    /// @return ShopItemOwned[] An array of owned shop items.
     function getPurchasedShopItems(uint256 nftId) public view returns (ShopItemOwned[] memory) {
         ShopItemOwned[] memory ownedItems = new ShopItemOwned[](1);
         ownedItems[0] = ShopItemOwned({
@@ -78,10 +94,13 @@ PixotchiExtensionPermission
         return ownedItems;
     }
 
+    /// @notice Buys a shop item.
+    /// @param nftId The ID of the NFT.
+    /// @param itemId The ID of the item to buy.
     function buyShopItem(uint256 nftId, uint256 itemId) external nonReentrant {
         require(shopItemExists(itemId), "This item doesn't exist");
         require(IGame(address(this)).isPlantAlive(nftId), "Plant is dead");
-        require(IERC721A(address(this)).ownerOf(nftId) == msg.sender, "Not the owner");
+        require(IERC721A.IERC721A(address(this)).ownerOf(nftId) == msg.sender, "Not the owner");
 
         uint256 amount = _sS().shopItemPrice[itemId];
 
@@ -110,9 +129,13 @@ PixotchiExtensionPermission
         emit ShopItemPurchased(nftId, msg.sender, itemId);
     }
 
+    /// @notice Applies the effect of a shop item to an NFT.
+    /// @param nftId The ID of the NFT.
+    /// @param itemId The ID of the item.
     function _applyItemEffect(uint256 nftId, uint256 itemId) internal {
-        // Implement the logic to apply the item's effect to the NFT
-        // This is a placeholder function and should be customized based on your requirements
+        if (itemId == 0) {
+            _sS().shop_0_Fence_EffectUntil[nftId] = block.timestamp + _sS().shopItemExpireTime[itemId];
+        }
     }
 
     /// @dev Returns the storage.
