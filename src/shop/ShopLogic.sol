@@ -117,11 +117,7 @@ PixotchiExtensionPermission
         _sS().shopItemTotalConsumed[itemId]++;
 
         // Handle the payment using delegatecall
-        NFTLogicDelegations._delegateTokenBurnAndRedistribute(address(this), msg.sender, amount);
-
-        // Example usage of delegateWithReturnValue
-        // bytes memory result = NFTLogicDelegations.delegateWithReturnValue(address(this), msg.sender, amount);
-        // Process the result if needed
+        NFTLogicDelegations._tokenBurnAndRedistribute(address(this), msg.sender, amount);
 
         // Apply the item's effect (this part is hypothetical and should be adjusted based on your actual logic)
         _applyItemEffect(nftId, itemId);

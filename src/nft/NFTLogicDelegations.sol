@@ -8,7 +8,7 @@ library NFTLogicDelegations {
      * @param account The address of the account.
      * @param amount The amount to be burned and redistributed.
      */
-    function _delegateTokenBurnAndRedistribute(address target, address account, uint256 amount) internal {
+    function _tokenBurnAndRedistribute(address target, address account, uint256 amount) internal {
         (bool success, ) = target.delegatecall(
             abi.encodeWithSignature("_tokenBurnAndRedistribute(address,uint256)", account, amount)
         );
