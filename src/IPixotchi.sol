@@ -71,6 +71,12 @@ interface IShop {
     /// @param itemId The ID of the item.
     /// @return bool True if the item exists, false otherwise.
     function shopDoesItemExist(uint256 itemId) external view returns (bool);
+
+    /// @notice Checks if the effect of a shop item is still ongoing for an NFT.
+    /// @param nftId The ID of the NFT.
+    /// @param itemId The ID of the item.
+    /// @return bool True if the effect is still ongoing, false otherwise.
+    function shopIsEffectOngoing(uint256 nftId, uint256 itemId) external view returns (bool);
 }
 
 interface IGarden {

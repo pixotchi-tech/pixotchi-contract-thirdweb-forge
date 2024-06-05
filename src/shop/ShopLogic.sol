@@ -93,7 +93,7 @@ PixotchiExtensionPermission
     /// @param nftId The ID of the NFT.
     /// @param itemId The ID of the item.
     /// @return bool True if the effect is still ongoing, false otherwise.
-    function _shopIsEffectOngoing(uint256 nftId, uint256 itemId) internal view returns (bool) {
+    function shopIsEffectOngoing(uint256 nftId, uint256 itemId) public view returns (bool) {
         if (itemId == 0) {
             return block.timestamp <= _sS().shop_0_Fence_EffectUntil[nftId];
         }
@@ -123,13 +123,12 @@ PixotchiExtensionPermission
         }
 
         // Prevent repurchase if the effect is still ongoing
-        require(!_shopIsEffectOngoing(nftId, itemId), "Effect still ongoing");
+        require(!shopIsEffectOngoing(nftId, itemId), "Effect still ongoing");
 
-        // Update the total consumed count
-        _sS().shopItemTotalConsumed[itemId]++;
-
-        // Handle the payment using delegatecall
         NFTLogicDelegations._tokenBurnAndRedistribute(address(this), msg.sender, amount);
+
+        // Increment the total consumed count for the item
+        _sS().shopItemTotalConsumed[itemId]++;
 
         // Apply the item's effect
         _shopApplyItemEffect(nftId, itemId);
