@@ -101,12 +101,17 @@ PixotchiExtensionPermission
 
         // Check if the item is still active and not expired
         require(_sS().shopItemIsActive[itemId], "Item is not active");
-        require(block.timestamp <= _sS().shopItemExpireTime[itemId], "Item has expired");
+        if (_sS().shopItemExpireTime[itemId] != 0) {
+            require(block.timestamp <= _sS().shopItemExpireTime[itemId], "Item has expired");
+        }
 
         // Check if the item has limited supply and if it's still available
         if (_sS().shopItemMaxSupply[itemId] > 0) {
             require(_sS().shopItemTotalConsumed[itemId] < _sS().shopItemMaxSupply[itemId], "Item is out of stock");
         }
+
+        // Prevent repurchase if the effect is still ongoing
+        //require(block.timestamp > _sS().shopItemEffectUntil[nftId][itemId], "Effect still ongoing");
 
         // Update the total consumed count
         _sS().shopItemTotalConsumed[itemId]++;
@@ -114,7 +119,7 @@ PixotchiExtensionPermission
         // Handle the payment using delegatecall
         NFTLogicDelegations._tokenBurnAndRedistribute(address(this), msg.sender, amount);
 
-        // Apply the item's effect (this part is hypothetical and should be adjusted based on your actual logic)
+        // Apply the item's effect
         _shopApplyItemEffect(nftId, itemId);
 
         emit ShopItemPurchased(nftId, msg.sender, itemId);
@@ -125,8 +130,9 @@ PixotchiExtensionPermission
     /// @param itemId The ID of the item.
     function _shopApplyItemEffect(uint256 nftId, uint256 itemId) internal {
         if (itemId == 0) {
-            _sS().shop_0_Fence_EffectUntil[nftId] = block.timestamp + _sS().shopItemExpireTime[itemId];
+            _sS().shop_0_Fence_EffectUntil[nftId] = block.timestamp + _sS().shopItemEffectTime[itemId];
         }
+        // Add more conditions here for different itemIds
     }
 
     /// @dev Returns the storage.
@@ -139,3 +145,4 @@ PixotchiExtensionPermission
         data = ShopStorage.data();
     }
 }
+
