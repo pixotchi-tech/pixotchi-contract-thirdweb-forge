@@ -181,81 +181,6 @@ ReentrancyGuard//,
         _redeem(id, ownerOfId);
     }
 
-//    function updatePointsAndRewards(uint256 _nftId, uint256 _points, uint256 _timeExtension) external {
-//        require(_s().IsAuthorized[msg.sender], "Not Authorized");
-//
-//        if (_timeExtension != 0)
-//            _s().plantTimeUntilStarving[_nftId] += _timeExtension;
-//
-//        if (_s().plantScore[_nftId] > 0) {
-//            _s().ethOwed[_nftId] = pendingEth(_nftId);
-//        }
-//
-//        _s().plantScore[_nftId] += _points;
-//
-//        _s().plantRewardDebt[_nftId] = _s().plantScore[_nftId].mulDivDown(
-//            _s().ethAccPerShare,
-//            _s().PRECISION
-//        );
-//
-//        _s().totalScores += _points;
-//
-//        emit Played(_nftId, _points, _timeExtension);
-//    }
-
-//    function updatePointsAndRewardsV2(uint256 _nftId, int256 _points, int256 _timeExtension) external {
-//        require(_s().IsAuthorized[msg.sender], "Not Authorized");
-//
-//        // Handling time extension adjustments
-//        if (_timeExtension != 0) {
-//            if (_timeExtension > 0 || uint256(- _timeExtension) <= _s().plantTimeUntilStarving[_nftId]) {
-//                // Safe to adjust time, whether adding or subtracting
-//                _s().plantTimeUntilStarving[_nftId] = uint256(int256(_s().plantTimeUntilStarving[_nftId]) + _timeExtension);
-//            } else {
-//                // Prevent underflow if trying to subtract more than the current value
-//                _s().plantTimeUntilStarving[_nftId] = 0;
-//            }
-//        }
-//
-//        // Handling point adjustments
-//        if (_points != 0) {
-//            if (_points > 0 || uint256(- _points) <= _s().plantScore[_nftId]) {
-//                // Safe to adjust points, whether adding or subtracting
-//                _s().plantScore[_nftId] = uint256(int256(_s().plantScore[_nftId]) + _points);
-//            } else {
-//                // Prevent underflow if trying to subtract more than the current score
-//                _s().plantScore[_nftId] = 0;
-//            }
-//
-//            // Adjust pending ETH, only if plantScore is positive
-//            if (_s().plantScore[_nftId] > 0) {
-//                _s().ethOwed[_nftId] = pendingEth(_nftId);
-//            }
-//
-//            // Recalculate reward debt, assuming plantScore did not underflow
-//            _s().plantRewardDebt[_nftId] = _s().plantScore[_nftId].mulDivDown(_s().ethAccPerShare, _s().PRECISION);
-//        }
-//
-//        // Adjust total scores accordingly, checking for underflow and overflow
-//        if (_points > 0) {
-//            _s().totalScores += uint256(_points);
-//        } else if (_points < 0) { // Check if points are negative to avoid unnecessary operations when _points are 0
-//            uint256 absPoints = uint256(- _points);
-//            if (absPoints > 0) { // Proceed only if absPoints is greater than 0
-//                if (absPoints <= _s().totalScores) {
-//                    _s().totalScores -= absPoints;
-//                } else {
-//                    // Handle the case where totalScores cannot absorb the subtraction, e.g., set to 0 or revert
-//                    _s().totalScores = 0; // or revert with an error message
-//                }
-//            }
-//            // If absPoints is 0, no changes are made to totalScores
-//        }
-//        // No else block needed for _points == 0 as no changes are required in that scenario
-//
-//        emit PlayedV2(_nftId, _points, _timeExtension);
-//    }
-
     /*///////////////////////////////////////////////////////////////
                             View functions
     //////////////////////////////////////////////////////////////*/
@@ -400,6 +325,12 @@ function getStatus(uint256 plant) public view returns (Status) {
         require(
             level(fromId) < level(toId),
             "Only attack plants above your level"
+        );
+
+        // Check if the Fence item is active for the target plant
+        require(
+            !IShop(address(this)).shopIsEffectOngoing(toId, 0),
+            "Target plant is protected by a Fence"
         );
 
         pct = 5; // Set the percentage to 0.5%
