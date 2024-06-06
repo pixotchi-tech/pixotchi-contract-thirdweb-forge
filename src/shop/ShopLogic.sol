@@ -28,7 +28,7 @@ PixotchiExtensionPermission
 
     /// @notice Reinitializes the ShopLogic contract.
     /// @dev This function is called to reinitialize the contract with new settings.
-    function reinitializer_8_ShopLogic() public reinitializer(8) {
+    function reinitializer_8_ShopLogic() public reinitializer(9) {
         _shopCreateItem("Fence", 50 * 10**18, 2 days, 0); // Assuming 0 for unlimited supply
     }
 
