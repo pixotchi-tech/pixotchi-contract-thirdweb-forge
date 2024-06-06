@@ -4,7 +4,7 @@ pragma solidity ^0.8.23;
 // Internal imports
 import "../game/GameStorage.sol";
 import "../IPixotchi.sol";
-import "../nft/NFTLogicDelegations.sol";
+//import "../nft/NFTLogicDelegations.sol";
 import "../utils/PixotchiExtensionPermission.sol";
 import "./ShopStorage.sol";
 
@@ -28,29 +28,32 @@ PixotchiExtensionPermission
 
     /// @notice Reinitializes the ShopLogic contract.
     /// @dev This function is called to reinitialize the contract with new settings.
-    function reinitializer_8_ShopLogic() public reinitializer(9) {
-        _shopCreateItem("Fence", 50 * 10**18, 2 days, 0); // Assuming 0 for unlimited supply
+    function reinitializer_8_ShopLogic() public reinitializer(11) {
+        _shopModifyItem(0, "Fence", 50 * 10**18, 0, 0); // Assuming 0 for unlimited supply
+        _sS().shop_0_Fence_EffectUntil[0] = block.timestamp + 2 days;
+        _sS().shopItemCounter = 1;
     }
 
-    /// @notice Creates a new shop item.
+    /// @notice Modifies an existing shop item.
+    /// @param itemId The ID of the item.
     /// @param name The name of the item.
     /// @param price The price of the item.
     /// @param expireTime The expiration time of the item.
     /// @param maxSupply The maximum supply of the item (0 for unlimited).
-    function _shopCreateItem(
+    function _shopModifyItem(
+        uint256 itemId,
         string memory name,
         uint256 price,
         uint256 expireTime,
         uint256 maxSupply
     ) private {
-        uint256 newItemId = _sS().shopItemCounter++;
-        _sS().shopItemName[newItemId] = name;
-        _sS().shopItemPrice[newItemId] = price;
-        _sS().shopItemExpireTime[newItemId] = expireTime;
-        _sS().shopItemIsActive[newItemId] = true;
-        _sS().shopItemTotalConsumed[newItemId] = 0;
-        _sS().shopItemMaxSupply[newItemId] = maxSupply; // 0 = Unlimited supply
-        emit ShopItemCreated(newItemId, name, price, expireTime);
+        _sS().shopItemName[itemId] = name;
+        _sS().shopItemPrice[itemId] = price;
+        _sS().shopItemExpireTime[itemId] = expireTime;
+        _sS().shopItemIsActive[itemId] = true;
+        _sS().shopItemTotalConsumed[itemId] = 0;
+        _sS().shopItemMaxSupply[itemId] = maxSupply; // 0 = Unlimited supply
+        emit ShopItemCreated(itemId, name, price, expireTime);
     }
 
     /// @notice Checks if a shop item exists.
@@ -125,7 +128,8 @@ PixotchiExtensionPermission
         // Prevent repurchase if the effect is still ongoing
         require(!shopIsEffectOngoing(nftId, itemId), "Effect still ongoing");
 
-        NFTLogicDelegations._tokenBurnAndRedistribute(address(this), msg.sender, amount);
+        //NFTLogicDelegations._tokenBurnAndRedistribute(address(this), msg.sender, amount);
+        _tokenBurnAndRedistribute(msg.sender, amount);
 
         // Increment the total consumed count for the item
         _sS().shopItemTotalConsumed[itemId]++;
@@ -134,6 +138,29 @@ PixotchiExtensionPermission
         _shopApplyItemEffect(nftId, itemId);
 
         emit ShopItemPurchased(nftId, msg.sender, itemId);
+    }
+
+
+    /// @notice Burns a portion of the tokens and redistributes the rest.
+    /// @param account The address from which tokens will be burned and redistributed.
+    /// @param amount The total amount of tokens to be processed.
+    function _tokenBurnAndRedistribute(address account, uint256 amount) internal {
+        uint256 _burnPercentage = _sG().burnPercentage;
+
+        // Calculate the burn amount based on the provided amount
+        uint256 _burnAmount = (amount * _burnPercentage) / 100;
+        // Calculate the amount for revShareWallet
+        uint256 _revShareAmount = amount - _burnAmount;
+
+        // Burn the calculated amount of tokens
+        if (_burnAmount > 0) {
+            _sG().token.transferFrom(account, address(0), _burnAmount);
+        }
+
+        // Transfer the calculated share of tokens to the revShareWallet
+        if (_revShareAmount > 0) {
+            _sG().token.transferFrom(account, _sG().revShareWallet, _revShareAmount);
+        }
     }
 
     /// @notice Applies the effect of a shop item to an NFT.
@@ -156,3 +183,4 @@ PixotchiExtensionPermission
         data = ShopStorage.data();
     }
 }
+
