@@ -29,13 +29,13 @@ PixotchiExtensionPermission
     /// @notice Reinitializes the ShopLogic contract.
     /// @dev This function is called to reinitialize the contract with new settings.
     function reinitializer_8_ShopLogic() public reinitializer(8) {
-        shopCreateFence();
+        _shopCreateFence();
         _sS().shopItemCounter = 1;
     }
 
     /// @notice Creates a Fence item in the shop.
     /// @dev This function sets up the initial parameters for the Fence item.
-    function shopCreateFence() public {
+    function _shopCreateFence() private {
         uint256 itemId = 0;
         string memory itemName = "Fence";
         uint256 itemPrice = 50 * 10**18;
@@ -44,6 +44,17 @@ PixotchiExtensionPermission
         uint256 itemEffectTime = 2 days;
 
         _shopModifyItem(itemId, itemName, itemPrice, itemExpireTime, itemMaxSupply, itemEffectTime);
+    }
+
+    /// @notice Modifies an existing shop item.
+    /// @param itemId The ID of the item.
+    /// @param name The name of the item.
+    /// @param price The price of the item.
+    /// @param expireTime The expiration time of the item.
+    /// @param maxSupply The maximum supply of the item (0 for unlimited).
+    /// @param effectTime The effect time of the item.
+    function shopModifyItem(uint256 itemId, string memory name, uint256 price, uint256 expireTime, uint256 maxSupply, uint256 effectTime) external onlyAdminRole {
+        _shopModifyItem(itemId, name, price, expireTime, maxSupply, effectTime);
     }
 
     /// @notice Modifies an existing shop item.
