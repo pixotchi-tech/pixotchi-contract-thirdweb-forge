@@ -26,6 +26,8 @@ interface IConfig {
 
 }
 
+
+
 interface IShop {
     /// @notice Emitted when a shop item is created.
     /// @param id The ID of the shop item.
@@ -51,6 +53,7 @@ interface IShop {
         uint256 id;
         string name;
         uint256 effectUntil; // in the future, per owner
+        bool effectIsOngoingActive;
     }
 
     /// @notice Gets all shop items.
@@ -124,11 +127,23 @@ interface INFT {
 
     function getPlantsByOwner(address _owner) external view returns (IGame.PlantFull[] memory);
 
+    function getPlantInfoExtended(uint256 id) external view returns (IGame.PlantFull memory);
+
+    function getPlantsInfoExtended(uint256[] memory _nftIds) external view returns (IGame.PlantFull[] memory);
+
+    function getPlantsByOwnerExtended(address _owner) external view returns (IGame.PlantFull[] memory);
+
     event Mint(address to, uint256 strain, uint256 id);
 }
 
 interface IRenderer {
     function prepareTokenURI(IGame.PlantFull calldata plant, string calldata ipfsHash/*, string calldata status, uint256 level*/) external pure returns (string memory);
+}
+
+interface IGameExtensions {
+    struct PlantExtensions {
+        IShop.ShopItemOwned[] shopItemOwned;
+    }
 }
 
 interface IGame {
@@ -185,6 +200,7 @@ interface IGame {
         uint256 level;
         address owner;
         uint256 rewards;
+        IGameExtensions.PlantExtensions[] extensions;
     }
 
 

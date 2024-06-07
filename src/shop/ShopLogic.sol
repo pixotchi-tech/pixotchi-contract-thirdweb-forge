@@ -28,10 +28,22 @@ PixotchiExtensionPermission
 
     /// @notice Reinitializes the ShopLogic contract.
     /// @dev This function is called to reinitialize the contract with new settings.
-    function reinitializer_8_ShopLogic() public reinitializer(11) {
-        _shopModifyItem(0, "Fence", 50 * 10**18, 0, 0); // Assuming 0 for unlimited supply
-        _sS().shop_0_Fence_EffectUntil[0] = block.timestamp + 2 days;
+    function reinitializer_8_ShopLogic() public reinitializer(12) {
+        shopCreateFence();
         _sS().shopItemCounter = 1;
+    }
+
+    /// @notice Creates a Fence item in the shop.
+    /// @dev This function sets up the initial parameters for the Fence item.
+    function shopCreateFence() public {
+        uint256 itemId = 0;
+        string memory itemName = "Fence";
+        uint256 itemPrice = 50 * 10**18;
+        uint256 itemExpireTime = 0; // 0 for no expiration
+        uint256 itemMaxSupply = 0; // 0 for unlimited supply
+        uint256 itemEffectTime = 2 days;
+
+        _shopModifyItem(itemId, itemName, itemPrice, itemExpireTime, itemMaxSupply, itemEffectTime);
     }
 
     /// @notice Modifies an existing shop item.
@@ -40,12 +52,14 @@ PixotchiExtensionPermission
     /// @param price The price of the item.
     /// @param expireTime The expiration time of the item.
     /// @param maxSupply The maximum supply of the item (0 for unlimited).
+    /// @param effectTime The effect time of the item.
     function _shopModifyItem(
         uint256 itemId,
         string memory name,
         uint256 price,
         uint256 expireTime,
-        uint256 maxSupply
+        uint256 maxSupply,
+        uint256 effectTime
     ) private {
         _sS().shopItemName[itemId] = name;
         _sS().shopItemPrice[itemId] = price;
@@ -53,6 +67,8 @@ PixotchiExtensionPermission
         _sS().shopItemIsActive[itemId] = true;
         _sS().shopItemTotalConsumed[itemId] = 0;
         _sS().shopItemMaxSupply[itemId] = maxSupply; // 0 = Unlimited supply
+        _sS().shopItemEffectTime[itemId] = effectTime;
+        
         emit ShopItemCreated(itemId, name, price, expireTime);
     }
 
@@ -80,14 +96,21 @@ PixotchiExtensionPermission
     }
 
     /// @notice Gets the purchased shop items for a specific NFT.
-    /// @param nftId The ID of the NFT.
-    /// @return ShopItemOwned[] An array of owned shop items.
+    /// @dev This function retrieves all the shop items that have been purchased by a specific NFT.
+    /// It returns an array of `ShopItemOwned` structs, each containing details about the item.
+    /// @param nftId The ID of the NFT for which to retrieve purchased items.
+    /// @return ShopItemOwned[] An array of owned shop items, each containing:
+    /// - `id`: The ID of the item.
+    /// - `name`: The name of the item.
+    /// - `effectUntil`: The timestamp until which the item's effect is active.
+    /// - `effectIsOngoingActive`: A boolean indicating if the item's effect is still ongoing.
     function shopGetPurchasedItems(uint256 nftId) public view returns (ShopItemOwned[] memory) {
         ShopItemOwned[] memory ownedItems = new ShopItemOwned[](1);
         ownedItems[0] = ShopItemOwned({
             id: 0,
             name: _sS().shopItemName[0],
-            effectUntil: _sS().shop_0_Fence_EffectUntil[nftId]
+            effectUntil: _sS().shop_0_Fence_EffectUntil[nftId],
+            effectIsOngoingActive: shopIsEffectOngoing(nftId, 0)
         });
         return ownedItems;
     }
@@ -101,6 +124,10 @@ PixotchiExtensionPermission
             return block.timestamp <= _sS().shop_0_Fence_EffectUntil[nftId];
         }
         // Add more conditions here for different itemIds
+        // Example:
+        // if (itemId == 1) {
+        //     return block.timestamp <= _sS().shop_1_SomeItem_EffectUntil[nftId];
+        // }
         return false;
     }
 
@@ -183,4 +210,3 @@ PixotchiExtensionPermission
         data = ShopStorage.data();
     }
 }
-
