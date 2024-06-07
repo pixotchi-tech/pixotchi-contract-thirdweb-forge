@@ -28,7 +28,7 @@ PixotchiExtensionPermission
 
     /// @notice Reinitializes the ShopLogic contract.
     /// @dev This function is called to reinitialize the contract with new settings.
-    function reinitializer_8_ShopLogic() public reinitializer(12) {
+    function reinitializer_8_ShopLogic() public reinitializer(8) {
         shopCreateFence();
         _sS().shopItemCounter = 1;
     }
@@ -68,7 +68,7 @@ PixotchiExtensionPermission
         _sS().shopItemTotalConsumed[itemId] = 0;
         _sS().shopItemMaxSupply[itemId] = maxSupply; // 0 = Unlimited supply
         _sS().shopItemEffectTime[itemId] = effectTime;
-        
+
         emit ShopItemCreated(itemId, name, price, expireTime);
     }
 
@@ -89,7 +89,7 @@ PixotchiExtensionPermission
                 id: i,
                 name: _sS().shopItemName[i],
                 price: _sS().shopItemPrice[i],
-                expireTime: _sS().shopItemExpireTime[i]
+                effectTime: _sS().shopItemEffectTime[i]
             });
         }
         return items;

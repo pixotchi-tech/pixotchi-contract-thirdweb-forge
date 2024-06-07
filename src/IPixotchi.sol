@@ -46,7 +46,7 @@ interface IShop {
         uint256 id;
         string name;
         uint256 price;
-        uint256 expireTime; // for example 3 days timespan.
+        uint256 effectTime; // for example 3 days timespan.
     }
 
     struct ShopItemOwned {
@@ -226,8 +226,8 @@ interface IGame {
 
     //event Mint(uint256 id);
 
-    event Played(uint256 indexed id, uint256 points, uint256 timeExtension);
-    event PlayedV2(uint256 indexed id, int256 points, int256 timeExtension);
+    //event Played(uint256 indexed id, uint256 points, uint256 timeExtension);
+    //event PlayedV2(uint256 indexed id, int256 points, int256 timeExtension);
 
     // Player functions
     //function mint(uint256 strain) external;

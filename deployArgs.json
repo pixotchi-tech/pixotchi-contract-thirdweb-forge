@@ -189,8 +189,8 @@
     {
       "metadata": {
         "name": "ShopLogic",
-        "metadataURI": "ipfs://QmSS1sFNbYNy9hJy1Nw9fsyvE3ouHzVHWSEteiao2F6xrs",
-        "implementation": "0x2f89F53423E159605A5ae2A148aFCc814930d3c0"
+        "metadataURI": "ipfs://QmSopj2iB3yc6AdKDScZhpCbmkGnPxZnw1gHKmVvUthnj7",
+        "implementation": "0x44e156CBb4506cee55A96b45D10A77806E012469"
       },
       "functions": [
         {
