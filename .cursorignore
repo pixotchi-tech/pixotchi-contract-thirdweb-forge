@@ -8,3 +8,5 @@ ipfs
 cache
 out
 deployArgs*.json
+.vscode
+test
