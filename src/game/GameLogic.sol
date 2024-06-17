@@ -252,7 +252,7 @@ contract GameLogic is IGame, ReentrancyGuard/*, ERC2771ContextConsumer*/ {
     function getStatus(uint256 plant) public view returns (Status) {
         GameStorage.Data storage s = _s();
 
-        if (s.burnedPlants[plant]) {
+        if (s.burnedPlants[plant] || IERC721AExtension(address(this)).isBurned(plant)) {
             return Status.BURNED;
         }
         if (!isPlantAlive(plant)) {
