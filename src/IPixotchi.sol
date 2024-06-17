@@ -263,3 +263,9 @@ interface IGame {
 }
 
 
+interface IERC721AExtension {
+    /**
+     * @dev Returns whether `tokenId` has been burned.
+     */
+    function isBurned(uint256 tokenId) external view returns (bool);
+}
