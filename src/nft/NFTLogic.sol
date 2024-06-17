@@ -349,6 +349,7 @@ contract NFTLogic is
 
     /**
      * @dev Returns detailed information about plants owned by a specific address, with an option to include extensions.
+     * Plants with status BURNED are excluded.
      * @param _owner The address of the owner.
      * @param withExtensions Whether to include extensions in the plant information.
      * @return An array of detailed information about the plants owned by the address.
@@ -359,9 +360,22 @@ contract NFTLogic is
     ) private view returns (IGame.PlantFull[] memory) {
         uint32[] memory ids = _s().idsByOwner[_owner];
         IGame.PlantFull[] memory plants = new IGame.PlantFull[](ids.length);
+        uint256 validCount = 0;
+
         for (uint256 i = 0; i < ids.length; i++) {
-            plants[i] = _getPlantInfo(ids[i], withExtensions);
+            IGame.PlantFull memory plant = _getPlantInfo(ids[i], withExtensions);
+            if (plant.status != IGame.Status.BURNED) {
+                // Skip burned plants
+                plants[validCount] = plant;
+                validCount++;
+            }
         }
+
+        // Resize the array to the valid count
+        assembly {
+            mstore(plants, validCount)
+        }
+
         return plants;
     }
 
