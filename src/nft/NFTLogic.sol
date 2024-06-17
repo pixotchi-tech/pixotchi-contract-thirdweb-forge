@@ -141,6 +141,8 @@ contract NFTLogic is
      */
     function burn(uint256 tokenId) external guard {
         super._burn(tokenId);
+        _s().burnedPlants[tokenId] = true;
+        _s().strainBurned[_s().plantStrain[tokenId]]++;
     }
 
     /*/////////////////////////////////////////////////////////////
@@ -305,6 +307,7 @@ contract NFTLogic is
 
     /**
      * @dev Returns detailed information about multiple plants, with an option to include extensions.
+     * Plants with status BURNED are excluded.
      * @param _nftIds The IDs of the plants.
      * @param withExtensions Whether to include extensions in the plant information.
      * @return An array of detailed information about the plants.
@@ -314,9 +317,22 @@ contract NFTLogic is
         bool withExtensions
     ) private view returns (IGame.PlantFull[] memory) {
         IGame.PlantFull[] memory plants = new IGame.PlantFull[](_nftIds.length);
+        uint256 validCount = 0;
+
         for (uint256 i = 0; i < _nftIds.length; i++) {
-            plants[i] = _getPlantInfo(_nftIds[i], withExtensions);
+            IGame.PlantFull memory plant = _getPlantInfo(_nftIds[i], withExtensions);
+            if (plant.status != IGame.Status.BURNED) {
+                // Skip burned plants
+                plants[validCount] = plant;
+                validCount++;
+            }
         }
+
+        // Resize the array to the valid count
+        assembly {
+            mstore(plants, validCount)
+        }
+
         return plants;
     }
 
@@ -341,7 +357,7 @@ contract NFTLogic is
         address _owner,
         bool withExtensions
     ) private view returns (IGame.PlantFull[] memory) {
-        uint32[] storage ids = _s().idsByOwner[_owner];
+        uint32[] memory ids = _s().idsByOwner[_owner];
         IGame.PlantFull[] memory plants = new IGame.PlantFull[](ids.length);
         for (uint256 i = 0; i < ids.length; i++) {
             plants[i] = _getPlantInfo(ids[i], withExtensions);
@@ -507,10 +523,12 @@ contract NFTLogic is
     ) internal override {
         for (uint256 i = 0; i < batchSize; i++) {
             uint256 tokenId = startTokenId + i;
-            if (from != address(0)) {
+            if (from == address(0)) {
+                // No action taken
+            } else if (to == address(0)) {
+                // No action taken
+            } else {
                 _removeTokenIdFromOwner(uint32(tokenId), from);
-            }
-            if (to != address(0)) {
                 _addTokenIdToOwner(uint32(tokenId), to);
             }
         }
