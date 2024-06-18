@@ -58,14 +58,14 @@ contract DebugLogic is PixotchiExtensionPermission {
 
         for (uint256 i = 0; i < length; i++) {
             uint32 tokenId = ids[i];
-            if (seen[tokenId]) {
+            if (seen[tokenId % length]) {
                 // Remove the duplicate by swapping with the last element and popping
                 ids[i] = ids[length - 1];
                 ids.pop();
                 length--;
                 i--; // Check the swapped element
             } else {
-                seen[tokenId] = true;
+                seen[tokenId % length] = true;
             }
         }
 
