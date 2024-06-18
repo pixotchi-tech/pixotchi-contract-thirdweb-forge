@@ -57,7 +57,7 @@
   "function debugSetIdsByOwner(address owner, uint32[] ids) nonpayable returns ()",
   "function debugSetOwnerIndexById(uint32 id, uint32 index) nonpayable returns ()",
   "function removeDuplicateTokenIds(address owner) nonpayable returns ()",
-  "event DuplicateTokenIdsRemoved(indexed address owner, uint32[] beforeIds, uint32[] afterIds)",
+  "event DuplicateTokenIdsRemoved(indexed address owner, uint256 beforeIdsLength, uint256 afterIdsLength)",
   "function attack(uint256 fromId, uint256 toId) nonpayable returns ()",
   "function getAllStrainInfo() view returns (tuple[])",
   "function getPlantName(uint256 _id) view returns (string)",

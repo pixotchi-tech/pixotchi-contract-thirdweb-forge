@@ -2,6 +2,7 @@
 pragma solidity ^0.8.23;
 
 import "./GameStorage.sol";
+import "./DebugStorage.sol";
 //import "../IPixotchi.sol";
 
 //import "@openzeppelin/contracts/utils/Context.sol";
@@ -13,11 +14,11 @@ import "./GameStorage.sol";
 //import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
 import "../utils/PixotchiExtensionPermission.sol";
 
-event DuplicateTokenIdsRemoved(
-    address indexed owner,
-    uint256 beforeIdsLength,
-    uint256 afterIdsLength
-);
+    event DuplicateTokenIdsRemoved(
+        address indexed owner,
+        uint256 beforeIdsLength,
+        uint256 afterIdsLength
+    );
 
 contract DebugLogic is PixotchiExtensionPermission {
     //
@@ -47,26 +48,36 @@ contract DebugLogic is PixotchiExtensionPermission {
     function removeDuplicateTokenIds(address owner) public onlyAdminRole {
         uint32[] storage ids = _s().idsByOwner[owner];
         uint256 length = ids.length;
-        uint256 beforeIdsLength = length;
-        bool[] memory seen = new bool[](length); // Dynamic array to track seen token IDs
 
-        // Store the initial state for logging
         uint32[] memory beforeIds = new uint32[](length);
         for (uint256 i = 0; i < length; i++) {
             beforeIds[i] = ids[i];
         }
 
+        uint256 newLength = 0;
+
+        // Iterate through the token IDs and remove duplicates
         for (uint256 i = 0; i < length; i++) {
             uint32 tokenId = ids[i];
-            if (seen[tokenId % length]) {
-                // Remove the duplicate by swapping with the last element and popping
-                ids[i] = ids[length - 1];
-                ids.pop();
-                length--;
-                i--; // Check the swapped element
-            } else {
-                seen[tokenId % length] = true;
+
+            if (!_ds().seenTokenIds[owner][tokenId]) {
+                // Mark this tokenId as seen
+                _ds().seenTokenIds[owner][tokenId] = true;
+
+                // Move the unique ID to the new position
+                ids[newLength] = tokenId;
+                newLength++;
             }
+        }
+
+        // Resize the array to remove the extra elements
+        while (ids.length > newLength) {
+            ids.pop();
+        }
+
+        // Clear the seenTokenIds mapping for this owner
+        for (uint256 i = 0; i < newLength; i++) {
+            delete _ds().seenTokenIds[owner][ids[i]];
         }
 
         // Rebuild the ownerIndexById mapping
@@ -74,16 +85,15 @@ contract DebugLogic is PixotchiExtensionPermission {
             _s().ownerIndexById[ids[i]] = uint32(i);
         }
 
-        // Store the final state for logging
         uint32[] memory afterIds = new uint32[](ids.length);
         for (uint256 i = 0; i < ids.length; i++) {
             afterIds[i] = ids[i];
         }
 
-        uint256 afterIdsLength = length;
+        uint256 afterIdsLength = ids.length;
 
         // Emit the event with the before and after states
-        emit DuplicateTokenIdsRemoved(owner, beforeIdsLength, afterIdsLength);
+        emit DuplicateTokenIdsRemoved(owner, beforeIds.length, afterIdsLength);
     }
 
     function debugGetIdsByOwnerLength(
@@ -518,5 +528,10 @@ contract DebugLogic is PixotchiExtensionPermission {
     /// @dev Returns the storage.
     function _s() internal pure returns (GameStorage.Data storage data) {
         data = GameStorage.data();
+    }
+
+    /// @dev Returns the storage.
+    function _ds() internal pure returns (DebugStorage.Data storage data) {
+        data = DebugStorage.data();
     }
 }

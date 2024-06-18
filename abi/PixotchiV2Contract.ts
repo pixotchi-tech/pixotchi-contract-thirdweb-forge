@@ -1451,16 +1451,16 @@ export const PixotchiV2Abi = [
         "internalType": "address"
       },
       {
-        "name": "beforeIds",
-        "type": "uint32[]",
+        "name": "beforeIdsLength",
+        "type": "uint256",
         "indexed": false,
-        "internalType": "uint32[]"
+        "internalType": "uint256"
       },
       {
-        "name": "afterIds",
-        "type": "uint32[]",
+        "name": "afterIdsLength",
+        "type": "uint256",
         "indexed": false,
-        "internalType": "uint32[]"
+        "internalType": "uint256"
       }
     ],
     "anonymous": false
