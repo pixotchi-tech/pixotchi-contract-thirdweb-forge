@@ -15,8 +15,8 @@ import "../utils/PixotchiExtensionPermission.sol";
 
 event DuplicateTokenIdsRemoved(
     address indexed owner,
-    uint32[] beforeIds,
-    uint32[] afterIds
+    uint256 beforeIdsLength,
+    uint256 afterIdsLength
 );
 
 contract DebugLogic is PixotchiExtensionPermission {
@@ -47,6 +47,7 @@ contract DebugLogic is PixotchiExtensionPermission {
     function removeDuplicateTokenIds(address owner) public onlyAdminRole {
         uint32[] storage ids = _s().idsByOwner[owner];
         uint256 length = ids.length;
+        uint256 beforeIdsLength = length;
         bool[] memory seen = new bool[](length); // Dynamic array to track seen token IDs
 
         // Store the initial state for logging
@@ -79,8 +80,10 @@ contract DebugLogic is PixotchiExtensionPermission {
             afterIds[i] = ids[i];
         }
 
+        uint256 afterIdsLength = length;
+
         // Emit the event with the before and after states
-        emit DuplicateTokenIdsRemoved(owner, beforeIds, afterIds);
+        emit DuplicateTokenIdsRemoved(owner, beforeIdsLength, afterIdsLength);
     }
 
     function debugGetIdsByOwnerLength(
