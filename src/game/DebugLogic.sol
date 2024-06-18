@@ -13,32 +13,81 @@ import "./GameStorage.sol";
 //import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
 import "../utils/PixotchiExtensionPermission.sol";
 
+event DuplicateTokenIdsRemoved(
+    address indexed owner,
+    uint32[] beforeIds,
+    uint32[] afterIds
+);
+
 contract DebugLogic is PixotchiExtensionPermission {
+    //
+    //    function debugSetEthOwed(uint256 id, uint256 amount) public onlyAdminRole {
+    //        _s().ethOwed[id] = amount;
+    //    }
+    //
+    //    function debugGetEthOwed(uint256 id) public view returns (uint256) {
+    //        return _s().ethOwed[id];
+    //    }
+    //
+    //    function debugSetPlantRewardDebt(
+    //        uint256 id,
+    //        uint256 debt
+    //    ) public onlyAdminRole {
+    //        _s().plantRewardDebt[id] = debt;
+    //    }
+    //
+    //    function debugGetPlantRewardDebt(uint256 id) public view returns (uint256) {
+    //        return _s().plantRewardDebt[id];
+    //    }
 
+    /**
+     * @dev Removes duplicate token IDs from the owner's list of tokens.
+     * @param owner The address of the owner.
+     */
+    function removeDuplicateTokenIds(address owner) public onlyAdminRole {
+        uint32[] storage ids = _s().idsByOwner[owner];
+        uint256 length = ids.length;
+        bool[] memory seen = new bool[](length); // Dynamic array to track seen token IDs
 
-//
-//    function debugSetEthOwed(uint256 id, uint256 amount) public onlyAdminRole {
-//        _s().ethOwed[id] = amount;
-//    }
-//
-//    function debugGetEthOwed(uint256 id) public view returns (uint256) {
-//        return _s().ethOwed[id];
-//    }
-//
-//    function debugSetPlantRewardDebt(
-//        uint256 id,
-//        uint256 debt
-//    ) public onlyAdminRole {
-//        _s().plantRewardDebt[id] = debt;
-//    }
-//
-//    function debugGetPlantRewardDebt(uint256 id) public view returns (uint256) {
-//        return _s().plantRewardDebt[id];
-//    }
+        // Store the initial state for logging
+        uint32[] memory beforeIds = new uint32[](length);
+        for (uint256 i = 0; i < length; i++) {
+            beforeIds[i] = ids[i];
+        }
 
-function debugGetIdsByOwnerLength(address owner) public view returns (uint256) {
-    return _s().idsByOwner[owner].length;
-}
+        for (uint256 i = 0; i < length; i++) {
+            uint32 tokenId = ids[i];
+            if (seen[tokenId]) {
+                // Remove the duplicate by swapping with the last element and popping
+                ids[i] = ids[length - 1];
+                ids.pop();
+                length--;
+                i--; // Check the swapped element
+            } else {
+                seen[tokenId] = true;
+            }
+        }
+
+        // Rebuild the ownerIndexById mapping
+        for (uint256 i = 0; i < ids.length; i++) {
+            _s().ownerIndexById[ids[i]] = uint32(i);
+        }
+
+        // Store the final state for logging
+        uint32[] memory afterIds = new uint32[](ids.length);
+        for (uint256 i = 0; i < ids.length; i++) {
+            afterIds[i] = ids[i];
+        }
+
+        // Emit the event with the before and after states
+        emit DuplicateTokenIdsRemoved(owner, beforeIds, afterIds);
+    }
+
+    function debugGetIdsByOwnerLength(
+        address owner
+    ) public view returns (uint256) {
+        return _s().idsByOwner[owner].length;
+    }
 
     function debugSetIdsByOwner(
         address owner,

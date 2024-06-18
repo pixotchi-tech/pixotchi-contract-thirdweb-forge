@@ -30,6 +30,24 @@ function mergeABIs(files) {
     return mergedABI;
 }
 
+// Function to create a human-readable ABI
+function createHumanReadableABI(abi) {
+    return abi.map(item => {
+        if (item.type === 'function') {
+            const inputs = item.inputs.map(input => `${input.type} ${input.name}`).join(', ');
+            const outputs = item.outputs.map(output => output.type).join(', ');
+            return `function ${item.name}(${inputs}) ${item.stateMutability} returns (${outputs})`;
+        } else if (item.type === 'event') {
+            const inputs = item.inputs.map(input => `${input.indexed ? 'indexed ' : ''}${input.type} ${input.name}`).join(', ');
+            return `event ${item.name}(${inputs})`;
+        } else if (item.type === 'error') {
+            const inputs = item.inputs.map(input => `${input.type} ${input.name}`).join(', ');
+            return `error ${item.name}(${inputs})`;
+        }
+        return '';
+    });
+}
+
 // Main function
 function main() {
     const srcDir = 'src';
@@ -48,6 +66,11 @@ function main() {
         fs.writeFileSync(abiJsonPath, JSON.stringify(mergedABI, null, 2));
         fs.writeFileSync(abiJsonMinPath, JSON.stringify(mergedABI));
         console.log(`Merged ABI saved to ${abiJsonPath} and ${abiJsonMinPath}`);
+
+        const humanReadableABI = createHumanReadableABI(mergedABI);
+        const humanReadableAbiPath = path.join(abiDir, 'PixotchiV2Abi.human.json');
+        fs.writeFileSync(humanReadableAbiPath, JSON.stringify(humanReadableABI, null, 2));
+        console.log(`Human-readable ABI saved to ${humanReadableAbiPath}`);
 
         const tsFilePath = path.join(abiDir, 'PixotchiV2Contract.ts');
         const tsFileMinPath = path.join(abiDir, 'PixotchiV2Contract.min.ts');
