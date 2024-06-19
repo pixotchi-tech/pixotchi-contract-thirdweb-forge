@@ -114,6 +114,7 @@ contract GameLogic is IGame, ReentrancyGuard/*, ERC2771ContextConsumer*/ {
      * @param _tokenId The ID of the player's plant.
      */
     function kill(uint256 _deadId, uint256 _tokenId) external isApproved(_tokenId) nonReentrant {
+        require(isPlantAlive(_tokenId), "your plant is dead");
         require(!isPlantAlive(_deadId), "The plant has to be dead to claim its points");
 
         if (_s().hasTheDiamond == _deadId) {
