@@ -8,14 +8,14 @@
   "dependencies": {
     "@openzeppelin/contracts-upgradeable": "5.0.2",
     "@thirdweb-dev/contracts": "3.15.0",
-    "thirdweb": "5.28.0"
+    "@thirdweb-dev/cli": "0.14.12"
   },
   "scripts": {
+    "build&generateAbi": "npm run forge:build && npm run abi:generate",
     "forge:build": "forge build --sizes --force",
+    "abi:generate": "node abi/MergeAbi.js",
     "build": "thirdweb detect",
     "deploy": "thirdweb deploy",
-    "deploy:dynamic": "thirdweb deploy --dynamic",
-    "publish": "thirdweb publish",
-    "forge build": "forge build"
+    "deploy:dynamic": "thirdweb deploy --dynamic"
   }
 }
