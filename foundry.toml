@@ -11,3 +11,7 @@ remappings = [
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
 #solc_version = '0.8.23'
+
+#[etherscan]
+##                   Paste TENDERLY_ACCESS_KEY    Chain ID        Verifier URL: ${TENDERLY_VIRTUAL_TESTNET_RPC}/verify/etherscan
+#unknown_chain = { key = "${TENDERLY_ACCESS_KEY}", chain = 84531111, url = "${TENDERLY_VIRTUAL_TESTNET_RPC_URL}/verify/etherscan" }

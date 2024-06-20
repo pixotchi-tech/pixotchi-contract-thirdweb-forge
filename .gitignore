@@ -6,3 +6,5 @@ out/
 .history
 src/nft/NFTLogic.sol
 lib
+.env
+abi/output

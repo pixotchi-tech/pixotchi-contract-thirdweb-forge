@@ -3,7 +3,6 @@ const path = require('path');
 
 // Array of filenames to skip
 const skipFiles = [
-    'ERC721AExtension',
     'NFTLogicDelegations',
     'ERC2771ContextConsumer',
     'FixedPointMathLib',
@@ -76,7 +75,7 @@ function main() {
 
     const mergedABI = mergeABIs(solFiles);
     if (mergedABI.length > 0) {
-        const abiDir = 'abi';
+        const abiDir = 'abi/output';
         if (!fs.existsSync(abiDir)) {
             fs.mkdirSync(abiDir);
         }
