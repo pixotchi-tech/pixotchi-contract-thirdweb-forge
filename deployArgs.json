@@ -4,7 +4,7 @@
       "metadata": {
         "name": "DebugLogic",
         "metadataURI": "ipfs://QmbZxWWRfuQK8M9nwrPfc1RFQzF2B7wcF6SSPNiVgcj8BF",
-        "implementation": "0xAF67993BEa3Fd3633bB18717DE77d62D1fe4c38D"
+        "implementation": "0xB23aC6Faedd31B47ad33A36F6eB95e6ADa8c3412"
       },
       "functions": [
         {
@@ -45,7 +45,7 @@
       "metadata": {
         "name": "GameLogic",
         "metadataURI": "ipfs://Qmf9bo6PitxuHdBYvR6rys7snH6UPk8o7YwmwRHYeMxnVD",
-        "implementation": "0xC6bfE02383d93c64768Cef5A81aD12f948645128"
+        "implementation": "0x8bF46b57949138637E66d8F45394ccbF1bdcc31b"
       },
       "functions": [
         {
@@ -110,7 +110,7 @@
       "metadata": {
         "name": "NFTLogic",
         "metadataURI": "ipfs://QmfX37CcZG4vuNMPL2VbG32nWP2BPkWoNNyQUhmFCiTZg6",
-        "implementation": "0x0d34bc1Aef100A8ca48D5dD5a3532Ff84C3c2a34"
+        "implementation": "0x0FB59028614Fcba9fAb2b71c8c1559637b461153"
       },
       "functions": [
         {
