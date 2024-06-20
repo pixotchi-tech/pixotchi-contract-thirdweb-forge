@@ -1,8 +1,4 @@
 [
-  "function balanceOf(address tokenOwner) view returns (uint256)",
-  "function totalSupply() view returns (uint256)",
-  "function transfer(address to, uint256 tokens) nonpayable returns (bool)",
-  "function transferFrom(address from, address to, uint256 tokens) nonpayable returns (bool)",
   "",
   "",
   "",
@@ -107,7 +103,6 @@
   "event Initialized(uint8 version)",
   "event Played(indexed uint256 id, uint256 points, uint256 timeExtension, string gameName)",
   "event PlayedV2(indexed uint256 id, int256 points, int256 timeExtension, string gameName)",
-  "function isBurned(uint256 tokenId) view returns (bool)",
   "function _getPlantsByOwner(address _owner) view returns (tuple[])",
   "function approve(address to, uint256 tokenId) nonpayable returns ()",
   "function balanceOf(address owner) view returns (uint256)",

@@ -1,18 +1,37 @@
 const fs = require('fs');
 const path = require('path');
 
+// Array of filenames to skip
+const skipFiles = [
+    'ERC721AExtension',
+    'NFTLogicDelegations',
+    'ERC2771ContextConsumer',
+    'FixedPointMathLib',
+    'PixotchiExtensionPermission'
+];
+
 // Function to recursively get all .sol files and extract filenames
-function getSolFiles(dir, files = []) {
+function getSolFiles(dir, files = [], skippedFiles = []) {
     const items = fs.readdirSync(dir);
     for (const item of items) {
         const fullPath = path.join(dir, item);
         if (fs.statSync(fullPath).isDirectory()) {
-            getSolFiles(fullPath, files);
+            getSolFiles(fullPath, files, skippedFiles);
         } else if (path.extname(fullPath) === '.sol') {
-            files.push(path.basename(fullPath, '.sol'));
+            const fileName = path.basename(fullPath, '.sol');
+            if (
+                fileName.startsWith('I') ||
+                fileName.endsWith('Storage') ||
+                fileName.endsWith('Library') ||
+                skipFiles.includes(fileName)
+            ) {
+                skippedFiles.push(fileName);
+            } else {
+                files.push(fileName);
+            }
         }
     }
-    return files;
+    return { files, skippedFiles };
 }
 
 // Function to merge ABIs from JSON files
@@ -51,8 +70,9 @@ function createHumanReadableABI(abi) {
 // Main function
 function main() {
     const srcDir = 'src';
-    const solFiles = getSolFiles(srcDir);
+    const { files: solFiles, skippedFiles } = getSolFiles(srcDir);
     console.log('Solidity files:', solFiles);
+    console.log('Skipped files:', skippedFiles);
 
     const mergedABI = mergeABIs(solFiles);
     if (mergedABI.length > 0) {
