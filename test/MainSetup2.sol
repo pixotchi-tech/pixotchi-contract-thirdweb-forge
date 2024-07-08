@@ -1,23 +1,16 @@
 // SPDX-License-Identifier: MIT
-// @author: thirdweb (https://github.com/thirdweb-dev/dynamic-contracts)
 
 pragma solidity ^0.8.26;
 
 import "forge-std/Test.sol";
-import {SSTORE2} from "../lib/dynamic-contracts/lib/sstore2/contracts/SSTORE2.sol";
-import {Bytecode} from "../lib/dynamic-contracts/lib/sstore2/contracts/utils/Bytecode.sol";
-
-
-
-import {BaseRouter, IRouter, IRouterState} from "../lib/dynamic-contracts/src/presets/BaseRouter.sol";
-import {IExtension} from "../lib/dynamic-contracts/src/interface/IExtension.sol";
-
-//import "../lib/dynamic-contracts/src/interface/IExtension.sol";
-//import "../lib/dynamic-contracts/src/presets/BaseRouter.sol";
 import "./utils/MockContracts.sol";
 import "./utils/Strings.sol";
 
-//import "forge-std/Test.sol";
+import {SSTORE2} from "../lib/dynamic-contracts/lib/sstore2/contracts/SSTORE2.sol";
+import {Bytecode} from "../lib/dynamic-contracts/lib/sstore2/contracts/utils/Bytecode.sol";
+import {BaseRouter, IRouter, IRouterState} from "../lib/dynamic-contracts/src/presets/BaseRouter.sol";
+import {IExtension} from "../lib/dynamic-contracts/src/interface/IExtension.sol";
+
 //import "../src/entrypoint/PixotchiRouter.sol";
 //import "../src/nft/NFTLogic.sol";
 //import "../src/game/GameLogic.sol";
@@ -25,8 +18,6 @@ import "./utils/Strings.sol";
 //import "../src/shop/ShopLogic.sol";
 //import "../src/nft/Renderer.sol";
 //import "../src/nft/ERC721AExtension.sol" as PixotchiERC721A;
-//import {BaseRouter, IRouter, IRouterState} from "../lib/dynamic-contracts/src/presets/BaseRouter.sol";
-//import {IExtension} from "../lib/dynamic-contracts/src/interface/IExtension.sol";
 
 
 /// @dev This custom router is written only for testing purposes and must not be used in production.
