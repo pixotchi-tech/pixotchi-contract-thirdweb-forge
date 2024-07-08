@@ -63,21 +63,41 @@ function extractFunctionsFromABI(contractName: string): ContractFunction[] {
  * This function modifies the MainSetup.t.sol file to include updated function selectors and signatures for each contract extension, ensuring the test file reflects the latest contract definitions.
  */
 function updateTestFile(testFileContent: string, contractName: string, functions: ContractFunction[]): string {
-    const startMarker = `// WARNING: Auto-generated code starts here. Do not modify manually.`;
-    const endMarker = `// WARNING: Auto-generated code ends here.`;
-    const extensionRegex = new RegExp(`createExtension\\("${contractName}",[^;]+;([\\s\\S]*?)${startMarker}[\\s\\S]*?${endMarker}`);
+    console.log(`Updating test file for contract: ${contractName}`);
+    const functionName = `_create${contractName}Extension`;
+    const functionRegex = new RegExp(`function\\s+${functionName}\\s*\\([^)]*\\)\\s*internal\\s+returns\\s*\\(Extension\\s+memory\\)\\s*{[\\s\\S]*?}`);
+
+    console.log(`Searching for function: ${functionName}`);
+
+    const match = testFileContent.match(functionRegex);
+    if (!match) {
+        console.log(`Function ${functionName} not found in the test file.`);
+        return testFileContent;
+    }
+
+    const existingFunction = match[0];
+    console.log(`Existing function found: ${existingFunction.substring(0, 100)}...`);
 
     const updatedFunctions = functions.map(func => 
-        `        extension.functions.push(BaseRouter.ExtensionFunction(${func.selector}, "${func.signature}"));`
+        `        extension.functions.push(ExtensionFunction(${func.selector}, "${func.signature}"));`
     ).join('\n');
 
-    const replacement = `createExtension("${contractName}", address(${contractName.toLowerCase()}));
-        ${startMarker}
-        extension.functions = new BaseRouter.ExtensionFunction[](${functions.length});
-${updatedFunctions}
-        ${endMarker}`;
+    const updatedFunction = existingFunction.replace(
+        /(\/\/ WARNING: Auto-generated code starts here\. Do not modify manually\.)([\s\S]*?)(\/\/ WARNING: Auto-generated code ends here\.)/,
+        `$1\n        extension.functions = new ExtensionFunction[](${functions.length});\n${updatedFunctions}\n        $3`
+    );
 
-    return testFileContent.replace(extensionRegex, replacement);
+    console.log(`Updated function: ${updatedFunction.substring(0, 100)}...`);
+
+    const newContent = testFileContent.replace(existingFunction, updatedFunction);
+
+    if (newContent === testFileContent) {
+        console.log(`WARNING: No changes made for ${contractName}. Function content might be identical.`);
+    } else {
+        console.log(`Content updated for ${contractName}`);
+    }
+
+    return newContent;
 }
 
 /**
@@ -88,27 +108,71 @@ ${updatedFunctions}
 function main() {
     console.log('Starting main function');
     let testFileContent = fs.readFileSync(testFile, 'utf-8');
+    console.log('Current content of MainSetup.t.sol:');
+    console.log(testFileContent);
+    console.log(`Initial test file content length: ${testFileContent.length}`);
 
     // Find all deployed contracts in the test file
-    const deployedContracts = testFileContent.match(/(\w+)\s*=\s*new\s+(\w+)\(\)/g);
+    const deployedContracts = testFileContent.match(/(\w+)\s*=\s*new\s+(\w+)(?:\.(\w+))?\(\)/g);
     if (!deployedContracts) {
         console.error('No deployed contracts found in test file');
         return;
     }
 
+    console.log(`Found ${deployedContracts.length} deployed contracts`);
+
     // Process each deployed contract
     for (const contract of deployedContracts) {
-        const [, variableName, contractName] = contract.match(/(\w+)\s*=\s*new\s+(\w+)\(\)/) || [];
+        const [, variableName, contractName] = contract.match(/(\w+)\s*=\s*new\s+(\w+)(?:\.(\w+))?\(\)/) || [];
         if (!contractName) continue;
 
-        console.log(`Processing contract: ${contractName}`);
-        const functions = extractFunctionsFromABI(contractName);
-        testFileContent = updateTestFile(testFileContent, contractName, functions);
+        let extensionName = contractName;
+        if (contractName === "ERC721AExtension") {
+            extensionName = "PixotchiERC721AExtension";
+        }
+
+        const functionName = `_create${extensionName}Extension`;
+        if (testFileContent.includes(functionName)) {
+            console.log(`Processing contract: ${extensionName}`);
+            const functions = extractFunctionsFromABI(contractName);
+            const updatedContent = updateTestFile(testFileContent, extensionName, functions);
+            
+            if (updatedContent !== testFileContent) {
+                testFileContent = updatedContent;
+                console.log(`Test file content updated for ${extensionName}`);
+            } else {
+                console.log(`No changes made for ${extensionName}`);
+            }
+        } else {
+            console.log(`Creating new extension function for ${extensionName}`);
+            const newFunction = createNewExtensionFunction(extensionName, variableName);
+            testFileContent += `\n${newFunction}\n`;
+            const functions = extractFunctionsFromABI(contractName);
+            testFileContent = updateTestFile(testFileContent, extensionName, functions);
+        }
     }
+
+    console.log(`Final test file content length: ${testFileContent.length}`);
 
     // Write updated content back to the test file
     fs.writeFileSync(testFile, testFileContent);
-    console.log('Test file updated successfully');
+    console.log('Test file written successfully');
+}
+
+function createNewExtensionFunction(contractName: string, variableName: string): string {
+    return `
+    function _create${contractName}Extension() internal returns (Extension memory) {
+        Extension memory extension;
+        extension.metadata.name = "${contractName}";
+        extension.metadata.metadataURI = "ipfs://${contractName}";
+        extension.metadata.implementation = address(${variableName});
+
+        // WARNING: Auto-generated code starts here. Do not modify manually.
+        // Functions will be added here
+        // WARNING: Auto-generated code ends here.
+
+        return extension;
+    }`;
 }
 
 // Execute the main function

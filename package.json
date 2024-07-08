@@ -11,6 +11,7 @@
     "@thirdweb-dev/cli": "0.14.12"
   },
   "scripts": {
+    "test:generate": "ts-node test/autogen.ts",
     "build&generateAbi": "npm run forge:build && npm run abi:generate",
     "forge:build": "forge build --sizes --force",
     "abi:generate": "node abi/MergeAbi.js",
