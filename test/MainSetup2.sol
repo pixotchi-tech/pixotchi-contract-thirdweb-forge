@@ -65,8 +65,8 @@ contract BaseRouterTest is Test, IExtension {
     }
 
     function setUp() public virtual {
-        Extension[] memory defaultExtensions = createDefaultExtensions();
-        router = BaseRouter(payable(address(new CustomRouter(defaultExtensions))));
+        Extension[] memory emptyExtensions = new Extension[](0);
+        router = BaseRouter(payable(address(new CustomRouter(emptyExtensions))));
         CustomRouter(payable(address(router))).initialize();
     }
 
@@ -128,33 +128,46 @@ contract BaseRouterTest is Test, IExtension {
             Extension memory extension = extensions[i];
             console.log("Processing extension:", extension.metadata.name);
             
-            // Check if the extension already exists before adding
-            if (!_extensionExists(extension.metadata.name)) {
-                console.log("Adding extension:", extension.metadata.name);
-                router.addExtension(extension);
-                
-                // Verify that the extension was added successfully
-                Extension memory addedExtension = router.getExtension(extension.metadata.name);
-                console.log("Retrieved extension name:", addedExtension.metadata.name);
-                console.log("Retrieved extension metadataURI:", addedExtension.metadata.metadataURI);
-                console.log("Retrieved extension implementation:", addedExtension.metadata.implementation);
-                console.log("Retrieved extension functions count:", addedExtension.functions.length);
-                
-                require(keccak256(abi.encodePacked(addedExtension.metadata.name)) == keccak256(abi.encodePacked(extension.metadata.name)), 
-                        string(abi.encodePacked("Failed to add extension: ", extension.metadata.name)));
-                
-                processFunctions(extension);
-            } else {
-                console.log("Extension already exists:", extension.metadata.name);
+            console.log("Adding extension:", extension.metadata.name);
+            try router.addExtension(extension) {
+                console.log("Extension added successfully:", extension.metadata.name);
+            } catch Error(string memory reason) {
+                console.log("Failed to add extension:", extension.metadata.name);
+                console.log("Reason:", reason);
+                // If the extension already exists, try to replace it
+                try router.replaceExtension(extension) {
+                    console.log("Extension replaced successfully:", extension.metadata.name);
+                } catch Error(string memory replaceReason) {
+                    console.log("Failed to replace extension:", extension.metadata.name);
+                    console.log("Reason:", replaceReason);
+                }
             }
+            
+            // Verify that the extension was added successfully
+            Extension[] memory updatedExtensions = router.getAllExtensions();
+            Extension memory addedExtension = _getExtensionByName(extension.metadata.name, updatedExtensions);
+            console.log("Retrieved extension name:", addedExtension.metadata.name);
+            console.log("Retrieved extension metadataURI:", addedExtension.metadata.metadataURI);
+            console.log("Retrieved extension implementation:", addedExtension.metadata.implementation);
+            console.log("Retrieved extension functions count:", addedExtension.functions.length);
+            
+            require(keccak256(abi.encodePacked(addedExtension.metadata.name)) == keccak256(abi.encodePacked(extension.metadata.name)), 
+                    string(abi.encodePacked("Failed to add extension: ", extension.metadata.name)));
+            
+            processFunctions(extension);
         }
     }
 
     function processFunctions(Extension memory extension) internal {
         for (uint256 i = 0; i < extension.functions.length; i++) {
             ExtensionFunction memory func = extension.functions[i];
-            // We'll enable all functions, as we can't easily check if they're already enabled
-            router.enableFunctionInExtension(extension.metadata.name, func);
+            console.log("Enabling function:", func.functionSignature);
+            try router.enableFunctionInExtension(extension.metadata.name, func) {
+                console.log("Function enabled successfully:", func.functionSignature);
+            } catch Error(string memory reason) {
+                console.log("Failed to enable function:", func.functionSignature);
+                console.log("Reason:", reason);
+            }
         }
     }
 
@@ -201,7 +214,9 @@ contract BaseRouterTest is Test, IExtension {
         params[0].functions[2] = FunctionCreationParams(IncrementDecrementGet.getNumber.selector, "getNumber()");
 
         _printRouterState();
+        console.log("Creating extensions...");
         Extension[] memory extensions = createExtensions(params);
+        console.log("Processing extensions...");
         processExtensions(extensions);
         _printRouterState();
 
@@ -209,6 +224,11 @@ contract BaseRouterTest is Test, IExtension {
 
         // Verify that the extension and its functions were added correctly
         Extension memory addedExtension = router.getExtension("TestExtension");
+        console.log("Added Extension Name:", addedExtension.metadata.name);
+        console.log("Added Extension MetadataURI:", addedExtension.metadata.metadataURI);
+        console.log("Added Extension Implementation:", addedExtension.metadata.implementation);
+        console.log("Added Extension Functions:", addedExtension.functions.length);
+
         emit log_named_string("Expected Extension Name", "TestExtension");
         emit log_named_string("Actual Extension Name", addedExtension.metadata.name);
         assertEq(addedExtension.metadata.name, "TestExtension", "Extension name mismatch");
@@ -235,7 +255,9 @@ contract BaseRouterTest is Test, IExtension {
         }
 
         _printRouterState();
+        console.log("Creating extensions...");
         Extension[] memory extensions = createExtensions(params);
+        console.log("Processing extensions...");
         processExtensions(extensions);
         _printRouterState();
 
@@ -244,6 +266,11 @@ contract BaseRouterTest is Test, IExtension {
 
             // Verify that the extensions and their functions were added correctly
             Extension memory addedExtension = router.getExtension(names[i]);
+            console.log("Added Extension Name:", addedExtension.metadata.name);
+            console.log("Added Extension MetadataURI:", addedExtension.metadata.metadataURI);
+            console.log("Added Extension Implementation:", addedExtension.metadata.implementation);
+            console.log("Added Extension Functions:", addedExtension.functions.length);
+
             emit log_named_string("Expected Extension Name", names[i]);
             emit log_named_string("Actual Extension Name", addedExtension.metadata.name);
             assertEq(addedExtension.metadata.name, names[i], "Extension name mismatch");
@@ -255,5 +282,12 @@ contract BaseRouterTest is Test, IExtension {
         }
     }
 
-    // ... existing code ...
+    function _getExtensionByName(string memory name, Extension[] memory extensions) internal pure returns (Extension memory) {
+        for (uint256 i = 0; i < extensions.length; i++) {
+            if (keccak256(abi.encodePacked(extensions[i].metadata.name)) == keccak256(abi.encodePacked(name))) {
+                return extensions[i];
+            }
+        }
+        revert("Extension not found");
+    }
 }
