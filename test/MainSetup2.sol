@@ -161,12 +161,24 @@ contract BaseRouterTest is Test, IExtension {
     function processFunctions(Extension memory extension) internal {
         for (uint256 i = 0; i < extension.functions.length; i++) {
             ExtensionFunction memory func = extension.functions[i];
-            console.log("Enabling function:", func.functionSignature);
-            try router.enableFunctionInExtension(extension.metadata.name, func) {
-                console.log("Function enabled successfully:", func.functionSignature);
-            } catch Error(string memory reason) {
-                console.log("Failed to enable function:", func.functionSignature);
-                console.log("Reason:", reason);
+            console.log("Checking function:", func.functionSignature);
+            
+            // Check if the function is already enabled
+            try router.getImplementationForFunction(func.functionSelector) returns (address impl) {
+                if (impl == extension.metadata.implementation) {
+                    console.log("Function already enabled:", func.functionSignature);
+                } else {
+                    console.log("Function implemented by different extension:", func.functionSignature);
+                }
+            } catch {
+                // If getImplementationForFunction reverts, it means the function is not enabled
+                console.log("Enabling function:", func.functionSignature);
+                try router.enableFunctionInExtension(extension.metadata.name, func) {
+                    console.log("Function enabled successfully:", func.functionSignature);
+                } catch Error(string memory reason) {
+                    console.log("Failed to enable function:", func.functionSignature);
+                    console.log("Reason:", reason);
+                }
             }
         }
     }
@@ -229,6 +241,12 @@ contract BaseRouterTest is Test, IExtension {
         console.log("Added Extension Implementation:", addedExtension.metadata.implementation);
         console.log("Added Extension Functions:", addedExtension.functions.length);
 
+        // Verify that the functions are correctly enabled
+        for (uint256 i = 0; i < addedExtension.functions.length; i++) {
+            address impl = router.getImplementationForFunction(addedExtension.functions[i].functionSelector);
+            require(impl == addedExtension.metadata.implementation, "Function not enabled");
+        }
+
         emit log_named_string("Expected Extension Name", "TestExtension");
         emit log_named_string("Actual Extension Name", addedExtension.metadata.name);
         assertEq(addedExtension.metadata.name, "TestExtension", "Extension name mismatch");
@@ -270,6 +288,12 @@ contract BaseRouterTest is Test, IExtension {
             console.log("Added Extension MetadataURI:", addedExtension.metadata.metadataURI);
             console.log("Added Extension Implementation:", addedExtension.metadata.implementation);
             console.log("Added Extension Functions:", addedExtension.functions.length);
+
+            // Verify that the functions are correctly enabled
+            for (uint256 j = 0; j < addedExtension.functions.length; j++) {
+                address impl = router.getImplementationForFunction(addedExtension.functions[j].functionSelector);
+                require(impl == addedExtension.metadata.implementation, "Function not enabled");
+            }
 
             emit log_named_string("Expected Extension Name", names[i]);
             emit log_named_string("Actual Extension Name", addedExtension.metadata.name);
