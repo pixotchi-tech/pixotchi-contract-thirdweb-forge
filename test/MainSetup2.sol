@@ -16,10 +16,24 @@ import "./ExtensionData.sol";
 
 /// @dev This custom router is written only for testing purposes and must not be used in production.
 contract CustomRouter is BaseRouter {
-    constructor(Extension[] memory _extensions) BaseRouter(_extensions) {}
+    address public owner;
+
+    constructor(Extension[] memory _extensions) BaseRouter(_extensions) {
+        owner = msg.sender;
+    }
 
     function initialize() public {
         __BaseRouter_init();
+    }
+
+    function addExtension(Extension memory extension) public override {
+        super.addExtension(extension);
+        // Add a log to confirm the extension was added
+        console.log("Extension added:", extension.metadata.name);
+    }
+
+    function getOwner() public view returns (address) {
+        return owner;
     }
 
     /// @dev Returns whether a function can be disabled in an extension in the given execution context.
@@ -28,7 +42,7 @@ contract CustomRouter is BaseRouter {
     }
 
     // Add this receive function
-    //receive() external payable {}
+    receive() external payable {}
 }
 
 contract BaseRouterTest is Test, IExtension {
@@ -112,10 +126,26 @@ contract BaseRouterTest is Test, IExtension {
     function processExtensions(Extension[] memory extensions) internal {
         for (uint256 i = 0; i < extensions.length; i++) {
             Extension memory extension = extensions[i];
+            console.log("Processing extension:", extension.metadata.name);
+            
             // Check if the extension already exists before adding
             if (!_extensionExists(extension.metadata.name)) {
+                console.log("Adding extension:", extension.metadata.name);
                 router.addExtension(extension);
+                
+                // Verify that the extension was added successfully
+                Extension memory addedExtension = router.getExtension(extension.metadata.name);
+                console.log("Retrieved extension name:", addedExtension.metadata.name);
+                console.log("Retrieved extension metadataURI:", addedExtension.metadata.metadataURI);
+                console.log("Retrieved extension implementation:", addedExtension.metadata.implementation);
+                console.log("Retrieved extension functions count:", addedExtension.functions.length);
+                
+                require(keccak256(abi.encodePacked(addedExtension.metadata.name)) == keccak256(abi.encodePacked(extension.metadata.name)), 
+                        string(abi.encodePacked("Failed to add extension: ", extension.metadata.name)));
+                
                 processFunctions(extension);
+            } else {
+                console.log("Extension already exists:", extension.metadata.name);
             }
         }
     }
@@ -145,6 +175,18 @@ contract BaseRouterTest is Test, IExtension {
         console.log("Number of Functions:", ext.functions.length);
     }
 
+    function _printRouterState() internal view {
+        console.log("Router address:", address(router));
+        console.log("Router owner:", CustomRouter(payable(address(router))).getOwner());
+        Extension[] memory extensions = router.getAllExtensions();
+        console.log("Router extension count:", extensions.length);
+        
+        console.log("Extensions:");
+        for (uint i = 0; i < extensions.length; i++) {
+            console.log(extensions[i].metadata.name);
+        }
+    }
+
     function test_createAndProcessExtensions() public {
         ExtensionCreationParams[] memory params = new ExtensionCreationParams[](1);
 
@@ -158,8 +200,10 @@ contract BaseRouterTest is Test, IExtension {
         params[0].functions[1] = FunctionCreationParams(IncrementDecrementGet.decrementNumber.selector, "decrementNumber()");
         params[0].functions[2] = FunctionCreationParams(IncrementDecrementGet.getNumber.selector, "getNumber()");
 
+        _printRouterState();
         Extension[] memory extensions = createExtensions(params);
         processExtensions(extensions);
+        _printRouterState();
 
         _printExtensionDetails("TestExtension");
 
@@ -190,8 +234,11 @@ contract BaseRouterTest is Test, IExtension {
             });
         }
 
+        _printRouterState();
         Extension[] memory extensions = createExtensions(params);
         processExtensions(extensions);
+        _printRouterState();
+
         for (uint256 i = 0; i < names.length; i++) {
             _printExtensionDetails(names[i]);
 
