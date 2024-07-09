@@ -10,46 +10,16 @@ import {SSTORE2} from "../lib/dynamic-contracts/lib/sstore2/contracts/SSTORE2.so
 import {Bytecode} from "../lib/dynamic-contracts/lib/sstore2/contracts/utils/Bytecode.sol";
 import {BaseRouter, IRouter, IRouterState} from "../lib/dynamic-contracts/src/presets/BaseRouter.sol";
 import {IExtension} from "../lib/dynamic-contracts/src/interface/IExtension.sol";
+import {PixotchiRouter} from "../src/entrypoint/PixotchiRouter.sol";
 
 // New imports
 import "./ExtensionData.sol";
-
-/// @dev This custom router is written only for testing purposes and must not be used in production.
-contract CustomRouter is BaseRouter {
-    address public owner;
-
-    constructor(Extension[] memory _extensions) BaseRouter(_extensions) {
-        owner = msg.sender;
-    }
-
-    function initialize() public {
-        __BaseRouter_init();
-    }
-
-    function addExtension(Extension memory extension) public override {
-        super.addExtension(extension);
-        // Add a log to confirm the extension was added
-        console.log("Extension added:", extension.metadata.name);
-    }
-
-    function getOwner() public view returns (address) {
-        return owner;
-    }
-
-    /// @dev Returns whether a function can be disabled in an extension in the given execution context.
-    function _isAuthorizedCallToUpgrade() internal view virtual override returns (bool) {
-        return true;
-    }
-
-    // Add this receive function
-    receive() external payable {}
-}
 
 contract BaseRouterTest is Test, IExtension {
     
     using Strings for uint256;
 
-    BaseRouter internal router;
+    PixotchiRouter internal router;
 
     // New structs
     struct ExtensionCreationParams {
@@ -66,8 +36,11 @@ contract BaseRouterTest is Test, IExtension {
 
     function setUp() public virtual {
         Extension[] memory emptyExtensions = new Extension[](0);
-        router = BaseRouter(payable(address(new CustomRouter(emptyExtensions))));
-        CustomRouter(payable(address(router))).initialize();
+        PixotchiRouter.SimpleRouterConstructorParams memory params = PixotchiRouter.SimpleRouterConstructorParams({
+            extensions: emptyExtensions
+        });
+        router = new PixotchiRouter(params);
+        router.initializeRouter();
     }
 
     function createDefaultExtensions() internal returns (Extension[] memory) {
@@ -202,7 +175,7 @@ contract BaseRouterTest is Test, IExtension {
 
     function _printRouterState() internal view {
         console.log("Router address:", address(router));
-        console.log("Router owner:", CustomRouter(payable(address(router))).getOwner());
+        console.log("Router owner:", router.hasRole(router.DEFAULT_ADMIN_ROLE(), address(this)));
         Extension[] memory extensions = router.getAllExtensions();
         console.log("Router extension count:", extensions.length);
         

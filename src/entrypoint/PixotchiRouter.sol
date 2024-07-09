@@ -107,7 +107,7 @@ ERC2771ContextUpgradeable
     function initializeRouter(
     ) external initializer {
         __ReentrancyGuard_init();
-        address _defaultAdmin = 0x44e156CBb4506cee55A96b45D10A77806E012469;
+        address _defaultAdmin = msg.sender;
         _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
         _setupRole(EXTENSION_ROLE, _defaultAdmin);
         _setRoleAdmin(EXTENSION_ROLE, EXTENSION_ROLE);
