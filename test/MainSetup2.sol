@@ -26,6 +26,9 @@ contract CustomRouter is BaseRouter {
     function _isAuthorizedCallToUpgrade() internal view virtual override returns (bool) {
         return true;
     }
+
+    // Add this receive function
+    //receive() external payable {}
 }
 
 contract BaseRouterTest is Test, IExtension {
@@ -109,17 +112,37 @@ contract BaseRouterTest is Test, IExtension {
     function processExtensions(Extension[] memory extensions) internal {
         for (uint256 i = 0; i < extensions.length; i++) {
             Extension memory extension = extensions[i];
-            processFunctions(extension);
+            // Check if the extension already exists before adding
+            if (!_extensionExists(extension.metadata.name)) {
+                router.addExtension(extension);
+                processFunctions(extension);
+            }
         }
     }
 
     function processFunctions(Extension memory extension) internal {
         for (uint256 i = 0; i < extension.functions.length; i++) {
             ExtensionFunction memory func = extension.functions[i];
-            // Process function logic here
-            // For example, you could add the function to the router
+            // We'll enable all functions, as we can't easily check if they're already enabled
             router.enableFunctionInExtension(extension.metadata.name, func);
         }
+    }
+
+    // Helper function to check if an extension exists
+    function _extensionExists(string memory extensionName) internal view returns (bool) {
+        try router.getExtension(extensionName) {
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    function _printExtensionDetails(string memory extensionName) internal view {
+        Extension memory ext = router.getExtension(extensionName);
+        console.log("Extension Name:", ext.metadata.name);
+        console.log("Extension MetadataURI:", ext.metadata.metadataURI);
+        console.log("Extension Implementation:", ext.metadata.implementation);
+        console.log("Number of Functions:", ext.functions.length);
     }
 
     function test_createAndProcessExtensions() public {
@@ -138,12 +161,16 @@ contract BaseRouterTest is Test, IExtension {
         Extension[] memory extensions = createExtensions(params);
         processExtensions(extensions);
 
+        _printExtensionDetails("TestExtension");
+
         // Verify that the extension and its functions were added correctly
         Extension memory addedExtension = router.getExtension("TestExtension");
-        assertEq(addedExtension.metadata.name, "TestExtension");
-        assertEq(addedExtension.metadata.metadataURI, "ipfs://TestExtension");
-        assertEq(addedExtension.metadata.implementation, address(extensions[0].metadata.implementation));
-        assertEq(addedExtension.functions.length, 3);
+        emit log_named_string("Expected Extension Name", "TestExtension");
+        emit log_named_string("Actual Extension Name", addedExtension.metadata.name);
+        assertEq(addedExtension.metadata.name, "TestExtension", "Extension name mismatch");
+        assertEq(addedExtension.metadata.metadataURI, "ipfs://TestExtension", "Extension metadataURI mismatch");
+        assertEq(addedExtension.metadata.implementation, address(extensions[0].metadata.implementation), "Extension implementation mismatch");
+        assertEq(addedExtension.functions.length, 3, "Incorrect number of functions");
     }
 
     function test_createExtensionsFromExternalData() public {
@@ -165,18 +192,21 @@ contract BaseRouterTest is Test, IExtension {
 
         Extension[] memory extensions = createExtensions(params);
         processExtensions(extensions);
-
-        // Verify that the extensions and their functions were added correctly
         for (uint256 i = 0; i < names.length; i++) {
+            _printExtensionDetails(names[i]);
+
+            // Verify that the extensions and their functions were added correctly
             Extension memory addedExtension = router.getExtension(names[i]);
-            assertEq(addedExtension.metadata.name, names[i]);
-            assertEq(addedExtension.metadata.metadataURI, metadataURIs[i]);
-            assertEq(addedExtension.metadata.implementation, implementations[i]);
+            emit log_named_string("Expected Extension Name", names[i]);
+            emit log_named_string("Actual Extension Name", addedExtension.metadata.name);
+            assertEq(addedExtension.metadata.name, names[i], "Extension name mismatch");
+            assertEq(addedExtension.metadata.metadataURI, metadataURIs[i], "Extension metadataURI mismatch");
+            assertEq(addedExtension.metadata.implementation, implementations[i], "Extension implementation mismatch");
             
             FunctionCreationParams[] memory functionParams = abi.decode(functionsData[i], (FunctionCreationParams[]));
-            assertEq(addedExtension.functions.length, functionParams.length);
+            assertEq(addedExtension.functions.length, functionParams.length, "Incorrect number of functions");
         }
     }
 
-    // ... (keep the rest of the existing tests)
+    // ... existing code ...
 }

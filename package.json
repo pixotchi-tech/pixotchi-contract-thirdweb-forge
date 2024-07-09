@@ -12,6 +12,7 @@
   },
   "scripts": {
     "test:generate": "ts-node test/autogen.ts",
+    "test": "forge test --match-contract BaseRouterTest",
     "build&generateAbi": "npm run forge:build && npm run abi:generate",
     "forge:build": "forge build --sizes --force",
     "abi:generate": "node abi/MergeAbi.js",
