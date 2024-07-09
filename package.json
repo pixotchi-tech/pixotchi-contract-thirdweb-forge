@@ -11,9 +11,9 @@
     "@thirdweb-dev/cli": "0.14.12"
   },
   "scripts": {
+    "build&generateAbi": "npm run forge:build && npm run abi:generate",
     "test:generate": "ts-node test/autogen.ts",
     "test": "forge test --match-contract BaseRouterTest",
-    "build&generateAbi": "npm run forge:build && npm run abi:generate",
     "forge:build": "forge build --sizes --force",
     "abi:generate": "node abi/MergeAbi.js",
     "build": "thirdweb detect",
