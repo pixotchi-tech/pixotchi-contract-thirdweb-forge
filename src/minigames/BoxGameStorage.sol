@@ -21,6 +21,8 @@ library BoxGameStorage {
         mapping(uint256 => uint256) lastPlayed; // Tracks last played time for each NFT.
         uint256[5] pointRewards; // Array storing point rewards.
         uint256[5] timeRewards; // Array storing time rewards.
+        mapping(uint256 => uint256) lastPlayedWithStar; // Tracks last played time with star.
+        uint256 coolDownTimeStar; // Cooldown time between plays with star.
     }
 
     function data() internal pure returns (Data storage data_) {

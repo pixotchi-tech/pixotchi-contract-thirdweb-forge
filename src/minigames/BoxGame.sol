@@ -36,6 +36,7 @@ PixotchiExtensionPermission
         _sMini().nftContractRewardDecimals = 1e12; // Set the reward decimals.
         _sMini().pointRewards = [0, 75 * 1e12, 150 * 1e12, 200 * 1e12, 300 * 1e12]; // Initialize point rewards.
         _sMini().timeRewards = [0, 5 hours, 10 hours, 15 hours, 20 hours]; // Initialize time rewards.
+        _sMini().coolDownTimeStar = 6 hours;
     }
 
 
@@ -56,6 +57,25 @@ PixotchiExtensionPermission
             return 0;
         }
         return _sMini().coolDownTime - timePassed;
+    }
+
+    function boxGameGetCoolDownTimeWithStar(uint256 nftID) public view override returns (uint256) {
+        uint256 lastPlayedTime = _sMini().lastPlayedWithStar[nftID];
+        // Return 0 if the NFT has never been played.
+        if (lastPlayedTime == 0) {
+            return 0;
+        }
+        // Check if the current time is less than the last played time (edge case).
+        if (block.timestamp < lastPlayedTime) {
+            return _sMini().coolDownTimeStar;
+        }
+        // Calculate the time passed since last played.
+        uint256 timePassed = block.timestamp - lastPlayedTime;
+        // Return 0 if the cooldown has passed, otherwise return remaining time.
+        if (timePassed >= _sMini().coolDownTimeStar) {
+            return 0;
+        }
+        return _sMini().coolDownTimeStar - timePassed;
     }
 
     function boxGamePlay(uint256 nftID, uint256 seed) external override returns (uint256 points, uint256 timeExtension) {
@@ -82,7 +102,32 @@ PixotchiExtensionPermission
         return (points, timeExtension);
     }
 
+    function boxGamePlayWithStar(uint256 nftID, uint256 seed) external override returns (uint256 points, uint256 timeExtension) {
+        // Ensure the caller is the owner of the NFT and meets other requirements.
+        require((IERC721A(address(this)).ownerOf(nftID) == msg.sender), "Not the owner of nft");
+        require( _s().plantStars[nftID] > 0 , "Need one star");
+        //require(seed > 0 && seed < 10, "Seed should be between 1-9");
+        require(boxGameGetCoolDownTimeWithStar(nftID) == 0, "Cool down time has not passed yet");
+        require(IGame(address(this)).isPlantAlive(nftID), "Plant is dead");
 
+        // Generate random indices for points and time rewards.
+        uint256 pointsIndex = random(seed, 0, 4);
+        points = _sMini().pointRewards[pointsIndex];
+        uint256 timeIndex = random2(seed, 0, 4);
+        timeExtension = _sMini().timeRewards[timeIndex];
+
+        // Record the current time as the last played time for this NFT.
+        _sMini().lastPlayedWithStar[nftID] = block.timestamp;
+
+        _s().plantStars[nftID] -= 1;
+
+        // Update the NFT with new points and time extension.
+        _updatePointsAndRewards(nftID, points, timeExtension);
+
+        // Return the points and time extension.
+        emit Played(nftID, points, timeExtension, "BoxGame");
+        return (points, timeExtension);
+    }
 
 
     function _updatePointsAndRewards(uint256 _nftId, uint256 _points, uint256 _timeExtension) internal {
