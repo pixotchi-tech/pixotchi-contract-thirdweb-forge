@@ -36,6 +36,11 @@ PixotchiExtensionPermission
         _sMini().nftContractRewardDecimals = 1e12; // Set the reward decimals.
         _sMini().pointRewards = [0, 75 * 1e12, 150 * 1e12, 200 * 1e12, 300 * 1e12]; // Initialize point rewards.
         _sMini().timeRewards = [0, 5 hours, 10 hours, 15 hours, 20 hours]; // Initialize time rewards.
+        //_sMini().coolDownTimeStar = 6 hours;
+    }
+
+    // Function to initialize the contract. Only callable once.
+    function boxGameInitialize2() public onlyAdminRole {
         _sMini().coolDownTimeStar = 6 hours;
     }
 
