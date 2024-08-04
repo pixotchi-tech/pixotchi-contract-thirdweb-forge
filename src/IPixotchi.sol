@@ -13,6 +13,10 @@ interface IBoxGame {
     function boxGameGetCoolDownTimePerNFT(uint256 nftID) external view returns (uint256);
 
     function boxGamePlay(uint256 nftID, uint256 seed) external returns (uint256 points, uint256 timeExtension);
+
+    function boxGameGetCoolDownTimeWithStar(uint256 nftID) external view returns (uint256);
+
+    function boxGamePlayWithStar(uint256 nftID, uint256 seed) external returns (uint256 points, uint256 timeExtension);
 }
 
 interface ISpinGame {
