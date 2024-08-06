@@ -8,3 +8,11 @@ src/nft/NFTLogic.sol
 lib
 .env
 abi/output
+
+# Ignore submodule directories
+lib/forge-std/
+lib/dynamic-contracts/
+lib/contracts/
+lib/thirdweb-contracts/
+lib/openzeppelin-contracts-upgradeable/
+lib/openzeppelin-contracts/
