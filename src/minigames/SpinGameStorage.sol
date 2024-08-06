@@ -23,8 +23,10 @@ library SpinGameStorage {
 
     struct Data {
         uint256 coolDownTime; // Cooldown time between plays for each NFT.
+        uint256 coolDownTimeWithStar;
         uint256 nftContractRewardDecimals; // Decimals for reward calculation.
         mapping(uint256 => uint256) lastPlayed; // Tracks last played time for each NFT.
+        mapping(uint256 => uint256) lastPlayedWithStar;
         mapping(uint256 => int256) pointRewards; // Mapping storing point rewards.
         mapping(uint256 => int256) timeRewards; // Mapping storing time rewards.
         mapping(uint256 => bool) isPercentage; // Mapping storing if the change is percentage-based.

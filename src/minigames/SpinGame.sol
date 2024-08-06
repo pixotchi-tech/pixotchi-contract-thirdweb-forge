@@ -122,6 +122,80 @@ contract SpinGame is
         // Record the current time as the last played time for this NFT.
         _sMini().lastPlayed[nftID] = block.timestamp;
 
+       
+
+        // Update the NFT with new points and time extension.
+        _updatePointsAndRewardsV2(nftID, pointsAdjustment, timeAdjustment);
+
+        // Return the points and time extension.
+        emit PlayedV2(nftID, pointsAdjustment, timeAdjustment, "SpinGame");
+        return (pointsAdjustment, timeAdjustment, isPercentage);
+    }
+
+    function spinGameGetCoolDownTimeWithStar(
+        uint256 nftID
+    ) public view override returns (uint256) {
+        uint256 lastPlayedTime = _sMini().lastPlayedWithStar[nftID];
+        // Return 0 if the NFT has never been played.
+        if (lastPlayedTime == 0) {
+            return 0;
+        }
+        // Check if the current time is less than the last played time (edge case).
+        if (block.timestamp < lastPlayedTime) {
+            return _sMini().coolDownTimeWithStar;
+        }
+        // Calculate the time passed since last played.
+        uint256 timePassed = block.timestamp - lastPlayedTime;
+        // Return 0 if the cooldown has passed, otherwise return remaining time.
+        if (timePassed >= _sMini().coolDownTimeWithStar) {
+            return 0;
+        }
+        return _sMini().coolDownTimeWithStar - timePassed;
+    }
+
+    function spinGamePlayWithStar(
+        uint256 nftID,
+        uint256 seed
+    ) external override returns (int256 pointsAdjustment, int256 timeAdjustment, bool isPercentage) {
+        // Ensure the caller is the owner of the NFT and meets other requirements.
+        require(
+            (IERC721A(address(this)).ownerOf(nftID) == msg.sender),
+            "Not the owner of nft"
+        );
+        require(
+            spinGameGetCoolDownTimeWithStar(nftID) == 0,
+            "Cool down time has not passed yet"
+        );
+        require(IGame(address(this)).isPlantAlive(nftID), "Plant is dead");
+        require( _s().plantStars[nftID] > 0 , "Need one star");
+
+        // Generate random indices for points and time rewards.
+        uint256 index = random(seed, 0, 5);
+        isPercentage = _sMini().isPercentage[index];
+
+        if (isPercentage) {
+            if (_sMini().pointRewards[index] != 0) {
+                pointsAdjustment =
+                    (int256(INFT(address(this)).getPlantScore(nftID)) * _sMini().pointRewards[index]) /
+                    100;
+            }
+            if (_sMini().timeRewards[index] != 0) {
+                uint256 plantTimeUntilStarving = INFT(address(this)).getPlantTimeUntilStarving(nftID);
+                uint256 remainingLifetime = plantTimeUntilStarving > block.timestamp ? plantTimeUntilStarving - block.timestamp : 0;
+                timeAdjustment =
+                    (int256(remainingLifetime) * _sMini().timeRewards[index]) /
+                    100;
+            }
+        } else {
+            pointsAdjustment = _sMini().pointRewards[index];
+            timeAdjustment = _sMini().timeRewards[index];
+        }
+
+        // Record the current time as the last played time for this NFT.
+        _sMini().lastPlayedWithStar[nftID] = block.timestamp;
+
+        _s().plantStars[nftID] -= 1;
+
         // Update the NFT with new points and time extension.
         _updatePointsAndRewardsV2(nftID, pointsAdjustment, timeAdjustment);
 

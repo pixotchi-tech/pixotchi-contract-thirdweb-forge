@@ -24,6 +24,10 @@ interface ISpinGame {
 
     function spinGamePlay(uint256 nftID, uint256 seed) external returns (int256 pointsAdjustment, int256 timeAdjustment, bool isPercentage);
     //function spinGamePlay(uint256 nftID, uint256 seed) external returns (uint256 points, uint256 timeExtension);
+
+    function spinGameGetCoolDownTimeWithStar(uint256 nftID) external view returns (uint256);
+
+    function spinGamePlayWithStar(uint256 nftID, uint256 seed) external returns (int256 pointsAdjustment, int256 timeAdjustment, bool isPercentage);
 }
 
 interface IConfig {
