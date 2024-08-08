@@ -61,6 +61,11 @@ contract SpinGame is
         _sMini().isPercentage[5] = false;
     }
 
+    // Function to initialize the contract. Only callable once.
+    function spinGameInitialize2() public onlyAdminRole {
+        _sMini().coolDownTimeWithStar = 6 hours;
+    }
+
     function spinGameGetCoolDownTimePerNFT(
         uint256 nftID
     ) public view override returns (uint256) {
