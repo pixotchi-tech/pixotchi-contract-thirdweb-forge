@@ -23,6 +23,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 import"../IPixotchi.sol";
 
 contract Renderer is IRenderer {
+    uint256 private constant LEVELS_PER_IMAGE_FASTER = 2;
     uint256 private constant LEVELS_PER_IMAGE = 10;
     uint256 private constant MAX_IMAGE_LEVEL = 22;
 
@@ -55,7 +56,7 @@ contract Renderer is IRenderer {
             Base64.encode(bytes(string(
                 abi.encodePacked(
                     attributes,
-                    getImageUri(plant.level, ipfsHash)
+                    getImageUri(plant.level, plant.strain, ipfsHash)
                 )
             )))
         ));
@@ -64,9 +65,15 @@ contract Renderer is IRenderer {
     /// @notice Calculates the image level based on the plant level
     /// @param _level The level of the plant
     /// @return The calculated image level
-    function calculateImageLevel(uint256 _level) public pure returns (uint256) {
+    function calculateImageLevel(uint256 _level, uint256 _strain) public pure returns (uint256) {
         if (_level == 0) return 0; // Handle potential edge case
-        uint256 imageLevel = (_level - 1) / LEVELS_PER_IMAGE;
+
+        uint256 imageLevel;
+        if(_strain == 5)
+        imageLevel = (_level - 1) / LEVELS_PER_IMAGE_FASTER;
+        else
+        imageLevel = (_level - 1) / LEVELS_PER_IMAGE;
+
         return imageLevel > MAX_IMAGE_LEVEL ? MAX_IMAGE_LEVEL : imageLevel;
     }
 
@@ -74,8 +81,8 @@ contract Renderer is IRenderer {
     /// @param _level The level of the plant
     /// @param ipfsHash The IPFS hash for the image
     /// @return The complete image URI
-    function getImageUri(uint256 _level, string calldata ipfsHash) public pure returns (string memory) {
-        uint256 imageLevel = calculateImageLevel(_level);
+    function getImageUri(uint256 _level, uint256 _strain, string calldata ipfsHash) public pure returns (string memory) {
+        uint256 imageLevel = calculateImageLevel(_level, _strain);
         return append('ipfs://', ipfsHash, '/', string(abi.encodePacked(Strings.toString(imageLevel), '.svg')), '"}');
     }
 
