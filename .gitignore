@@ -4,7 +4,7 @@ out/
 #yarn.lock
 .idea
 .history
-src/nft/NFTLogic.sol
+
 lib
 .env
 abi/output
