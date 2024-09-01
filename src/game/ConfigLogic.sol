@@ -75,6 +75,10 @@ PixotchiExtensionPermission
         _s().token = IToken(_token);
     }
 
+    function updateTOD(uint256 id, uint256 tod) external onlyAdminRole {
+        _s().plantTimeUntilStarving[id] = tod;
+    }
+
     /// @dev Returns the storage.
     function _s() internal pure returns (GameStorage.Data storage data) {
         data = GameStorage.data();

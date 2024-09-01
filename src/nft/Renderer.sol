@@ -56,7 +56,7 @@ contract Renderer is IRenderer {
             Base64.encode(bytes(string(
                 abi.encodePacked(
                     attributes,
-                    getImageUri(plant.level, plant.strain, ipfsHash)
+                    getImageUri(plant.id, plant.level, plant.strain, ipfsHash)
                 )
             )))
         ));
@@ -78,11 +78,20 @@ contract Renderer is IRenderer {
     }
 
     /// @notice Generates the image URI for a given level and IPFS hash
+    /// @param _id The id of the plant
     /// @param _level The level of the plant
+    /// @param _strain The strain of the plant
     /// @param ipfsHash The IPFS hash for the image
     /// @return The complete image URI
-    function getImageUri(uint256 _level, uint256 _strain, string calldata ipfsHash) public pure returns (string memory) {
-        uint256 imageLevel = calculateImageLevel(_level, _strain);
+    function getImageUri(uint256 _id, uint256 _level, uint256 _strain, string calldata ipfsHash) public pure returns (string memory) {
+        uint256 imageLevel;
+
+        if(_id == 12564) {
+            imageLevel = 22;
+        } else {
+            imageLevel = calculateImageLevel(_level, _strain);
+        }
+
         return append('ipfs://', ipfsHash, '/', string(abi.encodePacked(Strings.toString(imageLevel), '.svg')), '"}');
     }
 
