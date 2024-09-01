@@ -1,0 +1,510 @@
+[
+  {
+    "metadata": {
+      "name": "ConfigLogic",
+      "metadataURI": "ipfs://Qmcz1VPTi7MbSZ37auR25y9bJrbHzZHsTkDzL7ERsaLfqn",
+      "implementation": "0x7B873c52e3206F9fF95E50E201d149d8417AE972"
+    },
+    "functions": [
+      {
+        "functionSelector": "0x7d57498c",
+        "functionSignature": "initializeConfigLogic()"
+      },
+      {
+        "functionSelector": "0xb303c03a",
+        "functionSignature": "setConfig(bool,uint256)"
+      },
+      {
+        "functionSelector": "0x325cb44b",
+        "functionSignature": "setPRECISION(uint256)"
+      },
+      {
+        "functionSelector": "0x56d3163d",
+        "functionSignature": "setRenderer(address)"
+      },
+      {
+        "functionSelector": "0x1bddb706",
+        "functionSignature": "setRevShareWallet(address)"
+      },
+      {
+        "functionSelector": "0x88b00837",
+        "functionSignature": "setStrain(uint256,uint256,uint256,string,string,bool,uint256,uint256)"
+      },
+      {
+        "functionSelector": "0x144fa6d7",
+        "functionSignature": "setToken(address)"
+      },
+      {
+        "functionSelector": "0xb77d67fa",
+        "functionSignature": "updateTOD(uint256,uint256)"
+      }
+    ]
+  },
+  {
+    "metadata": {
+      "name": "GameLogic",
+      "metadataURI": "ipfs://Qmf9bo6PitxuHdBYvR6rys7snH6UPk8o7YwmwRHYeMxnVD",
+      "implementation": "0xc8ca2E5357A2dB307a2c9724756CD7204A22515B"
+    },
+    "functions": [
+      {
+        "functionSelector": "0xe1fa7638",
+        "functionSignature": "attack(uint256,uint256)"
+      },
+      {
+        "functionSelector": "0xd12b4e6d",
+        "functionSignature": "getAllStrainInfo()"
+      },
+      {
+        "functionSelector": "0x78770724",
+        "functionSignature": "getPlantName(uint256)"
+      },
+      {
+        "functionSelector": "0x5c622a0e",
+        "functionSignature": "getStatus(uint256)"
+      },
+      {
+        "functionSelector": "0xf929b585",
+        "functionSignature": "isApprovedFn(uint256,address)"
+      },
+      {
+        "functionSelector": "0xb559bbb4",
+        "functionSignature": "isPlantAlive(uint256)"
+      },
+      {
+        "functionSelector": "0xe2c352ed",
+        "functionSignature": "kill(uint256,uint256)"
+      },
+      {
+        "functionSelector": "0x05c58df2",
+        "functionSignature": "level(uint256)"
+      },
+      {
+        "functionSelector": "0xf251b76a",
+        "functionSignature": "onAttack(uint256,uint256)"
+      },
+      {
+        "functionSelector": "0x0573ea94",
+        "functionSignature": "pass(uint256,uint256)"
+      },
+      {
+        "functionSelector": "0xccc73973",
+        "functionSignature": "pendingEth(uint256)"
+      },
+      {
+        "functionSelector": "0xdb006a75",
+        "functionSignature": "redeem(uint256)"
+      },
+      {
+        "functionSelector": "0x114da366",
+        "functionSignature": "setPlantName(uint256,string)"
+      },
+      {
+        "functionSelector": "0x6d7b7fc9",
+        "functionSignature": "statusToString(uint8)"
+      }
+    ]
+  },
+  {
+    "metadata": {
+      "name": "GardenLogic",
+      "metadataURI": "ipfs://QmVrdeGA8thLvuwHeezhYSQKHTcxLNVmQ4R7fzMQnKSB7m",
+      "implementation": "0x5d4581c56D397B3A6378a9522ca945d45156A1Ea"
+    },
+    "functions": [
+      {
+        "functionSelector": "0x715488b0",
+        "functionSignature": "buyAccessory(uint256,uint256)"
+      },
+      {
+        "functionSelector": "0x79c5cb1c",
+        "functionSignature": "createItem(string,uint256,uint256,uint256)"
+      },
+      {
+        "functionSelector": "0xa53c1f87",
+        "functionSignature": "createItems((uint256,string,uint256,uint256,uint256)[])"
+      },
+      {
+        "functionSelector": "0xeba475b5",
+        "functionSignature": "editGardenItems((uint256,string,uint256,uint256,uint256)[])"
+      },
+      {
+        "functionSelector": "0x99cc726d",
+        "functionSignature": "editItem(uint256,uint256,uint256,string,uint256)"
+      },
+      {
+        "functionSelector": "0xac6ca58b",
+        "functionSignature": "getAllGardenItem()"
+      },
+      {
+        "functionSelector": "0x4864d053",
+        "functionSignature": "getGardenItem(uint256)"
+      },
+      {
+        "functionSelector": "0x143b35f0",
+        "functionSignature": "initializeGardenLogic()"
+      },
+      {
+        "functionSelector": "0x843bd641",
+        "functionSignature": "itemExists(uint256)"
+      }
+    ]
+  },
+  {
+    "metadata": {
+      "name": "NFTLogic",
+      "metadataURI": "ipfs://QmfX37CcZG4vuNMPL2VbG32nWP2BPkWoNNyQUhmFCiTZg6",
+      "implementation": "0x872e3D4f5C5afE9A2c4Ce7855161d59b8D44ae70"
+    },
+    "functions": [
+      {
+        "functionSelector": "0x54a475ba",
+        "functionSignature": "_getPlantsByOwner(address)"
+      },
+      {
+        "functionSelector": "0x095ea7b3",
+        "functionSignature": "approve(address,uint256)"
+      },
+      {
+        "functionSelector": "0x70a08231",
+        "functionSignature": "balanceOf(address)"
+      },
+      {
+        "functionSelector": "0x42966c68",
+        "functionSignature": "burn(uint256)"
+      },
+      {
+        "functionSelector": "0x081812fc",
+        "functionSignature": "getApproved(uint256)"
+      },
+      {
+        "functionSelector": "0x2a5d5138",
+        "functionSignature": "getPlantInfo(uint256)"
+      },
+      {
+        "functionSelector": "0x572a9d6a",
+        "functionSignature": "getPlantInfoExtended(uint256)"
+      },
+      {
+        "functionSelector": "0x03226d49",
+        "functionSignature": "getPlantScore(uint256)"
+      },
+      {
+        "functionSelector": "0x213b093a",
+        "functionSignature": "getPlantTimeUntilStarving(uint256)"
+      },
+      {
+        "functionSelector": "0x1123d4de",
+        "functionSignature": "getPlantsByOwner(address)"
+      },
+      {
+        "functionSelector": "0xd1c1438e",
+        "functionSignature": "getPlantsByOwnerExtended(address)"
+      },
+      {
+        "functionSelector": "0xba9a58e0",
+        "functionSignature": "getPlantsInfo(uint256[])"
+      },
+      {
+        "functionSelector": "0x59cfe1f5",
+        "functionSignature": "getPlantsInfoExtended(uint256[])"
+      },
+      {
+        "functionSelector": "0x837aa729",
+        "functionSignature": "initializeNFTLogic()"
+      },
+      {
+        "functionSelector": "0xe985e9c5",
+        "functionSignature": "isApprovedForAll(address,address)"
+      },
+      {
+        "functionSelector": "0xa0712d68",
+        "functionSignature": "mint(uint256)"
+      },
+      {
+        "functionSelector": "0x06fdde03",
+        "functionSignature": "name()"
+      },
+      {
+        "functionSelector": "0x6352211e",
+        "functionSignature": "ownerOf(uint256)"
+      },
+      {
+        "functionSelector": "0x5f0c851d",
+        "functionSignature": "removeTokenIdFromOwner(uint32,address)"
+      },
+      {
+        "functionSelector": "0x42842e0e",
+        "functionSignature": "safeTransferFrom(address,address,uint256)"
+      },
+      {
+        "functionSelector": "0xb88d4fde",
+        "functionSignature": "safeTransferFrom(address,address,uint256,bytes)"
+      },
+      {
+        "functionSelector": "0xa22cb465",
+        "functionSignature": "setApprovalForAll(address,bool)"
+      },
+      {
+        "functionSelector": "0x01ffc9a7",
+        "functionSignature": "supportsInterface(bytes4)"
+      },
+      {
+        "functionSelector": "0x95d89b41",
+        "functionSignature": "symbol()"
+      },
+      {
+        "functionSelector": "0x4e9dfa77",
+        "functionSignature": "tokenBurnAndRedistribute(address,uint256)"
+      },
+      {
+        "functionSelector": "0xc87b56dd",
+        "functionSignature": "tokenURI(uint256)"
+      },
+      {
+        "functionSelector": "0x18160ddd",
+        "functionSignature": "totalSupply()"
+      },
+      {
+        "functionSelector": "0x23b872dd",
+        "functionSignature": "transferFrom(address,address,uint256)"
+      }
+    ]
+  },
+  {
+    "metadata": {
+      "name": "Renderer",
+      "metadataURI": "ipfs://QmTX5bj7yMudtcTm6Yrx9rBJUjkJrExmfXnGR3Zcn7XNXW",
+      "implementation": "0x71dF7F436b1957b53781348337E02875F5dF260d"
+    },
+    "functions": [
+      {
+        "functionSelector": "0x6ec445a1",
+        "functionSignature": "calculateImageLevel(uint256)"
+      },
+      {
+        "functionSelector": "0x517f28f9",
+        "functionSignature": "getImageUri(uint256,string)"
+      },
+      {
+        "functionSelector": "0x59fffcc2",
+        "functionSignature": "prepareTokenURI((uint256,string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint8,string,uint256,address,uint256,((uint256,string,uint256,bool)[])[]),string)"
+      }
+    ]
+  },
+  {
+    "metadata": {
+      "name": "ReinitializerUtil",
+      "metadataURI": "ipfs://QmarPXjDtCVnLR75WV2emD7Xv8qEbHXgoDUfpotwocPFqS",
+      "implementation": "0x82a9aF882bFD2990239c32baC59f5A51a19Cfd4C"
+    },
+    "functions": [
+      {
+        "functionSelector": "0xa2280d67",
+        "functionSignature": "getReinitializerCursor()"
+      }
+    ]
+  },
+  {
+    "metadata": {
+      "name": "BoxGame",
+      "metadataURI": "ipfs://QmeJjx52aSVH5jpmYNQNcJXdWMC3Vceeh14ohGwao6K19d",
+      "implementation": "0xDAc475D196882D825d188dD870BDe546451f24AA"
+    },
+    "functions": [
+      {
+        "functionSelector": "0x660db682",
+        "functionSignature": "boxGameGetCoolDownTimePerNFT(uint256)"
+      },
+      {
+        "functionSelector": "0x5d8eca00",
+        "functionSignature": "boxGameGetCoolDownTimeWithStar(uint256)"
+      },
+      {
+        "functionSelector": "0x96ac0b9f",
+        "functionSignature": "boxGameInitialize()"
+      },
+      {
+        "functionSelector": "0x51927290",
+        "functionSignature": "boxGameInitialize2()"
+      },
+      {
+        "functionSelector": "0x52f3e0c4",
+        "functionSignature": "boxGamePlay(uint256,uint256)"
+      },
+      {
+        "functionSelector": "0xab64d0ee",
+        "functionSignature": "boxGamePlayWithStar(uint256,uint256)"
+      },
+      {
+        "functionSelector": "0x3733c0eb",
+        "functionSignature": "boxGameSetGlobalCoolDownTime(uint256)"
+      },
+      {
+        "functionSelector": "0xa3a6b7d8",
+        "functionSignature": "boxGameSetPointRewards(uint256[5])"
+      },
+      {
+        "functionSelector": "0x5a2c2ddd",
+        "functionSignature": "boxGameSetTimeRewards(uint256[5])"
+      }
+    ]
+  },
+  {
+    "metadata": {
+      "name": "SpinGame",
+      "metadataURI": "ipfs://QmbnZvpbufCqc1518Yd7QFcRSQrCu9Yv2mgKNZLaSPFmZk",
+      "implementation": "0x37B25D2F50A777A3817cAd4C31e856dBE73E435C"
+    },
+    "functions": [
+      {
+        "functionSelector": "0xca22a598",
+        "functionSignature": "SpinGameInitialize()"
+      },
+      {
+        "functionSelector": "0xb0584a42",
+        "functionSignature": "spinGameGetCoolDownTimePerNFT(uint256)"
+      },
+      {
+        "functionSelector": "0xd3e9bcc7",
+        "functionSignature": "spinGameGetCoolDownTimeWithStar(uint256)"
+      },
+      {
+        "functionSelector": "0x1e3f0436",
+        "functionSignature": "spinGameInitialize2()"
+      },
+      {
+        "functionSelector": "0xf162093c",
+        "functionSignature": "spinGamePlay(uint256,uint256)"
+      },
+      {
+        "functionSelector": "0xc0ba8cc7",
+        "functionSignature": "spinGamePlayWithStar(uint256,uint256)"
+      },
+      {
+        "functionSelector": "0xfa354a5e",
+        "functionSignature": "spinGameSetCoolDownTime(uint256)"
+      },
+      {
+        "functionSelector": "0x38672dbf",
+        "functionSignature": "spinGameSetIsPercentage(bool[])"
+      },
+      {
+        "functionSelector": "0xfb44c631",
+        "functionSignature": "spinGameSetPointRewards(uint256[])"
+      },
+      {
+        "functionSelector": "0x969ebb78",
+        "functionSignature": "spinGameSetTimeRewards(int256[])"
+      }
+    ]
+  },
+  {
+    "metadata": {
+      "name": "ShopLogic",
+      "metadataURI": "ipfs://QmYQf9HEVCPuTh1xFvQdSb8sTFT6Du73xnpW2SJKiTNq3v",
+      "implementation": "0xb0d799fc56c4C3D555A54bc776841050A3acB086"
+    },
+    "functions": [
+      {
+        "functionSelector": "0x99c6f8ea",
+        "functionSignature": "reinitializer_8_ShopLogic()"
+      },
+      {
+        "functionSelector": "0x15bc285e",
+        "functionSignature": "shopBuyItem(uint256,uint256)"
+      },
+      {
+        "functionSelector": "0x20038ee7",
+        "functionSignature": "shopDoesItemExist(uint256)"
+      },
+      {
+        "functionSelector": "0xebc603d9",
+        "functionSignature": "shopGetAllItems()"
+      },
+      {
+        "functionSelector": "0x206905bd",
+        "functionSignature": "shopGetPurchasedItems(uint256)"
+      },
+      {
+        "functionSelector": "0xa9b228d9",
+        "functionSignature": "shopIsEffectOngoing(uint256,uint256)"
+      },
+      {
+        "functionSelector": "0xec840144",
+        "functionSignature": "shopModifyItem(uint256,string,uint256,uint256,uint256,uint256)"
+      }
+    ]
+  },
+  {
+    "metadata": {
+      "name": "ERC721AExtension",
+      "metadataURI": "ipfs://QmWuff9b8R8BjkbALao1nQuG2C9urNDRmWwJTacoVyTr2n",
+      "implementation": "0x0a1dded52a6B79B9d6052727303243c76f5e921b"
+    },
+    "functions": [
+      {
+        "functionSelector": "0xdb44fe07",
+        "functionSignature": "isBurned(uint256)"
+      }
+    ]
+  },
+  {
+    "metadata": {
+      "name": "DebugLogic",
+      "metadataURI": "ipfs://QmbZxWWRfuQK8M9nwrPfc1RFQzF2B7wcF6SSPNiVgcj8BF",
+      "implementation": "0x0BE35F4Dd448AEfab21b9C09c4BEb3978bAc920D"
+    },
+    "functions": [
+      {
+        "functionSelector": "0xca1e4d2c",
+        "functionSignature": "debugGetBurnedPlants(uint256)"
+      },
+      {
+        "functionSelector": "0x9ac8703b",
+        "functionSignature": "debugGetIdsByOwner(address)"
+      },
+      {
+        "functionSelector": "0x3358a21e",
+        "functionSignature": "debugGetIdsByOwnerLength(address)"
+      },
+      {
+        "functionSelector": "0x53f86cf1",
+        "functionSignature": "debugGetOwnerIndexById(uint32)"
+      },
+      {
+        "functionSelector": "0x4c62f050",
+        "functionSignature": "debugSetBurnedPlants(uint256,bool)"
+      },
+      {
+        "functionSelector": "0x46717d77",
+        "functionSignature": "debugSetIdsByOwner(address,uint32[])"
+      },
+      {
+        "functionSelector": "0x330385bf",
+        "functionSignature": "debugSetOwnerIndexById(uint32,uint32)"
+      },
+      {
+        "functionSelector": "0x711159f2",
+        "functionSignature": "removeDuplicateTokenIds(address)"
+      }
+    ]
+  },
+  {
+    "metadata": {
+      "name": "AirdropLogic",
+      "metadataURI": "ipfs://QmXHpEozLHw1PgrtVLA1wLdCGoNPcodCarAC5tQmEyerA1",
+      "implementation": "0x9B5128dAFC0DA81703715C6Fbb48926D794A1ea7"
+    },
+    "functions": [
+      {
+        "functionSelector": "0x8dbac9e2",
+        "functionSignature": "airdropExtendLifetime(uint256[],uint256)"
+      },
+      {
+        "functionSelector": "0x16081c4f",
+        "functionSignature": "airdropGetAliveTokenIds()"
+      }
+    ]
+  }
+]
