@@ -414,7 +414,7 @@ contract NFTLogic is
      * @param strain The strain of the NFT to be minted.
      * @param to The address to which the NFT will be minted.
      */
-    function _mintTo(uint256 strain, address to) internal nonReentrant {
+    function _mintTo(uint256 strain, address to) internal /*nonReentrant*/ {
         require(_s().mintIsActive, "Mint is closed");
         require(_s().strainIsActive[strain], "Strain is not active");
         require(
@@ -422,8 +422,11 @@ contract NFTLogic is
             "Strain supply exceeded"
         );
 
-        _tokenBurnAndRedistribute(to, _s().mintPriceByStrain[strain]);
+        uint256 mintPrice = _s().mintPriceByStrain[strain];
         uint256 tokenId = _totalMinted();
+        address to = msg.sender;
+
+        _s().strainTotalMinted[strain]++;
 
         uint256 _strainInitialTOD = _s().strainInitialTOD[strain] == 0
             ? 1 days
@@ -442,13 +445,13 @@ contract NFTLogic is
         });
 
         _createPlant(plant);
-
         _addTokenIdToOwner(uint32(tokenId), to);
-        uint256 quantity = 1;
-        _mint(to, quantity);
-        emit Mint(to, strain, tokenId);
 
-        _s().strainTotalMinted[strain]++;
+        _mint(to, 1);
+
+        _tokenBurnAndRedistribute(to, mintPrice);
+
+        emit Mint(to, strain, tokenId);
     }
 
     /**
@@ -476,25 +479,16 @@ contract NFTLogic is
         uint256 amount
     ) internal {
         uint256 _burnPercentage = _s().burnPercentage;
-
-        // Calculate the burn amount based on the provided amount
         uint256 _burnAmount = amount.mulDivDown(_burnPercentage, 100);
-
-        // Calculate the amount for revShareWallet
         uint256 _revShareAmount = amount.mulDivDown(100 - _burnPercentage, 100);
 
-        // Burn the calculated amount of tokens
+        // Interactions
         if (_burnAmount > 0) {
-            _s().token.transferFrom(account, address(0), _burnAmount);
+            require(_s().token.transferFrom(account, address(0), _burnAmount), "Burn transfer failed");
         }
 
-        // Transfer the calculated share of tokens to the revShareWallet
         if (_revShareAmount > 0) {
-            _s().token.transferFrom(
-                account,
-                _s().revShareWallet,
-                _revShareAmount
-            );
+            require(_s().token.transferFrom(account, _s().revShareWallet, _revShareAmount), "RevShare transfer failed");
         }
     }
 
