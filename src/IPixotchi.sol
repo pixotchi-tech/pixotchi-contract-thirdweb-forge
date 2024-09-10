@@ -142,6 +142,15 @@ interface INFT {
     function getPlantsByOwnerExtended(address _owner) external view returns (IGame.PlantFull[] memory);
 
     event Mint(address to, uint256 strain, uint256 id);
+
+        // Add this struct definition after the existing structs and before the contract definition
+    struct PlantStatus {
+        uint256 id;
+        string name;
+        uint256 points;
+        uint256 lastAttacked;
+        bool dead;
+    }
 }
 
 interface IRenderer {
