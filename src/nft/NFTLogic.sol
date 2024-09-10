@@ -177,7 +177,7 @@ contract NFTLogic is
                 string memory name = _s().plantName[id];
                 uint256 points = _s().plantScore[id];
                 //uint256 lastAttacked = _s().plantLastAttacked[id];
-                bool alreadyAttacked =  block.timestamp <= _s().plantLastAttacked[toId] + 1 hours;
+                bool alreadyAttacked =  block.timestamp <= (_s().plantLastAttacked[id] + 1 hours);
                 bool fence = /*!IShop(address(this)).shopIsEffectOngoing(id, 0);*/ block.timestamp <= _sS().shop_0_Fence_EffectUntil[id];
                 bool dead = (status == IGame.Status.DEAD);
 
