@@ -149,6 +149,47 @@ contract NFTLogic is
                         Game functions
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @dev Returns information about plants that are alive or dead, but not burned, within a specified ID range.
+     * @param fromId The starting ID of the range (inclusive).
+     * @param toId The ending ID of the range (inclusive).
+     * @return An array of PlantStatus structs containing information about the plants.
+     */
+    function getPlantStatusRange(uint256 fromId, uint256 toId) public view returns (PlantStatus[] memory) {
+        require(fromId <= toId, "Invalid ID range");
+        require(toId < _totalMinted(), "To ID exceeds total minted");
+
+        PlantStatus[] memory plants = new PlantStatus[](toId - fromId + 1);
+        uint256 validCount = 0;
+
+        for (uint256 id = fromId; id <= toId; id++) {
+            IGame.Status status = IGame(address(this)).getStatus(id);
+            
+            if (status != IGame.Status.BURNED) {
+                string memory name = _s().plantName[id];
+                uint256 points = _s().plantScore[id];
+                uint256 lastAttacked = _s().plantLastAttacked[id];
+                bool dead = (status == IGame.Status.DEAD);
+
+                plants[validCount] = PlantStatus({
+                    id: id,
+                    name: name,
+                    points: points,
+                    lastAttacked: lastAttacked,
+                    dead: dead
+                });
+                validCount++;
+            }
+        }
+
+        // Resize the array to the valid count
+        assembly {
+            mstore(plants, validCount)
+        }
+
+        return plants;
+    }
+
     /*///////////////////////////////////////////////////////////////
                             View functions
     //////////////////////////////////////////////////////////////*/
