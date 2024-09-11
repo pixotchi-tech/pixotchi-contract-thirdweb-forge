@@ -41,6 +41,23 @@ library ERC721AStorage {
 }
 
 
+library ERC721AExtensionLib {
+    function isBurned(uint256 tokenId) internal view returns (bool) {
+        ERC721AStorage.Data storage data = ERC721AStorage.erc721AStorage();
+        return data._ownerships[tokenId].burned;
+    }
+
+    function _startTokenId() internal pure returns (uint256) {
+        return 0;
+    }
+
+    function exists(uint256 tokenId) internal view returns (bool) {
+        ERC721AStorage.Data storage data = ERC721AStorage.erc721AStorage();
+        return _startTokenId() <= tokenId && tokenId < data._currentIndex && !data._ownerships[tokenId].burned;
+    }
+}
+
+
 contract ERC721AExtension is IERC721AExtension {
 
     /**
@@ -50,6 +67,25 @@ contract ERC721AExtension is IERC721AExtension {
         ERC721AStorage.Data storage data = ERC721AStorage.erc721AStorage();
         return data._ownerships[tokenId].burned;
     }
+
+
+    /**
+     * To change the starting tokenId, please override this function.
+     */
+    function _startTokenId() internal view virtual returns (uint256) {
+        return 0;
+    }
+
+
+    /**
+     * @dev See {IERC721Metadata-tokenURI}.
+     */
+    function exists(uint256 tokenId) public view returns (bool) {
+        ERC721AStorage.Data storage data = ERC721AStorage.erc721AStorage();
+        return _startTokenId() <= tokenId && tokenId < data._currentIndex && !data._ownerships[tokenId].burned;
+    }
+
+
 
 }
 

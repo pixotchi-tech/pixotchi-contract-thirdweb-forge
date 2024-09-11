@@ -13,7 +13,9 @@ import "../../lib/contracts/contracts/eip/ERC721AUpgradeable.sol";
 import "../../lib/contracts/lib/solady/src/utils/SafeTransferLib.sol";
 import "../../lib/contracts/lib/openzeppelin-contracts-upgradeable/contracts/utils/math/SafeMathUpgradeable.sol";
 import "../../lib/contracts/contracts/eip/interface/IERC721A.sol";
+import {ERC721AExtensionLib } from "./ERC721AExtension.sol";
 
+import "../shop/ShopStorage.sol";
 /**
  * @title NFTLogic
  * @dev This contract handles the logic for minting, burning, and managing NFTs in the Pixotchi game.
@@ -148,6 +150,57 @@ contract NFTLogic is
     /*/////////////////////////////////////////////////////////////
                         Game functions
     //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @dev Returns information about plants that are alive or dead, but not burned, within a specified ID range.
+     * @param fromId The starting ID of the range (inclusive).
+     * @param toId The ending ID of the range (inclusive).
+     * @return An array of PlantStatus structs containing information about the plants.
+     */
+    function getPlantStatusRange(uint256 fromId, uint256 toId) public view returns (PlantStatus[] memory) {
+        require(fromId <= toId, "Invalid ID range");
+        require(toId < _totalMinted(), "To ID exceeds total minted");
+
+        PlantStatus[] memory plants = new PlantStatus[](toId - fromId + 1);
+        uint256 validCount = 0;
+
+        for (uint256 id = fromId; id <= toId; id++) {
+
+            if(!ERC721AExtensionLib.exists(id)) {
+                continue;
+            }
+
+            IGame.Status status = IGame(address(this)).getStatus(id);
+            
+    
+            if (status != IGame.Status.BURNED /*||  IERC721A(address(this)).ownerOf(id) != address(0x0)*/ ) {
+                string memory name = _s().plantName[id];
+                uint256 points = _s().plantScore[id];
+                //uint256 lastAttacked = _s().plantLastAttacked[id];
+                bool alreadyAttacked =  block.timestamp <= (_s().plantLastAttacked[id] + 1 hours);
+                bool fence = /*!IShop(address(this)).shopIsEffectOngoing(id, 0);*/ block.timestamp <= _sS().shop_0_Fence_EffectUntil[id];
+                bool dead = (status == IGame.Status.DEAD);
+
+                plants[validCount] = PlantStatus({
+                    id: id,
+                    name: name,
+                    points: points,
+                    alreadyAttacked: alreadyAttacked,
+                    fence: fence,
+                    //lastAttacked: lastAttacked,
+                    dead: dead
+                });
+                validCount++;
+            }
+        }
+
+        //Resize the array to the valid count
+        assembly {
+            mstore(plants, validCount)
+        }
+
+        return plants;
+    }
 
     /*///////////////////////////////////////////////////////////////
                             View functions
@@ -371,6 +424,7 @@ contract NFTLogic is
             }
         }
 
+
         // Resize the array to the valid count
         assembly {
             mstore(plants, validCount)
@@ -540,6 +594,11 @@ contract NFTLogic is
                 _addTokenIdToOwner(uint32(tokenId), to);
             }
         }
+    }
+
+    /// @dev Returns the storage.
+    function _sS() internal pure returns (ShopStorage.Data storage data) {
+        data = ShopStorage.data();
     }
 
     /**

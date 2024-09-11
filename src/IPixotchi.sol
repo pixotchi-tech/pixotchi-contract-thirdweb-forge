@@ -142,6 +142,16 @@ interface INFT {
     function getPlantsByOwnerExtended(address _owner) external view returns (IGame.PlantFull[] memory);
 
     event Mint(address to, uint256 strain, uint256 id);
+
+        // Add this struct definition after the existing structs and before the contract definition
+    struct PlantStatus {
+        uint256 id;
+        string name;
+        uint256 points;
+        bool alreadyAttacked;
+        bool fence;
+        bool dead;
+    }
 }
 
 interface IRenderer {
@@ -276,4 +286,6 @@ interface IERC721AExtension {
      * @dev Returns whether `tokenId` has been burned.
      */
     function isBurned(uint256 tokenId) external view returns (bool);
+
+    function exists(uint256 tokenId) external view returns (bool);
 }
